@@ -6,107 +6,107 @@ import { useTheme, useWidgetSDK } from '@nitrostack/widgets';
 export default function AgenticDashboardWidget() {
   const theme = useTheme();
   const { getToolOutput } = useWidgetSDK();
-  const rawData = getToolOutput<any>();
 
   const isDark = theme === 'dark';
 
+  // Navigation tab
   const [activeTab, setActiveTab] = useState<'agents' | 'tools' | 'gateway' | 'cases'>('agents');
-  const [showLaunchModal, setShowLaunchModal] = useState(false);
-  const [selectedAgentName, setSelectedAgentName] = useState('Dr. Aether Medical Auditor');
   
-  // Custom user input (empty by default so user types query)
-  const [taskInput, setTaskInput] = useState('');
+  // Selected Patient Context State (Default: New Patient with NO data to test Empty States)
+  const [selectedPatientId, setSelectedPatientId] = useState<'NEW_PATIENT' | 'RAJESH_KUMAR'>('NEW_PATIENT');
+
+  // Patient Dynamic Data Store
+  const [patientsData, setPatientsData] = useState({
+    NEW_PATIENT: {
+      name: 'Jeffrin Merino',
+      phone: '9840123456',
+      scheme: 'Unregistered',
+      healthScore: null as number | null,
+      healthStatus: 'No health data available yet',
+      insurance: null as { provider: string; amount: string; used: string; remaining: string; cashless: boolean } | null,
+      medicines: null as { total: number; completed: number; nextDose: string; adherence: number } | null,
+      activeAgents: { running: 0, queued: 0, completedToday: 0 }
+    },
+    RAJESH_KUMAR: {
+      name: 'Rajesh Kumar',
+      phone: '9876543210',
+      scheme: 'CMCHIS Tamil Nadu',
+      healthScore: 88,
+      healthStatus: 'Post-Cardiac Audit Active',
+      insurance: { provider: 'CMCHIS Govt TN', amount: '₹5,00,000', used: '₹45,000', remaining: '₹4,55,000', cashless: true },
+      medicines: { total: 3, completed: 2, nextDose: '08:00 PM', adherence: 67 },
+      activeAgents: { running: 1, queued: 0, completedToday: 4 }
+    }
+  });
+
+  // Modal Launcher States
+  const [showModal, setShowModal] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
+  const [modalMode, setModalMode] = useState('');
+  const [userQueryInput, setUserQueryInput] = useState('');
   
-  // Chat History state
-  const [chatHistory, setChatHistory] = useState<string[]>([]);
-  
-  // Progress states
+  // Action Progress State
+  const [isExecuting, setIsExecuting] = useState(false);
   const [progressPercent, setProgressPercent] = useState(0);
   const [progressLogs, setProgressLogs] = useState<string[]>([]);
-  const [isExecuting, setIsExecuting] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
 
-  const agents = [
-    { name: 'Dr. Aether Medical Auditor', role: 'Billing & Insurance Fraud Audit', desc: 'Parses hospital bills, verifies Drug-Eluting Stents & ICU bed caps against NPPA DPCO statutory rules.', tools: ['analyze_billing_fraud_risk', 'verify_procedure_price_cap'], avatar: '👩‍⚕️', color: 'linear-gradient(135deg, #0284c7, #2563eb)' },
-    { name: 'NPPA Legal Enforcement Agent', role: 'Statutory Form 14555 Legal Notices', desc: 'Generates binding Form 14555 legal enforcement notices for prohibited upfront cash deposit demands.', tools: ['dispatch_emergency_email_escalation', 'grievance_notice_generator'], avatar: '⚖️', color: 'linear-gradient(135deg, #6366f1, #4f46e5)' },
-    { name: 'District Collector Escalation Bot', role: 'Emergency Government Escalation', desc: 'Dispatches immediate emergency email escalations to District Magistrates & SAFU Helplines.', tools: ['collector_escalation_dispatch', 'safu_grievance_filing'], avatar: '🏛️', color: 'linear-gradient(135deg, #10b981, #059669)' },
-    { name: 'NLEM Pharmacy Price Auditor', role: 'Essential Drug Markup Enforcement', desc: 'Audits pharmacy receipts for Human Insulin, IV Antibiotics, and Cardiac medications.', tools: ['pharmacy_overcharge_audit', 'calculate_cashless_rebate'], avatar: '💊', color: 'linear-gradient(135deg, #f59e0b, #d97706)' },
-    { name: 'Multi-Lingual Patient Advocate', role: 'Tamil, Kannada, Malayalam, Hindi Support', desc: 'Provides real-time voice and text patient intake, scheme eligibility, and emergency triage.', tools: ['multilingual_patient_voice_assistant', 'check_hospital_empanelment'], avatar: '🗣️', color: 'linear-gradient(135deg, #ec4899, #db2777)' },
-    { name: 'MoE Master Router Engine', role: '5-Stage Autonomous Execution Pipeline', desc: 'Full 360-degree autonomous pipeline combining Perception, Reasoning, Audit, Legal Notice, and Webhooks.', tools: ['run_autonomous_agentic_workflow', 'route_healthcare_query_moe'], avatar: '🧠', color: 'linear-gradient(135deg, #8b5cf6, #7c3aed)' }
-  ];
+  // Active patient object
+  const currentPatient = patientsData[selectedPatientId];
 
-  const toolsList = [
-    'analyze_billing_fraud_risk', 'verify_procedure_price_cap', 'dispatch_emergency_email_escalation',
-    'calculate_out_of_pocket_cashless_rebate', 'check_hospital_empanelment', 'track_agentic_action_progress',
-    'configure_external_ai_gateway', 'run_autonomous_agentic_workflow', 'illegal_cash_demand_negotiator',
-    'pharmacy_overcharge_audit', 'multilingual_patient_voice_assistant', 'patient_intake_triage',
-    'claim_audit_assistant', 'open_agentic_command_center'
-  ];
+  const switchPatient = (id: 'NEW_PATIENT' | 'RAJESH_KUMAR') => {
+    setSelectedPatientId(id);
+  };
 
-  // ALL 4 AI MODELS
-  const modelsList = [
-    { name: '🟢 OpenAI (GPT-4o / GPT-4 Turbo)', key: 'sk-proj-****9920', status: 'ACTIVE & ONLINE' },
-    { name: '🟣 Anthropic (Claude 3.5 Sonnet)', key: 'sk-ant-****8820', status: 'ACTIVE & ONLINE' },
-    { name: '🔵 Google AI (Gemini 1.5 Pro)', key: 'AIzaSy****8821', status: 'ACTIVE & ONLINE' },
-    { name: '⚪ DeepSeek (DeepSeek R1 Reasoning)', key: 'sk-ds-****1049', status: 'ACTIVE & ONLINE' }
-  ];
-
-  // ALL 10 PRIORITY CASES
-  const casesList = [
-    { caseId: 'CSE-2024-0089', patient: 'Rajesh Kumar', hospital: 'Kauvery Hospital Chennai', violation: 'Illegal ₹45,000 upfront cash deposit demand under CMCHIS TN', status: 'Audit In Progress' },
-    { caseId: 'CSE-2024-0090', patient: 'Priya Singh', hospital: 'Apollo Lifecare Delhi', violation: 'DES Stent Price Cap Exceeded (Quoted ₹52,000 vs Cap ₹38,260)', status: 'Legal Notice Sent' },
-    { caseId: 'CSE-2024-0091', patient: 'Amit Patel', hospital: 'Fortis Hospital Bangalore', violation: 'Prohibited upfront ICU bed deposit under SAST KA', status: 'Collector Notified' },
-    { caseId: 'CSE-2024-0092', patient: 'Fatima Khan', hospital: 'Max Super Specialty Delhi', violation: 'Essential Drug NLEM pharmacy markup overcharge', status: 'Rebate Approved' },
-    { caseId: 'CSE-2024-0093', patient: 'Suresh Reddy', hospital: 'Manipal Hospital Hyderabad', violation: 'Pre-admission cash deposit demand under Aarogyasri TS', status: 'Pending Audit' },
-    { caseId: 'CSE-2024-0094', patient: 'Ananya Sundaram', hospital: 'Kauvery Hospital Trichy (TN)', violation: 'Prohibited cash demand for Appendectomy under CMCHIS TN', status: 'SAFU Notice Issued' },
-    { caseId: 'CSE-2024-0095', patient: 'Karthik Raman', hospital: 'Aster CMI Bengaluru (KA)', violation: 'Knee Replacement Implant Cap Breach (Quoted ₹85k vs Cap ₹64k)', status: 'Cap Exception Flagged' },
-    { caseId: 'CSE-2024-0096', patient: 'Lakshmi Amma', hospital: 'KIMSHEALTH Trivandrum (KL)', violation: 'Illegal ICU daily surcharge under Karunya KHIIS Kerala', status: 'Collector Notified' },
-    { caseId: 'CSE-2024-0097', patient: 'Venkat Rao', hospital: 'KIMS Hospital Secunderabad (TS)', violation: 'NLEM Human Insulin pharmacy markup violation', status: 'Pharmacy Audit Passed' },
-    { caseId: 'CSE-2024-0098', patient: 'Meenakshi Nambiar', hospital: 'PSG Hospital Coimbatore (TN)', violation: 'Patient billing during active SAFU empanelment suspension', status: 'Blacklist Alert Active' }
-  ];
-
-  const startTask = () => {
-    const userQuery = taskInput.trim() || 'Kauvery Hospital Chennai cash deposit demand under CMCHIS TN';
-    
-    // Add query to Recent Chats History
-    setChatHistory(prev => [userQuery, ...prev]);
-
+  const handleRunAgent = () => {
     setIsExecuting(true);
     setIsCompleted(false);
     setProgressPercent(0);
-    setProgressLogs(["Ingesting hospital empanelment & scheme rules..."]);
+    setProgressLogs(["Initializing agent context & fetching patient records..."]);
 
-    const logsArray = [
-      "✓ Step 1 (20% Complete): Ingested hospital empanelment status for target facility (Status: EMPANELED_ACTIVE).",
-      "✓ Step 2 (40% Complete): Audited Drug-Eluting Stent quote against NPPA DPCO statutory cap (Cap: ₹38,260).",
-      "✓ Step 3 (60% Complete): Flagged illegal overcharge & calculated patient rebate entitlement (+12% interest).",
-      "✓ Step 4 (80% Complete): Formulated statutory Form 14555 legal enforcement notice & SAFU grievance packet.",
-      "✓ Step 5 (100% Complete): Dispatched emergency complaint email to District Collector & NHA Grievance Officer!"
-    ];
-
-    let currentStep = 0;
+    let current = 0;
     const interval = setInterval(() => {
-      currentStep++;
-      setProgressPercent(currentStep * 20);
-      if (currentStep <= logsArray.length) {
-        setProgressLogs(prev => [...prev, logsArray[currentStep - 1]]);
-      }
+      current += 25;
+      setProgressPercent(current);
 
-      if (currentStep >= 5) {
+      if (current === 25) {
+        setProgressLogs(prev => [...prev, "✓ Ingested patient record & scheme guidelines."]);
+      } else if (current === 50) {
+        setProgressLogs(prev => [...prev, "✓ Executed statutory compliance & audit tool."]);
+      } else if (current === 75) {
+        setProgressLogs(prev => [...prev, "✓ Calculated exact coverage & generated official statutory record."]);
+      } else if (current >= 100) {
         clearInterval(interval);
         setIsExecuting(false);
         setIsCompleted(true);
+
+        // REAL-TIME UPDATES: Update active patient state dynamically!
+        setPatientsData(prev => ({
+          ...prev,
+          [selectedPatientId]: {
+            ...prev[selectedPatientId],
+            healthScore: modalMode === 'RECORDS' ? 92 : prev[selectedPatientId].healthScore,
+            insurance: modalMode === 'INSURANCE' ? { provider: 'Star Health / CMCHIS', amount: '₹5,00,000', used: '₹0', remaining: '₹5,00,000', cashless: true } : prev[selectedPatientId].insurance,
+            medicines: modalMode === 'MEDICINE' ? { total: 4, completed: 3, nextDose: '08:00 PM', adherence: 75 } : prev[selectedPatientId].medicines,
+            activeAgents: {
+              ...prev[selectedPatientId].activeAgents,
+              completedToday: prev[selectedPatientId].activeAgents.completedToday + 1
+            }
+          }
+        }));
       }
     }, 600);
   };
 
-  const startNewChat = () => {
-    setTaskInput('');
-    setIsCompleted(false);
+  const openActionModal = (title: string, mode: string) => {
+    setModalTitle(title);
+    setModalMode(mode);
+    setUserQueryInput('');
     setIsExecuting(false);
+    setIsCompleted(false);
     setProgressPercent(0);
     setProgressLogs([]);
-    setShowLaunchModal(false);
+    setShowModal(true);
   };
 
   return (
@@ -115,49 +115,121 @@ export default function AgenticDashboardWidget() {
       background: isDark ? '#07090e' : '#f8fafc',
       borderRadius: '24px',
       color: isDark ? '#ffffff' : '#0f172a',
-      maxWidth: '860px',
+      maxWidth: '880px',
       boxShadow: '0 25px 60px rgba(0,0,0,0.5)',
       fontFamily: 'system-ui, -apple-system, sans-serif',
       border: '1px solid ' + (isDark ? 'rgba(56, 189, 248, 0.4)' : '#cbd5e1')
     }}>
       
-      {/* 1. TOP HEADER WITH + NEW CHAT BUTTON */}
+      {/* TOP HEADER WITH PATIENT SWITCHER */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', paddingBottom: '16px', borderBottom: '1px solid ' + (isDark ? 'rgba(56, 189, 248, 0.2)' : '#e2e8f0') }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div style={{ background: 'linear-gradient(135deg, #0284c7, #6366f1)', width: '38px', height: '38px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyCenter: 'center', fontSize: '20px', color: 'white' }}>⚡</div>
           <div>
-            <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 800 }}>AetherOS — Enterprise AI Agent Platform</h2>
-            <span style={{ fontSize: '11px', color: '#38bdf8', fontWeight: 600 }}>14 CONNECTED MCP TOOLS • 6 AUTONOMOUS AGENTS</span>
+            <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 800 }}>AetherOS — Patient AI Operating System</h2>
+            <span style={{ fontSize: '11px', color: '#38bdf8', fontWeight: 700 }}>CONTEXT-AWARE PATIENT ENGINE</span>
           </div>
         </div>
-        <div style={{ display: 'flex', gap: '8px' }}>
-          <button onClick={startNewChat} style={{ background: 'linear-gradient(135deg, #10b981, #059669)', color: 'white', border: 'none', padding: '6px 14px', borderRadius: '14px', fontSize: '11px', fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <span>+</span> New Chat
-          </button>
-          <span style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#34d399', fontSize: '11px', fontWeight: 800, padding: '6px 12px', borderRadius: '20px', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
-            ● 100% OPERATIONAL
-          </span>
+
+        {/* PATIENT CONTEXT SWITCHER DROPDOWN */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '10px', color: '#94a3b8', fontWeight: 700, textTransform: uppercase }}>SELECT PATIENT:</span>
+          <select
+            value={selectedPatientId}
+            onChange={(e) => switchPatient(e.target.value as any)}
+            style={{ background: isDark ? '#0b0f19' : '#ffffff', border: '1px solid #0284c7', color: 'white', padding: '6px 12px', borderRadius: '12px', fontSize: '11px', fontWeight: 800, outline: 'none', cursor: 'pointer' }}
+          >
+            <option value="NEW_PATIENT">👤 Jeffrin Merino (New Patient - No Data)</option>
+            <option value="RAJESH_KUMAR">👨‍💼 Rajesh Kumar (CMCHIS TN Active)</option>
+          </select>
         </div>
       </div>
 
-      {/* RECENT CHATS HISTORY BANNER */}
-      {chatHistory.length > 0 && (
-        <div style={{ background: 'rgba(2, 132, 199, 0.08)', border: '1px solid rgba(56, 189, 248, 0.3)', padding: '10px 14px', borderRadius: '12px', marginBottom: '16px', fontSize: '11px' }}>
-          <strong style={{ color: '#38bdf8' }}>📜 Recent Search History ({chatHistory.length}):</strong>
-          <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', marginTop: '6px' }}>
-            {chatHistory.map((q, idx) => (
-              <span key={idx} style={{ background: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9', padding: '4px 10px', borderRadius: '8px', whiteSpace: 'nowrap', border: '1px solid rgba(255,255,255,0.1)' }}>
-                {q}
-              </span>
-            ))}
-          </div>
+      {/* DYNAMIC DATA-DRIVEN DASHBOARD WIDGETS (3 STATES: LOADING, DATA, EMPTY STATE) */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px', marginBottom: '24px' }}>
+        
+        {/* WIDGET 1: HEALTH SCORE */}
+        <div style={{ background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff', border: '1px solid ' + (isDark ? 'rgba(56,189,248,0.2)' : '#e2e8f0'), padding: '16px', borderRadius: '16px' }}>
+          <div style={{ fontSize: '10px', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase' }}>Health Score</div>
+          {currentPatient.healthScore !== null ? (
+            <div>
+              <div style={{ fontSize: '24px', fontWeight: 900, color: '#10b981', margin: '4px 0' }}>{currentPatient.healthScore} / 100</div>
+              <div style={{ fontSize: '10px', color: '#34d399', fontWeight: 700 }}>● {currentPatient.healthStatus}</div>
+            </div>
+          ) : (
+            <div>
+              <div style={{ fontSize: '11px', color: '#cbd5e1', fontWeight: 700, margin: '8px 0 4px 0' }}>No health data available yet</div>
+              <div style={{ fontSize: '9px', color: '#94a3b8', marginBottom: '8px' }}>Upload medical records to compute score.</div>
+              <button onClick={() => openActionModal('Upload Medical Records', 'RECORDS')} style={{ background: 'rgba(2,132,199,0.2)', border: '1px solid #0284c7', color: '#38bdf8', padding: '4px 8px', borderRadius: '6px', fontSize: '9px', fontWeight: 800, cursor: 'pointer' }}>
+                📁 Upload Records
+              </button>
+            </div>
+          )}
         </div>
-      )}
 
-      {/* 2. TAB CONTROLS */}
+        {/* WIDGET 2: INSURANCE COVERAGE */}
+        <div style={{ background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff', border: '1px solid ' + (isDark ? 'rgba(56,189,248,0.2)' : '#e2e8f0'), padding: '16px', borderRadius: '16px' }}>
+          <div style={{ fontSize: '10px', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase' }}>Insurance Coverage</div>
+          {currentPatient.insurance !== null ? (
+            <div>
+              <div style={{ fontSize: '24px', fontWeight: 900, color: '#38bdf8', margin: '4px 0' }}>{currentPatient.insurance.amount}</div>
+              <div style={{ fontSize: '10px', color: '#34d399', fontWeight: 700 }}>{currentPatient.insurance.provider} (Cashless: Verified)</div>
+            </div>
+          ) : (
+            <div>
+              <div style={{ fontSize: '11px', color: '#cbd5e1', fontWeight: 700, margin: '8px 0 4px 0' }}>No insurance uploaded</div>
+              <div style={{ fontSize: '9px', color: '#94a3b8', marginBottom: '8px' }}>Upload policy PDF or health card.</div>
+              <button onClick={() => openActionModal('Verify Insurance Policy', 'INSURANCE')} style={{ background: 'rgba(16,185,129,0.2)', border: '1px solid #10b981', color: '#34d399', padding: '4px 8px', borderRadius: '6px', fontSize: '9px', fontWeight: 800, cursor: 'pointer' }}>
+                🛡️ Upload Insurance
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* WIDGET 3: MEDICINE ADHERENCE */}
+        <div style={{ background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff', border: '1px solid ' + (isDark ? 'rgba(56,189,248,0.2)' : '#e2e8f0'), padding: '16px', borderRadius: '16px' }}>
+          <div style={{ fontSize: '10px', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase' }}>Medicine Adherence</div>
+          {currentPatient.medicines !== null ? (
+            <div>
+              <div style={{ fontSize: '24px', fontWeight: 900, color: '#a855f7', margin: '4px 0' }}>{currentPatient.medicines.adherence}%</div>
+              <div style={{ fontSize: '10px', color: '#cbd5e1', fontWeight: 700 }}>{currentPatient.medicines.completed} / {currentPatient.medicines.total} Doses • Next: {currentPatient.medicines.nextDose}</div>
+            </div>
+          ) : (
+            <div>
+              <div style={{ fontSize: '11px', color: '#cbd5e1', fontWeight: 700, margin: '8px 0 4px 0' }}>No active prescriptions</div>
+              <div style={{ fontSize: '9px', color: '#94a3b8', marginBottom: '8px' }}>Upload prescription to track doses.</div>
+              <button onClick={() => openActionModal('Explain Prescription Medicines', 'MEDICINE')} style={{ background: 'rgba(168,85,247,0.2)', border: '1px solid #a855f7', color: '#c084fc', padding: '4px 8px', borderRadius: '6px', fontSize: '9px', fontWeight: 800, cursor: 'pointer' }}>
+                💊 Upload Prescription
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* WIDGET 4: ACTIVE AI WORKFLOWS */}
+        <div style={{ background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff', border: '1px solid ' + (isDark ? 'rgba(56,189,248,0.2)' : '#e2e8f0'), padding: '16px', borderRadius: '16px' }}>
+          <div style={{ fontSize: '10px', color: '#94a3b8', fontWeight 700, textTransform: 'uppercase' }}>Active AI Workflows</div>
+          {currentPatient.activeAgents.running > 0 || currentPatient.activeAgents.completedToday > 0 ? (
+            <div>
+              <div style={{ fontSize: '24px', fontWeight: 900, color: '#f59e0b', margin: '4px 0' }}>{currentPatient.activeAgents.running} Running</div>
+              <div style={{ fontSize: '10px', color: '#34d399', fontWeight: 700 }}>{currentPatient.activeAgents.completedToday} Workflows Completed Today</div>
+            </div>
+          ) : (
+            <div>
+              <div style={{ fontSize: '11px', color: '#cbd5e1', fontWeight: 700, margin: '8px 0 4px 0' }}>No active AI workflows</div>
+              <div style={{ fontSize: '9px', color: '#94a3b8', marginBottom: '8px' }}>AI workflows execute when tasks start.</div>
+              <button onClick={() => openActionModal('Run Autonomous AI Workflow', 'MOE')} style={{ background: 'rgba(245,158,11,0.2)', border: '1px solid #f59e0b', color: '#fbbf24', padding: '4px 8px', borderRadius: '6px', fontSize: '9px', fontWeight: 800, cursor: 'pointer' }}>
+                ⚡ Run Agent Task
+              </button>
+            </div>
+          )}
+        </div>
+
+      </div>
+
+      {/* AGENT MARKETPLACE CONTROLS */}
       <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
         {[
-          { id: 'agents', label: '🤖 AI Agent Marketplace' },
+          { id: 'agents', label: '🤖 AI Patient Agent Marketplace' },
           { id: 'tools', label: '🛠️ Connected MCP Tools (14)' },
           { id: 'gateway', label: '🧠 Multi-Model Gateway (4)' },
           { id: 'cases', label: '📈 Active Case Queue (10)' }
@@ -181,115 +253,57 @@ export default function AgenticDashboardWidget() {
         ))}
       </div>
 
-      {/* TAB 1: AI AGENTS MARKETPLACE */}
+      {/* TAB 1: MARKETPLACE */}
       {activeTab === 'agents' && (
-        <div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
-            {agents.map((ag, i) => (
-              <div key={i} style={{ background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff', border: '1px solid ' + (isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0'), padding: '16px', borderRadius: '16px', display: 'flex', flexDirection: 'column' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-                  <div style={{ background: ag.color, width: '40px', height: '40px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyCenter: 'center', fontSize: '20px', color: 'white', flexShrink: 0 }}>{ag.avatar}</div>
-                  <div>
-                    <div style={{ fontSize: '14px', fontWeight: 800 }}>{ag.name}</div>
-                    <div style={{ fontSize: '10px', color: '#38bdf8', fontWeight: 700 }}>{ag.role}</div>
-                  </div>
-                </div>
-                <p style={{ fontSize: '11px', opacity: 0.8, lineHeight: 1.4, marginBottom: '12px', flex: 1 }}>{ag.desc}</p>
-                <button
-                  onClick={() => { setSelectedAgentName(ag.name); setTaskInput(''); setShowLaunchModal(true); setIsCompleted(false); setIsExecuting(false); setProgressPercent(0); }}
-                  style={{ width: '100%', background: 'linear-gradient(135deg, #0284c7, #2563eb)', color: 'white', border: 'none', padding: '10px', borderRadius: '10px', fontWeight: 800, fontSize: '11px', cursor: 'pointer' }}
-                >
-                  ⚡ Book & Deploy Agent
-                </button>
-              </div>
-            ))}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+          <div style={{ background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff', border: '1px solid rgba(255,255,255,0.08)', padding: '16px', borderRadius: '16px' }}>
+            <div style={{ fontSize: '14px', fontWeight: 800, marginBottom: '4px' }}>📅 AI Smart Appointment Booking Agent</div>
+            <p style={{ fontSize: '11px', opacity: 0.8, marginBottom: '12px' }}>Autonomously books doctor appointments, checks cashless eligibility, and syncs calendar.</p>
+            <button onClick={() => openActionModal('Book Appointment', 'BOOKING')} style={{ width: '100%', background: '#0284c7', color: 'white', border: 'none', padding: '8px', borderRadius: '8px', fontWeight: 800, fontSize: '11px', cursor: 'pointer' }}>📅 Book Appointment</button>
+          </div>
+          <div style={{ background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff', border: '1px solid rgba(255,255,255,0.08)', padding: '16px', borderRadius: '16px' }}>
+            <div style={{ fontSize: '14px', fontWeight: 800, marginBottom: '4px' }}>🛡️ AI Insurance Intelligence Agent</div>
+            <p style={{ fontSize: '11px', opacity: 0.8, marginBottom: '12px' }}>Verifies policy PDF/card, coverage limits, room caps, and cashless eligibility.</p>
+            <button onClick={() => openActionModal('Verify Insurance Policy', 'INSURANCE')} style={{ width: '100%', background: '#059669', color: 'white', border: 'none', padding: '8px', borderRadius: '8px', fontWeight: 800, fontSize: '11px', cursor: 'pointer' }}>🛡️ Verify Insurance</button>
           </div>
         </div>
       )}
 
-      {/* TAB 2: CONNECTED MCP TOOLS (ALL 14 TOOLS) */}
-      {activeTab === 'tools' && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-          {toolsList.map((tName, idx) => (
-            <div key={idx} style={{ background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff', border: '1px solid ' + (isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0'), padding: '12px', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontSize: '11px' }}>
-                <code style={{ color: '#38bdf8', fontWeight: 700 }}>{tName}</code>
-                <div style={{ fontSize: '10px', opacity: 0.6 }}>Ping: {20 + (idx * 3)}ms • SSE Active</div>
-              </div>
-              <span style={{ background: 'rgba(16,185,129,0.15)', color: '#34d399', fontSize: '9px', fontWeight: 800, padding: '2px 6px', borderRadius: '6px' }}>CONNECTED</span>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* TAB 3: MULTI-MODEL GATEWAY (ALL 4 AI MODELS SHOWN!) */}
-      {activeTab === 'gateway' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          {modelsList.map((m, idx) => (
-            <div key={idx} style={{ background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff', border: '1px solid ' + (isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0'), padding: '14px', borderRadius: '14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontSize: '12px' }}>
-                <strong>{m.name}</strong>
-                <div style={{ fontSize: '10px', opacity: 0.7, marginTop: '2px' }}>API Key: <code>{m.key}</code></div>
-              </div>
-              <span style={{ background: 'rgba(16,185,129,0.15)', color: '#34d399', fontSize: '10px', fontWeight: 800, padding: '4px 10px', borderRadius: '8px' }}>
-                {m.status}
-              </span>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* TAB 4: ACTIVE CASE QUEUE (ALL 10 PRIORITY CASES SHOWN!) */}
-      {activeTab === 'cases' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '380px', overflowY: 'auto' }}>
-          {casesList.map((c, idx) => (
-            <div key={idx} style={{ background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff', border: '1px solid ' + (isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0'), padding: '12px', borderRadius: '12px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: 800, marginBottom: '4px' }}>
-                <span style={{ color: '#38bdf8' }}>{c.caseId}: {c.patient} ({c.hospital})</span>
-                <span style={{ color: c.status.includes('Progress') || c.status.includes('Flagged') ? '#ef4444' : '#10b981', fontSize: '10px' }}>{c.status}</span>
-              </div>
-              <div style={{ fontSize: '11px', opacity: 0.8 }}>Violation: {c.violation}</div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* BOOKING LAUNCH MODAL */}
-      {showLaunchModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+      {/* ACTION & DATA INPUT MODAL */}
+      {showModal && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.85)', display: 'flex', alignItems: 'center', justifyCenter: 'center', zIndex: 1000 }}>
           <div style={{ background: isDark ? '#0b0f19' : '#ffffff', border: '1px solid rgba(56,189,248,0.4)', padding: '24px', borderRadius: '20px', width: '480px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-              <h3 style={{ margin: 0, fontSize: '16px' }}>Book & Deploy: {selectedAgentName}</h3>
-              <button onClick={() => setShowLaunchModal(false)} style={{ background: 'transparent', border: 'none', color: '#ef4444', fontWeight: 800, cursor: 'pointer' }}>✕</button>
+            <div style={{ display: 'flex', justifyCenter: 'space-between', justifyContent: 'space-between', marginBottom: '14px' }}>
+              <h3 style={{ margin: 0, fontSize: '16px' }}>{modalTitle}</h3>
+              <button onClick={() => setShowModal(false)} style={{ background: 'transparent', border: 'none', color: '#ef4444', fontWeight: 800, cursor: 'pointer' }}>✕</button>
             </div>
 
             <div style={{ marginBottom: '14px' }}>
-              <label style={{ fontSize: '10px', color: '#38bdf8', fontWeight: 700, display: 'block', marginBottom: '4px' }}>TYPE YOUR COMPLAINT / QUERY STATEMENT</label>
-              <input
-                type="text"
-                value={taskInput}
-                onChange={(e) => setTaskInput(e.target.value)}
-                placeholder="Type your complaint query here (e.g. Kauvery Hospital Chennai demands 45,000 cash)..."
-                style={{ width: '100%', background: isDark ? '#090d16' : '#f8fafc', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', padding: '10px', color: isDark ? '#ffffff' : '#0f172a', fontSize: '12px' }}
+              <label style={{ fontSize: '10px', color: '#38bdf8', fontWeight: 700, display: 'block', marginBottom: '4px' }}>PATIENT INPUT / DOCUMENT DETAILS</label>
+              <textarea
+                value={userQueryInput}
+                onChange={(e) => setUserQueryInput(e.target.value)}
+                placeholder="Enter details or upload document parameters..."
+                style={{ width: '100%', height: '80px', background: isDark ? '#090d16' : '#f8fafc', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', padding: '10px', color: isDark ? '#ffffff' : '#0f172a', fontSize: '12px' }}
               />
             </div>
 
             {!isExecuting && !isCompleted && (
-              <button onClick={startTask} style={{ width: '100%', background: 'linear-gradient(135deg, #10b981, #059669)', color: 'white', border: 'none', padding: '12px', borderRadius: '10px', fontWeight: 800, fontSize: '12px', cursor: 'pointer' }}>
-                🚀 Launch Autonomous Agent Task
+              <button onClick={handleRunAgent} style={{ width: '100%', background: 'linear-gradient(135deg, #10b981, #059669)', color: 'white', border: 'none', padding: '12px', borderRadius: '10px', fontWeight: 800, fontSize: '12px', cursor: 'pointer' }}>
+                🚀 Execute Agent & Compute Data
               </button>
             )}
 
             {(isExecuting || isCompleted) && (
               <div style={{ background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.3)', padding: '14px', borderRadius: '12px', marginTop: '10px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: 800, marginBottom: '6px' }}>
-                  <span>{isCompleted ? '⚡ Autonomous Task Completed!' : 'Executing 5-Stage Agentic Loop...'}</span>
+                  <span>{isCompleted ? '⚡ Data Processed & Dashboard Updated!' : 'Processing Patient Data...'}</span>
                   <span style={{ color: '#38bdf8' }}>{progressPercent}%</span>
                 </div>
                 <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '3px', overflow: 'hidden', marginBottom: '10px' }}>
                   <div style={{ width: `${progressPercent}%`, height: '100%', background: 'linear-gradient(90deg, #10b981, #38bdf8)', transition: 'width 0.4s' }}></div>
                 </div>
-                <div style={{ fontSize: '10px', color: '#cbd5e1', lineHeight: 1.5, maxHeight: '100px', overflowY: 'auto' }}>
+                <div style={{ fontSize: '10px', color: '#cbd5e1', lineHeight: 1.5 }}>
                   {progressLogs.map((lg, i) => <div key={i}>{lg}</div>)}
                 </div>
               </div>
