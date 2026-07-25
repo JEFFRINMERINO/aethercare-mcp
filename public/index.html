@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AetherCare — Agentic AI Healthcare Portal</title>
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: rgba(255, 255, 255, 0.04);
+      --border: rgba(255, 255, 255, 0.12);
+      --primary: #6366f1;
+      --emerald: #10b981;
+      --rose: #ef4444;
+      --text: #ffffff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 24px; min-height: 100vh; }
+    .container { max-width: 1000px; margin: 0 auto; }
+    
+    /* Header */
+    .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
+    .logo { font-size: 22px; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+    .badge { background: rgba(99, 102, 241, 0.2); color: #818cf8; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.4); }
+    
+    /* Login Card */
+    .auth-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 32px; max-width: 440px; margin: 40px auto; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+    .auth-card h2 { margin-bottom: 8px; font-size: 22px; }
+    .auth-card p { opacity: 0.75; font-size: 13px; margin-bottom: 24px; }
+    .input-group { margin-bottom: 16px; text-align: left; }
+    .input-group label { display: block; font-size: 12px; font-weight: 700; opacity: 0.8; margin-bottom: 6px; }
+    .input-group input { width: 100%; padding: 12px 14px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 14px; outline: none; }
+    .btn { width: 100%; padding: 12px; background: linear-gradient(135deg, var(--primary), #3b82f6); color: white; border: none; border-radius: 10px; font-weight: 800; font-size: 14px; cursor: pointer; transition: all 0.2s; }
+    .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+    
+    /* User Portal */
+    .portal { display: none; }
+    .user-banner { background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(16,185,129,0.15)); border: 1px solid var(--primary); padding: 16px 20px; border-radius: 16px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; }
+    
+    /* Tool Catalog Grid */
+    .tool-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 32px; }
+    .tool-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 20px; transition: all 0.2s; cursor: pointer; }
+    .tool-card:hover { border-color: var(--primary); transform: translateY(-2px); background: rgba(255,255,255,0.06); }
+    .tool-icon { font-size: 24px; margin-bottom: 10px; }
+    .tool-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+    .tool-desc { font-size: 12px; opacity: 0.75; line-height: 1.4; }
+    
+    /* History Section */
+    .history-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-top: 24px; }
+    .history-item { padding: 12px; background: rgba(0,0,0,0.3); border-radius: 10px; margin-top: 10px; font-size: 13px; display: flex; justify-content: space-between; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+    <!-- Top Header -->
+    <div class="header">
+      <div class="logo">⚡ AetherCare Agentic AI</div>
+      <div class="badge">14 TOOLS • 13 WIDGETS</div>
+    </div>
+
+    <!-- Screen 1: User Login / Signup -->
+    <div id="authScreen" class="auth-card">
+      <h2>Patient & Hospital Portal</h2>
+      <p>Log in or Create an account using your Email or Mobile Number to access Agentic AI tools.</p>
+      
+      <div class="input-group">
+        <label>Email Address or Mobile Number</label>
+        <input type="text" id="userInput" placeholder="user@domain.com or +91 9876543210" value="jeffrin@amrita.edu">
+      </div>
+
+      <div class="input-group">
+        <label>Account Password</label>
+        <input type="password" id="passInput" placeholder="••••••••" value="password123">
+      </div>
+
+      <button class="btn" onclick="handleAuth()">Login / Create Account</button>
+    </div>
+
+    <!-- Screen 2: Authenticated Dashboard -->
+    <div id="portalScreen" class="portal">
+      <div class="user-banner">
+        <div>
+          <h3 id="userWelcome">Welcome, User!</h3>
+          <span style="font-size: 12px; opacity: 0.8;">Session State: <strong>PERSISTED ACTIVE</strong> • User Database Synced</span>
+        </div>
+        <button onclick="handleLogout()" style="background: rgba(239,68,68,0.2); color: #fca5a5; border: 1px solid #ef4444; padding: 6px 12px; border-radius: 8px; font-size: 12px; cursor: pointer;">Logout</button>
+      </div>
+
+      <!-- Tools Catalog -->
+      <h3 style="margin-bottom: 14px;">🛠️ Connected Agentic AI Tools Catalog</h3>
+      
+      <div class="tool-grid">
+        <div class="tool-card" onclick="runTask('run_autonomous_agentic_workflow')">
+          <div class="tool-icon">🤖</div>
+          <div class="tool-title">Autonomous Execution Loop</div>
+          <div class="tool-desc">Runs pure 5-stage AI pipeline (Perception ➔ Reasoning ➔ Fraud Audit ➔ Legal Notice ➔ Enforcement).</div>
+        </div>
+
+        <div class="tool-card" onclick="runTask('open_agentic_command_center')">
+          <div class="tool-icon">⚡</div>
+          <div class="tool-title">360-Degree Control Hub</div>
+          <div class="tool-desc">Full-screen operations center with hospital radar, price caps, pre-auth checklist & Form 14555 notice.</div>
+        </div>
+
+        <div class="tool-card" onclick="runTask('dispatch_emergency_email_escalation')">
+          <div class="tool-icon">📧</div>
+          <div class="tool-title">District Collector Email Escalation</div>
+          <div class="tool-desc">Dispatches automated email memorandum to District Collector & NHA Grievance Officers.</div>
+        </div>
+
+        <div class="tool-card" onclick="runTask('track_agentic_action_progress')">
+          <div class="tool-icon">📈</div>
+          <div class="tool-title">Real-Time Action Progress Tracker</div>
+          <div class="tool-desc">Tracks multi-step agentic execution progress (0%–100%) with animated progress bars.</div>
+        </div>
+
+        <div class="tool-card" onclick="runTask('configure_external_ai_gateway')">
+          <div class="tool-icon">🔑</div>
+          <div class="tool-title">External LLM API Key Gateway</div>
+          <div class="tool-desc">Connects external API keys for OpenAI GPT-4o, Claude 3.5, Gemini 1.5 Pro, and DeepSeek.</div>
+        </div>
+
+        <div class="tool-card" onclick="runTask('check_hospital_empanelment')">
+          <div class="tool-icon">🏥</div>
+          <div class="tool-title">Hospital Empanelment Radar</div>
+          <div class="tool-desc">Checks CMCHIS (TN), SAST (KA), Karunya (KL), Aarogyasri (TS/AP), PM-JAY & SAFU alerts.</div>
+        </div>
+
+        <div class="tool-card" onclick="runTask('verify_procedure_price_cap')">
+          <div class="tool-icon">⚖️</div>
+          <div class="tool-title">NPPA Stent & Implant Auditor</div>
+          <div class="tool-desc">Verifies NPPA DPCO 2013 ceiling caps for cardiac stents (₹38,260) and knee implants.</div>
+        </div>
+
+        <div class="tool-card" onclick="runTask('calculate_out_of_pocket_cashless_rebate')">
+          <div class="tool-icon">💵</div>
+          <div class="tool-title">Cashless Refund & Penalty Calculator</div>
+          <div class="tool-desc">Calculates 100% refund + 12% statutory penalty interest for forced cash deposits.</div>
+        </div>
+      </div>
+
+      <!-- User Persistent Execution History -->
+      <div class="history-card">
+        <h4 style="margin-bottom: 8px;">📜 User Persistent Session & Execution History</h4>
+        <div id="historyList">
+          <div class="history-item">
+            <span>⚡ Executed: Autonomous Agentic Execution Loop for Kauvery Hospital Chennai</span>
+            <span style="color: #10b981; font-weight: bold;">SUCCESSFULLY ENFORCED</span>
+          </div>
+          <div class="history-item">
+            <span>📜 Generated: Form 14555 Legal Notice against prohibited cash demand</span>
+            <span style="color: #6366f1; font-weight: bold;">NOTICE READY</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function handleAuth() {
+      const user = document.getElementById('userInput').value.trim();
+      const pass = document.getElementById('passInput').value.trim();
+
+      if (!user || !pass) {
+        alert('Please enter valid email/phone and password');
+        return;
+      }
+
+      localStorage.setItem('aethercare_user', user);
+      document.getElementById('userWelcome').innerText = 'Welcome back, ' + user + '!';
+      document.getElementById('authScreen').style.display = 'none';
+      document.getElementById('portalScreen').style.display = 'block';
+    }
+
+    function handleLogout() {
+      localStorage.removeItem('aethercare_user');
+      document.getElementById('authScreen').style.display = 'block';
+      document.getElementById('portalScreen').style.display = 'none';
+    }
+
+    function runTask(toolName) {
+      const user = localStorage.getItem('aethercare_user') || 'User';
+      alert('⚡ Dispatching Autonomous Task [' + toolName + '] for ' + user + '\n\nTo view visual widget rendering, open NitroChat or NitroStudio!');
+    }
+
+    // Auto-login if session exists
+    window.onload = function() {
+      const savedUser = localStorage.getItem('aethercare_user');
+      if (savedUser) {
+        document.getElementById('userWelcome').innerText = 'Welcome back, ' + savedUser + '!';
+        document.getElementById('authScreen').style.display = 'none';
+        document.getElementById('portalScreen').style.display = 'block';
+      }
+    };
+  </script>
+</body>
+</html>
