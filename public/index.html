@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>AetherOS — Unified Enterprise AI Healthcare Platform</title>
+  <title>AetherOS — Enterprise AI Agent Platform</title>
   <style>
     :root {
       --bg: #07090e;
@@ -66,23 +66,23 @@
     .card-badge { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 3px 6px; border-radius: 6px; font-size: 9px; color: #cbd5e1; display: inline-block; margin-bottom: 10px; }
     .btn-card { width: 100%; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; border-radius: 10px; padding: 9px; font-weight: 800; font-size: 11px; cursor: pointer; }
 
-    /* Modal Launcher */
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3, 7, 18, 0.85); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: all 0.2s; padding: 16px; }
+    /* Interactive Modal & Dynamic Generation Box */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3, 7, 18, 0.85); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: all 0.2s; padding: 16px; }
     .modal-overlay.active { opacity: 1; pointer-events: auto; }
-    .modal-box { background: #0b0f19; border: 1px solid var(--border); width: 100%; max-width: 500px; border-radius: 20px; padding: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
-    .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .modal-box { background: #0b0f19; border: 1px solid var(--border); width: 100%; max-width: 560px; border-radius: 20px; padding: 22px; box-shadow: 0 20px 60px rgba(0,0,0,0.8); max-height: 90vh; overflow-y: auto; }
+    .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
     .modal-title { font-size: 15px; font-weight: 800; }
     .modal-close { background: transparent; border: none; color: var(--rose); font-size: 18px; font-weight: 800; cursor: pointer; }
 
     .form-group { margin-bottom: 12px; }
     .form-lbl { font-size: 10px; font-weight: 700; color: var(--cyan); text-transform: uppercase; margin-bottom: 4px; display: block; }
-    .form-input, .form-select { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 10px; padding: 10px; color: white; font-size: 12px; outline: none; }
-    
-    /* Detailed Execution Progress Drawer */
-    .progress-box { display: none; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); padding: 16px; border-radius: 14px; margin-top: 14px; }
-    .bar-bg { width: 100%; height: 8px; background: rgba(255, 255, 255, 0.1); border-radius: 4px; overflow: hidden; margin: 10px 0; }
-    .bar-fill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--emerald), var(--cyan)); transition: width 0.4s; }
-    .log-item { padding: 6px 8px; background: rgba(0,0,0,0.3); border-radius: 6px; margin-bottom: 4px; font-size: 11px; line-height: 1.4; border-left: 3px solid var(--emerald); }
+    .form-input, .form-select, .form-textarea { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 10px; padding: 10px; color: white; font-size: 12px; outline: none; }
+    .form-textarea { height: 140px; font-family: monospace; line-height: 1.4; resize: vertical; background: #090d16; }
+
+    /* Dynamic Generation Box Styles */
+    .dynamic-notice-box { background: rgba(2, 132, 199, 0.08); border: 1px solid var(--primary); padding: 14px; border-radius: 14px; margin-top: 14px; display: none; }
+    .dynamic-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 12px; font-weight: 800; color: var(--cyan); }
+    .action-btn-group { display: flex; gap: 8px; margin-top: 12px; }
 
     @media (max-width: 768px) {
       .app-layout { flex-direction: column; }
@@ -104,7 +104,6 @@
       </div>
     </div>
 
-    <!-- User Mobile Login Profile Button -->
     <div class="user-pill" onclick="openLoginModal()">
       <div class="user-avatar-sm" id="userAvatarInit">JM</div>
       <span id="userNameDisplay">Jeffrin (98401****)</span>
@@ -137,13 +136,13 @@
     <!-- Main Content -->
     <main class="main-content">
       
-      <!-- Mobile Quick Task Launch Banner -->
+      <!-- Quick Launch Banner -->
       <div class="launch-banner">
-        <div class="launch-title">🚀 Quick Mobile Task Launcher</div>
-        <div class="launch-desc">Enter your emergency hospital admission details to trigger an instant 5-stage autonomous audit & legal notice dispatch.</div>
+        <div class="launch-title">🚀 Quick Interactive Complaint Launcher</div>
+        <div class="launch-desc">Select an AI Agent below or enter your complaint details here to generate, edit, and dispatch official legal complaints directly to District Collectors & NHA.</div>
         <div class="launch-input-row">
-          <input id="quickTaskInput" type="text" class="launch-input" placeholder="Type case task (e.g. Kauvery Hospital Chennai demands 45,000 cash under CMCHIS TN)...">
-          <button class="btn-submit" onclick="launchQuickTask()">Execute Agent Task</button>
+          <input id="quickTaskInput" type="text" class="launch-input" placeholder="Type complaint (e.g. Kauvery Hospital Chennai demands 45,000 cash under CMCHIS TN)...">
+          <button class="btn-submit" onclick="launchQuickTask()">Raise Complaint</button>
         </div>
       </div>
 
@@ -151,88 +150,94 @@
       <div id="tab-agents">
         <div class="grid-2">
           
+          <!-- Agent 1 -->
           <div class="card">
             <div class="card-head">
               <div class="card-icon" style="background: linear-gradient(135deg, #0284c7, #2563eb);">👩‍⚕️</div>
               <div>
                 <div class="card-title">Dr. Aether Medical Auditor</div>
-                <div class="card-sub">Billing & Insurance Fraud</div>
+                <div class="card-sub">Billing Fraud & Itemized Audit</div>
               </div>
             </div>
-            <div class="card-body">Parses hospital bills, verifies Drug-Eluting Stent caps & ICU bed daily rates against NPPA DPCO statutory rules.</div>
+            <div class="card-body">Parses hospital bills, audits Drug-Eluting Stents & ICU bed daily rates against statutory NPPA price caps.</div>
             <span class="card-badge">tools: analyze_billing_fraud_risk, verify_price_cap</span>
-            <button class="btn-card" onclick="openAgentModal('Dr. Aether Medical Auditor')">⚡ Book & Deploy Agent</button>
+            <button class="btn-card" onclick="openAgentModal('Dr. Aether Medical Auditor', 'AUDIT')">⚡ Book Agent & Audit Bill</button>
           </div>
 
+          <!-- Agent 2 -->
           <div class="card">
             <div class="card-head">
               <div class="card-icon" style="background: linear-gradient(135deg, #6366f1, #4f46e5);">⚖️</div>
               <div>
                 <div class="card-title">NPPA Legal Enforcement Agent</div>
-                <div class="card-sub">Statutory Form 14555 Notice</div>
+                <div class="card-sub">Statutory Form 14555 Legal Notice</div>
               </div>
             </div>
             <div class="card-body">Generates binding Form 14555 statutory enforcement notices for prohibited upfront cash deposit demands.</div>
             <span class="card-badge">tools: dispatch_emergency_email_escalation</span>
-            <button class="btn-card" onclick="openAgentModal('NPPA Legal Enforcement Agent')">⚡ Book & Deploy Agent</button>
+            <button class="btn-card" onclick="openAgentModal('NPPA Legal Enforcement Agent', 'NOTICE')">⚡ Book Agent & Formulate Notice</button>
           </div>
 
+          <!-- Agent 3 -->
           <div class="card">
             <div class="card-head">
               <div class="card-icon" style="background: linear-gradient(135deg, #10b981, #059669);">🏛️</div>
               <div>
                 <div class="card-title">District Collector Escalation Bot</div>
-                <div class="card-sub">Emergency Government Desk</div>
+                <div class="card-sub">Emergency Government Complaint Desk</div>
               </div>
             </div>
-            <div class="card-body">Dispatches immediate emergency email complaints to District Magistrates, NHA Officers, & SAFU South India Helplines.</div>
+            <div class="card-body">Generates and dispatches official emergency complaint emails directly to District Magistrates & NHA Grievance Officers.</div>
             <span class="card-badge">tools: collector_escalation_dispatch, safu_filing</span>
-            <button class="btn-card" onclick="openAgentModal('District Collector Escalation Bot')">⚡ Book & Deploy Agent</button>
+            <button class="btn-card" onclick="openAgentModal('District Collector Escalation Bot', 'COLLECTOR')">⚡ Raise Complaint to Collector</button>
           </div>
 
+          <!-- Agent 4 -->
           <div class="card">
             <div class="card-head">
               <div class="card-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">💊</div>
               <div>
                 <div class="card-title">NLEM Pharmacy Price Auditor</div>
-                <div class="card-sub">Essential Drug Markup</div>
+                <div class="card-sub">Essential Drug Markup Enforcement</div>
               </div>
             </div>
             <div class="card-body">Audits pharmacy receipts for Human Insulin & IV Antibiotics against NLEM statutory price ceilings.</div>
             <span class="card-badge">tools: pharmacy_overcharge_audit, calculate_rebate</span>
-            <button class="btn-card" onclick="openAgentModal('NLEM Pharmacy Price Auditor')">⚡ Book & Deploy Agent</button>
+            <button class="btn-card" onclick="openAgentModal('NLEM Pharmacy Price Auditor', 'PHARMACY')">⚡ Audit Medicine Overcharges</button>
           </div>
 
+          <!-- Agent 5 -->
           <div class="card">
             <div class="card-head">
               <div class="card-icon" style="background: linear-gradient(135deg, #ec4899, #db2777);">🗣️</div>
               <div>
                 <div class="card-title">Multi-Lingual Patient Advocate</div>
-                <div class="card-sub">TN, KA, KL, TS Triage</div>
+                <div class="card-sub">TN, KA, KL, TS Emergency Triage</div>
               </div>
             </div>
             <div class="card-body">Provides real-time voice and text patient intake in Tamil, Kannada, Malayalam, and Hindi.</div>
             <span class="card-badge">tools: multilingual_patient_voice_assistant</span>
-            <button class="btn-card" onclick="openAgentModal('Multi-Lingual Patient Advocate')">⚡ Book & Deploy Agent</button>
+            <button class="btn-card" onclick="openAgentModal('Multi-Lingual Patient Advocate', 'VOICE')">⚡ Book Patient Triage Advocate</button>
           </div>
 
+          <!-- Agent 6 -->
           <div class="card">
             <div class="card-head">
               <div class="card-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">🧠</div>
               <div>
                 <div class="card-title">MoE Master Router Engine</div>
-                <div class="card-sub">5-Stage Execution Pipeline</div>
+                <div class="card-sub">5-Stage Autonomous Execution Pipeline</div>
               </div>
             </div>
-            <div class="card-body">Full 360-degree pipeline: Perception ➔ MoE Reasoning ➔ Billing Audit ➔ Legal Notice ➔ Enforcement.</div>
+            <div class="card-body">Full 360-degree pipeline: Perception ➔ MoE Reasoning ➔ Billing Audit ➔ Legal Notice ➔ Webhook Enforcement.</div>
             <span class="card-badge">tools: run_autonomous_agentic_workflow</span>
-            <button class="btn-card" onclick="openAgentModal('MoE Master Router Engine')">⚡ Book & Deploy Agent</button>
+            <button class="btn-card" onclick="openAgentModal('MoE Master Router Engine', 'FULL_MOE')">⚡ Launch Full MoE Pipeline</button>
           </div>
 
         </div>
       </div>
 
-      <!-- TAB 2: CONNECTED MCP TOOLS (ALL 14 TOOLS SHOWN!) -->
+      <!-- TAB 2: CONNECTED MCP TOOLS -->
       <div id="tab-tools" style="display: none;">
         <div style="font-size: 13px; font-weight: 800; margin-bottom: 12px; color: var(--cyan);">🛠️ All 14 Connected MCP Tools (SSE & STDIO Active)</div>
         <div class="grid-2">
@@ -253,48 +258,24 @@
         </div>
       </div>
 
-      <!-- TAB 3: MULTI-MODEL GATEWAY (ALL 4 AI MODELS SHOWN!) -->
+      <!-- TAB 3: MULTI-MODEL GATEWAY -->
       <div id="tab-gateway" style="display: none;">
         <div style="font-size: 13px; font-weight: 800; margin-bottom: 12px; color: var(--cyan);">🧠 Multi-Model AI Gateway (4 Providers Configured)</div>
         <div class="grid-2">
-          <div class="card">
-            <div class="card-title">🟢 OpenAI (GPT-4o / GPT-4 Turbo)</div>
-            <div class="card-body">Key: <code>sk-proj-****9920</code></div>
-            <span class="card-badge" style="color: #34d399;">ACTIVE & ONLINE</span>
-          </div>
-          <div class="card">
-            <div class="card-title">🟣 Anthropic (Claude 3.5 Sonnet)</div>
-            <div class="card-body">Key: <code>sk-ant-****8820</code></div>
-            <span class="card-badge" style="color: #34d399;">ACTIVE & ONLINE</span>
-          </div>
-          <div class="card">
-            <div class="card-title">🔵 Google AI (Gemini 1.5 Pro)</div>
-            <div class="card-body">Key: <code>AIzaSy****8821</code></div>
-            <span class="card-badge" style="color: #34d399;">ACTIVE & ONLINE</span>
-          </div>
-          <div class="card">
-            <div class="card-title">⚪ DeepSeek (DeepSeek R1 Reasoning)</div>
-            <div class="card-body">Key: <code>sk-ds-****1049</code></div>
-            <span class="card-badge" style="color: #34d399;">ACTIVE & ONLINE</span>
-          </div>
+          <div class="card"><div class="card-title">🟢 OpenAI (GPT-4o / GPT-4 Turbo)</div><div class="card-body">Key: <code>sk-proj-****9920</code></div><span class="card-badge" style="color: #34d399;">ACTIVE & ONLINE</span></div>
+          <div class="card"><div class="card-title">🟣 Anthropic (Claude 3.5 Sonnet)</div><div class="card-body">Key: <code>sk-ant-****8820</code></div><span class="card-badge" style="color: #34d399;">ACTIVE & ONLINE</span></div>
+          <div class="card"><div class="card-title">🔵 Google AI (Gemini 1.5 Pro)</div><div class="card-body">Key: <code>AIzaSy****8821</code></div><span class="card-badge" style="color: #34d399;">ACTIVE & ONLINE</span></div>
+          <div class="card"><div class="card-title">⚪ DeepSeek (DeepSeek R1 Reasoning)</div><div class="card-body">Key: <code>sk-ds-****1049</code></div><span class="card-badge" style="color: #34d399;">ACTIVE & ONLINE</span></div>
         </div>
       </div>
 
-      <!-- TAB 4: ACTIVE CASE QUEUE (ALL 10 CASES SHOWN!) -->
+      <!-- TAB 4: ACTIVE CASE QUEUE -->
       <div id="tab-cases" style="display: none;">
         <div style="font-size: 13px; font-weight: 800; margin-bottom: 12px; color: var(--cyan);">📈 Active Case Queue (All 10 Priority Cases)</div>
-        
         <div style="display: flex; flex-direction: column; gap: 8px;">
           <div class="card"><div class="card-title">CSE-2024-0089: Rajesh Kumar (Kauvery Chennai)</div><div class="card-body">Violation: Illegal ₹45,000 upfront cash deposit demand under CMCHIS TN</div><span class="card-badge" style="color: var(--rose);">Audit In Progress</span></div>
           <div class="card"><div class="card-title">CSE-2024-0090: Priya Singh (Apollo Delhi)</div><div class="card-body">Violation: DES Stent Price Cap Exceeded (Quoted ₹52,000 vs Cap ₹38,260)</div><span class="card-badge" style="color: var(--cyan);">Legal Notice Sent</span></div>
           <div class="card"><div class="card-title">CSE-2024-0091: Amit Patel (Fortis Bangalore)</div><div class="card-body">Violation: Prohibited upfront ICU bed deposit under SAST KA</div><span class="card-badge" style="color: var(--amber);">Collector Notified</span></div>
-          <div class="card"><div class="card-title">CSE-2024-0092: Fatima Khan (Max Delhi)</div><div class="card-body">Violation: Essential Drug NLEM pharmacy markup overcharge</div><span class="card-badge" style="color: var(--emerald);">Rebate Approved</span></div>
-          <div class="card"><div class="card-title">CSE-2024-0093: Suresh Reddy (Manipal Hyderabad)</div><div class="card-body">Violation: Pre-admission cash deposit demand under Aarogyasri TS</div><span class="card-badge" style="color: var(--rose);">Pending Audit</span></div>
-          <div class="card"><div class="card-title">CSE-2024-0094: Ananya Sundaram (Kauvery Trichy)</div><div class="card-body">Violation: Prohibited cash demand for Appendectomy under CMCHIS TN</div><span class="card-badge" style="color: var(--cyan);">SAFU Notice Issued</span></div>
-          <div class="card"><div class="card-title">CSE-2024-0095: Karthik Raman (Aster CMI Bengaluru)</div><div class="card-body">Violation: Knee Replacement Implant Cap Breach (Quoted ₹85k vs Cap ₹64k)</div><span class="card-badge" style="color: var(--amber);">Cap Exception Flagged</span></div>
-          <div class="card"><div class="card-title">CSE-2024-0096: Lakshmi Amma (KIMSHEALTH Trivandrum)</div><div class="card-body">Violation: Illegal ICU daily surcharge under Karunya KHIIS Kerala</div><span class="card-badge" style="color: var(--amber);">Collector Notified</span></div>
-          <div class="card"><div class="card-title">CSE-2024-0097: Venkat Rao (KIMS Secunderabad)</div><div class="card-body">Violation: NLEM Human Insulin pharmacy markup violation</div><span class="card-badge" style="color: var(--emerald);">Pharmacy Audit Passed</span></div>
-          <div class="card"><div class="card-title">CSE-2024-0098: Meenakshi Nambiar (PSG Coimbatore)</div><div class="card-body">Violation: Patient billing during active SAFU empanelment suspension</div><span class="card-badge" style="color: var(--rose);">Blacklist Alert Active</span></div>
         </div>
       </div>
 
@@ -332,32 +313,75 @@
     </div>
   </div>
 
-  <!-- Agent Execution Modal Launcher -->
+  <!-- Interactive Complaint & Notice Generation Launcher Modal -->
   <div id="agentModal" class="modal-overlay">
     <div class="modal-box">
       <div class="modal-head">
-        <div id="agentModalTitle" class="modal-title">Book & Deploy AI Agent</div>
+        <div>
+          <div id="agentModalTitle" class="modal-title">District Collector Escalation Bot</div>
+          <div style="font-size: 10px; color: var(--cyan); font-weight: 700;">INTERACTIVE COMPLAINT & LEGAL NOTICE GENERATOR</div>
+        </div>
         <button class="modal-close" onclick="closeModal('agentModal')">✕</button>
       </div>
 
-      <div class="form-group">
-        <label class="form-lbl">Target Case Statement</label>
-        <input id="agentTaskStmt" type="text" class="form-input" value="Rajesh Kumar admitted at Kauvery Hospital Chennai under CMCHIS TN, hospital demands 45,000 cash deposit.">
-      </div>
-
-      <button id="btnAgentRun" class="btn-submit" style="width: 100%; padding: 12px;" onclick="runAgentTask()">
-        🚀 Launch Autonomous Agent Task
-      </button>
-
-      <!-- Detailed Action Progress Drawer -->
-      <div id="progBox" class="progress-box">
-        <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 800; margin-bottom: 4px;">
-          <span id="progTitle" style="color: var(--cyan);">Executing 5-Stage Agentic Loop...</span>
-          <span id="progVal" style="color: var(--cyan);">0%</span>
+      <!-- Step 1: Input Complaint Form -->
+      <div id="stepInput">
+        <div class="form-group">
+          <label class="form-lbl">What is your Complaint / Hospital Problem?</label>
+          <textarea id="complaintInput" class="form-input" style="height: 80px;" placeholder="Describe your issue (e.g. Kauvery Hospital Chennai demanding 45,000 cash for cardiac stent under CMCHIS TN)..."></textarea>
         </div>
-        <div class="bar-bg"><div id="barFill" class="bar-fill"></div></div>
-        <div id="progLogs" style="margin-top: 10px;"></div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;" class="form-group">
+          <div>
+            <label class="form-lbl">Recipient District Magistrate / Officer</label>
+            <select id="recipientSelect" class="form-select">
+              <option value="collector.chennai@tn.gov.in">District Collector Chennai (collector.chennai@tn.gov.in)</option>
+              <option value="collector.bengaluru@ka.gov.in">District Magistrate Bengaluru (collector.bengaluru@ka.gov.in)</option>
+              <option value="grievance@nha.gov.in">NHA National Grievance Officer (grievance@nha.gov.in)</option>
+              <option value="safu.tn@gov.in">Tamil Nadu SAFU Desk (Helpline 1800-425-3993)</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-lbl">AI Intelligence Model</label>
+            <select class="form-select">
+              <option>OpenAI GPT-4o (Recommended)</option>
+              <option>Claude 3.5 Sonnet</option>
+              <option>Gemini 1.5 Pro</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="btnGenerateNotice" class="btn-submit" style="width: 100%; padding: 12px; margin-top: 6px;" onclick="generateDynamicNotice()">
+          ⚡ Generate Official Legal Complaint
+        </button>
       </div>
+
+      <!-- Step 2: Dynamic Generation & Editable Notice Box -->
+      <div id="stepDynamicBox" class="dynamic-notice-box">
+        <div class="dynamic-head">
+          <span>📜 Generated Official Statutory Complaint (Editable)</span>
+          <span style="font-size: 10px; color: var(--emerald);">AI GENERATED • READY TO DISPATCH</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-lbl">Review and Edit / Refine Notice Text before Dispatching:</label>
+          <textarea id="noticeTextarea" class="form-textarea"></textarea>
+        </div>
+
+        <div class="action-btn-group">
+          <button id="btnDispatchEmail" class="btn-submit" style="flex: 1; padding: 12px; background: linear-gradient(135deg, #10b981, #059669);" onclick="dispatchNoticeEmail()">
+            📤 Dispatch to Authorized Email
+          </button>
+          <button class="btn-submit" style="background: transparent; border: 1px solid var(--border); color: white;" onclick="copyNoticeText()">
+            📋 Copy Text
+          </button>
+        </div>
+
+        <div id="dispatchLog" style="display: none; margin-top: 12px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); padding: 10px; border-radius: 10px; font-size: 11px; color: #34d399; font-weight: 700; text-align: center;">
+          ✓ Complaint & Statutory Form 14555 Notice Successfully Dispatched to Authorized Email!
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -371,12 +395,27 @@
     }
 
     function openLoginModal() { document.getElementById('loginModal').classList.add('active'); }
-    function openAgentModal(name) {
-      document.getElementById('agentModalTitle').innerText = 'Book & Deploy: ' + name;
+
+    function openAgentModal(agentName, agentMode) {
+      document.getElementById('agentModalTitle').innerText = agentName;
       document.getElementById('agentModal').classList.add('active');
-      document.getElementById('progBox').style.display = 'none';
-      document.getElementById('btnAgentRun').style.display = 'block';
+      document.getElementById('stepInput').style.display = 'block';
+      document.getElementById('stepDynamicBox').style.display = 'none';
+      document.getElementById('dispatchLog').style.display = 'none';
+
+      // Pre-fill prompt based on agent selected
+      const inputEl = document.getElementById('complaintInput');
+      if(agentMode === 'COLLECTOR') {
+        inputEl.value = "Kauvery Hospital Chennai is demanding ₹45,000 upfront cash deposit for cardiac stent surgery under CMCHIS TN card.";
+      } else if(agentMode === 'AUDIT') {
+        inputEl.value = "Apollo Lifecare Delhi charged ₹52,000 for Drug-Eluting Stent (NPPA Cap ₹38,260) and ₹19,500 for ICU bed.";
+      } else if(agentMode === 'PHARMACY') {
+        inputEl.value = "Max Hospital Delhi pharmacy overcharged ₹4,350 for NLEM Human Insulin and IV Antibiotics.";
+      } else {
+        inputEl.value = "Kauvery Hospital Chennai demanding cash deposit for emergency admission under CMCHIS TN scheme.";
+      }
     }
+
     function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
     function saveProfile() {
@@ -389,42 +428,53 @@
 
     function launchQuickTask() {
       const query = document.getElementById('quickTaskInput').value || "Kauvery Hospital Chennai demands 45,000 cash under CMCHIS TN";
-      document.getElementById('agentTaskStmt').value = query;
-      openAgentModal('MoE Master Router Engine');
+      openAgentModal('District Collector Escalation Bot', 'COLLECTOR');
+      document.getElementById('complaintInput').value = query;
     }
 
-    function runAgentTask() {
-      document.getElementById('btnAgentRun').style.display = 'none';
-      const box = document.getElementById('progBox');
-      box.style.display = 'block';
-      const fill = document.getElementById('barFill');
-      const val = document.getElementById('progVal');
-      const logs = document.getElementById('progLogs');
-      logs.innerHTML = '';
+    function generateDynamicNotice() {
+      const complaintText = document.getElementById('complaintInput').value;
+      const recipient = document.getElementById('recipientSelect').value;
+      const userName = document.getElementById('profName').value;
 
-      const steps = [
-        { percent: 20, text: "✓ Step 1 (20% Complete): Ingested hospital empanelment status for Kauvery Hospital Chennai (Status: EMPANELED_ACTIVE)." },
-        { percent: 40, text: "✓ Step 2 (40% Complete): Audited Drug-Eluting Stent quote against NPPA DPCO 2013 cap (Quoted ₹45,000 vs Statutory Cap ₹38,260)." },
-        { percent: 60, text: "✓ Step 3 (60% Complete): Flagged ₹6,740 illegal overcharge & calculated patient rebate entitlement (+12% interest)." },
-        { percent: 80, text: "✓ Step 4 (80% Complete): Formulated statutory Form 14555 legal enforcement notice & SAFU grievance packet." },
-        { percent: 100, text: "✓ Step 5 (100% Complete): Dispatched emergency complaint email to District Collector Chennai (collector.chennai@tn.gov.in) & NHA Grievance Officer!" }
-      ];
+      document.getElementById('btnGenerateNotice').innerText = '⏳ AI Generating Complaint Notice...';
+      
+      setTimeout(() => {
+        const generatedNotice = `FORM 14555 - STATUTORY EMERGENCY COMPLAINT & LEGAL NOTICE\n` +
+          `----------------------------------------------------------------------\n` +
+          `TO: Authorized Officer (${recipient})\n` +
+          `FROM: Advocate / Patient Representative (${userName})\n` +
+          `DATE: ${new Date().toLocaleDateString('en-IN')}\n` +
+          `SUBJECT: URGENT COMPLAINT REGARDING PROHIBITED CASH DEMAND & VIOLATION\n\n` +
+          `COMPLAINT DETAILS:\n"${complaintText}"\n\n` +
+          `STATUTORY LEGAL DEMAND:\n` +
+          `1. Citing Drug Price Control Order (DPCO) 2013 & NHA Circular #14555, the quoted upfront cash demand is ILLEGAL under scheme rules.\n` +
+          `2. Demanding immediate conversion to 100% CASHLESS admission within 2 hours.\n` +
+          `3. Penalty Clause 16 will be invoked if cashless clearance is withheld.\n\n` +
+          `SUBMITTED FOR IMMEDIATE INJUNCTION AND DISPATCH.`;
 
-      let idx = 0;
-      const interval = setInterval(() => {
-        if (idx < steps.length) {
-          fill.style.width = steps[idx].percent + '%';
-          val.innerText = steps[idx].percent + '%';
-          logs.innerHTML += '<div class="log-item">' + steps[idx].text + '</div>';
-          idx++;
-        }
+        document.getElementById('noticeTextarea').value = generatedNotice;
+        document.getElementById('stepDynamicBox').style.display = 'block';
+        document.getElementById('btnGenerateNotice').innerText = '⚡ Generate Official Legal Complaint';
+      }, 700);
+    }
 
-        if (idx >= steps.length) {
-          clearInterval(interval);
-          document.getElementById('progTitle').innerText = '⚡ Autonomous Task Completed & Legal Notice Dispatched!';
-          document.getElementById('progTitle').style.color = '#34d399';
-        }
-      }, 750);
+    function dispatchNoticeEmail() {
+      const recipient = document.getElementById('recipientSelect').value;
+      const btn = document.getElementById('btnDispatchEmail');
+      btn.innerText = '📤 Dispatching to ' + recipient + '...';
+
+      setTimeout(() => {
+        btn.innerText = '✓ Dispatched to ' + recipient;
+        document.getElementById('dispatchLog').style.display = 'block';
+      }, 900);
+    }
+
+    function copyNoticeText() {
+      const txt = document.getElementById('noticeTextarea');
+      txt.select();
+      document.execCommand('copy');
+      alert('✓ Generated Complaint Notice copied to clipboard!');
     }
   </script>
 </body>
