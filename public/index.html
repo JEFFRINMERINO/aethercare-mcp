@@ -2,506 +2,328 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AetherOS — Enterprise AI Agent & Tool Operations Platform</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>AetherOS — Enterprise AI Agent Platform</title>
   <style>
     :root {
       --bg: #07090e;
       --sidebar-bg: #0b0f19;
       --card-bg: rgba(255, 255, 255, 0.03);
-      --card-hover: rgba(255, 255, 255, 0.06);
+      --card-hover: rgba(255, 255, 255, 0.07);
       --border: rgba(56, 189, 248, 0.2);
       --primary: #0284c7;
-      --primary-hover: #0369a1;
       --secondary: #6366f1;
       --emerald: #10b981;
       --rose: #ef4444;
-      --amber: #f59e0b;
       --cyan: #38bdf8;
       --text: #f8fafc;
       --text-muted: #94a3b8;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-    body { background: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
+    body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
 
-    /* Left Sidebar Navigation */
-    .sidebar { width: 260px; background: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px 16px; flex-shrink: 0; }
-    .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; padding-left: 8px; }
-    .brand-icon { background: linear-gradient(135deg, var(--primary), var(--secondary)); width: 38px; height: 38px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; box-shadow: 0 0 20px rgba(2, 132, 199, 0.5); }
-    .brand-title { font-size: 17px; font-weight: 800; letter-spacing: -0.5px; }
-    .brand-sub { font-size: 10px; color: var(--cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+    /* Top Navbar */
+    .navbar { background: var(--sidebar-bg); border-bottom: 1px solid var(--border); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .brand-icon { background: linear-gradient(135deg, var(--primary), var(--secondary)); width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: white; box-shadow: 0 0 16px rgba(2, 132, 199, 0.5); }
+    .brand-title { font-size: 16px; font-weight: 800; }
+    .brand-sub { font-size: 9px; color: var(--cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
 
-    .nav-section { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin: 16px 8px 8px 8px; }
-    .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 12px; color: var(--text-muted); font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-bottom: 4px; text-decoration: none; }
-    .nav-item:hover, .nav-item.active { background: rgba(56, 189, 248, 0.12); color: white; border: 1px solid rgba(56, 189, 248, 0.3); }
-    .nav-item .badge { margin-left: auto; background: rgba(16, 185, 129, 0.2); color: #34d399; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 700; }
+    .status-badge { background: rgba(16, 185, 129, 0.15); color: #34d399; padding: 5px 12px; border-radius: 20px; font-size: 10px; font-weight: 800; border: 1px solid rgba(16, 185, 129, 0.3); display: flex; align-items: center; gap: 6px; }
+    .dot { width: 6px; height: 6px; background: #34d399; border-radius: 50%; box-shadow: 0 0 8px #34d399; }
 
-    .user-profile { margin-top: auto; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border); padding: 12px; border-radius: 14px; display: flex; align-items: center; gap: 10px; }
-    .user-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #10b981, #059669); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; }
-    
-    /* Main Content */
-    .main-wrapper { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    /* Main Container */
+    .container { max-width: 1100px; margin: 0 auto; width: 100%; padding: 20px; flex: 1; }
 
-    /* Top Bar Header */
-    .top-header { height: 64px; border-bottom: 1px solid var(--border); background: rgba(11, 15, 25, 0.8); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: space-between; padding: 0 28px; }
-    .global-search { display: flex; align-items: center; gap: 10px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); padding: 8px 16px; border-radius: 12px; width: 420px; }
-    .global-search input { background: transparent; border: none; outline: none; color: white; font-size: 13px; width: 100%; }
-    .sys-status-group { display: flex; align-items: center; gap: 12px; }
-    .sys-badge { background: rgba(16, 185, 129, 0.15); color: #34d399; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 800; border: 1px solid rgba(16, 185, 129, 0.3); display: flex; align-items: center; gap: 6px; }
-    .sys-badge-dot { width: 8px; height: 8px; background: #34d399; border-radius: 50%; box-shadow: 0 0 10px #34d399; }
+    /* Compact Stats Bar */
+    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 20px; }
+    .stat-box { background: var(--card-bg); border: 1px solid var(--border); padding: 12px 14px; border-radius: 14px; }
+    .stat-lbl { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
+    .stat-val { font-size: 18px; font-weight: 800; margin-top: 2px; }
 
-    /* Content Dashboard */
-    .content-area { flex: 1; padding: 28px; overflow-y: auto; }
+    /* Compact Nav Tabs */
+    .tabs-row { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 4px; }
+    .tab-btn { background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border); color: var(--text-muted); padding: 8px 16px; border-radius: 10px; font-size: 11px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+    .tab-btn.active, .tab-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
 
-    /* Page Titles */
-    .header-group { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; }
-    .page-title { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
-    .page-subtitle { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+    /* Agents Grid */
+    .agents-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .agent-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; transition: all 0.2s; }
+    .agent-card:hover { border-color: var(--cyan); background: var(--card-hover); transform: translateY(-2px); }
+    .agent-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .agent-ico { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; flex-shrink: 0; }
+    .agent-title { font-size: 14px; font-weight: 800; }
+    .agent-role { font-size: 10px; color: var(--cyan); font-weight: 700; text-transform: uppercase; }
+    .agent-body { font-size: 11px; color: var(--text-muted); line-height: 1.4; margin-bottom: 12px; flex: 1; }
+    .agent-tag { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 3px 6px; border-radius: 6px; font-size: 9px; color: #cbd5e1; display: inline-block; margin-bottom: 12px; }
+    .btn-action { width: 100%; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; border-radius: 10px; padding: 10px; font-weight: 800; font-size: 11px; cursor: pointer; }
 
-    /* Stats Overview Bar */
-    .stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
-    .stat-card { background: var(--card-bg); border: 1px solid var(--border); padding: 18px; border-radius: 16px; transition: all 0.2s; }
-    .stat-card:hover { transform: translateY(-2px); background: var(--card-hover); border-color: var(--cyan); }
-    .stat-title { font-size: 12px; color: var(--text-muted); font-weight: 600; }
-    .stat-value { font-size: 24px; font-weight: 800; margin: 6px 0; color: white; }
-    .stat-change { font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 4px; }
-    .stat-change.up { color: var(--emerald); }
-
-    /* Grid of AI Agents (Marketplace) */
-    .agents-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; margin-bottom: 32px; }
-    .agent-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 20px; display: flex; flex-direction: column; transition: all 0.25s; position: relative; overflow: hidden; }
-    .agent-card:hover { border-color: var(--cyan); transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,0.4); }
-    .agent-header { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
-    .agent-avatar { width: 50px; height: 50px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; color: white; flex-shrink: 0; box-shadow: 0 0 20px rgba(2, 132, 199, 0.4); }
-    .agent-name { font-size: 16px; font-weight: 800; }
-    .agent-role { font-size: 11px; color: var(--cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-    .agent-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px; flex: 1; }
-    .agent-tools-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
-    .tool-tag { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 8px; font-size: 10px; font-weight: 600; color: #cbd5e1; }
-    .btn-book { width: 100%; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; border-radius: 12px; padding: 12px; font-weight: 800; font-size: 12px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.3); display: flex; align-items: center; justify-content: center; gap: 8px; }
-    .btn-book:hover { opacity: 0.95; transform: scale(1.01); }
-
-    /* Connected Tools Grid */
-    .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-bottom: 32px; }
-    .tool-card { background: var(--card-bg); border: 1px solid var(--border); padding: 16px; border-radius: 16px; display: flex; align-items: center; justify-content: space-between; }
-    .tool-info { display: flex; align-items: center; gap: 12px; }
-    .tool-icon { width: 36px; height: 36px; background: rgba(56, 189, 248, 0.12); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-    .tool-title { font-size: 13px; font-weight: 700; }
-    .tool-ping { font-size: 10px; color: var(--text-muted); }
-    .status-pill { background: rgba(16, 185, 129, 0.15); color: #34d399; font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 8px; }
-
-    /* Modal Booking Launcher */
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3, 7, 18, 0.85); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: all 0.3s; }
+    /* Modal Overlay */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3, 7, 18, 0.85); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: all 0.2s; padding: 16px; }
     .modal-overlay.active { opacity: 1; pointer-events: auto; }
-    .modal-box { background: #0b0f19; border: 1px solid var(--border); width: 540px; border-radius: 24px; padding: 28px; box-shadow: 0 30px 80px rgba(0,0,0,0.8); transform: translateY(20px); transition: all 0.3s; }
-    .modal-overlay.active .modal-box { transform: translateY(0); }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .modal-title { font-size: 18px; font-weight: 800; }
-    .btn-close { background: transparent; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; }
-    .form-group { margin-bottom: 16px; }
-    .form-label { font-size: 11px; font-weight: 700; color: var(--cyan); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: block; }
-    .form-input, .form-select, .form-textarea { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; color: white; font-size: 13px; outline: none; }
+    .modal-box { background: #0b0f19; border: 1px solid var(--border); width: 100%; max-width: 480px; border-radius: 20px; padding: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
+    .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .modal-title { font-size: 15px; font-weight: 800; }
+    .modal-close { background: transparent; border: none; color: var(--rose); font-size: 18px; font-weight: 800; cursor: pointer; }
+
+    .form-group { margin-bottom: 12px; }
+    .form-lbl { font-size: 10px; font-weight: 700; color: var(--cyan); text-transform: uppercase; margin-bottom: 4px; display: block; }
+    .form-input { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 10px; padding: 10px; color: white; font-size: 12px; outline: none; }
     
-    /* Progress Drawer */
-    .task-progress-box { display: none; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 16px; border-radius: 14px; margin-top: 16px; }
-    .progress-bar-bg { width: 100%; height: 8px; background: rgba(255, 255, 255, 0.1); border-radius: 4px; overflow: hidden; margin: 10px 0; }
-    .progress-bar-fill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--emerald), var(--cyan)); transition: width 0.4s ease; }
+    /* Task Progress */
+    .progress-box { display: none; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 14px; border-radius: 12px; margin-top: 12px; }
+    .bar-bg { width: 100%; height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 3px; overflow: hidden; margin: 8px 0; }
+    .bar-fill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--emerald), var(--cyan)); transition: width 0.4s; }
   </style>
 </head>
 <body>
 
-  <!-- Left Sidebar Navigation -->
-  <aside class="sidebar">
+  <!-- Top Navbar -->
+  <header class="navbar">
     <div class="brand">
       <div class="brand-icon">⚡</div>
       <div>
         <div class="brand-title">AetherOS</div>
-        <div class="brand-sub">AI Agent Platform</div>
+        <div class="brand-sub">Enterprise AI Agent Platform</div>
       </div>
     </div>
-
-    <div class="nav-section">Autonomous Agents OS</div>
-    <a href="#" class="nav-item active" onclick="switchTab('agents', this)">
-      <span>🤖</span> AI Agent Marketplace <span class="badge">6 Online</span>
-    </a>
-    <a href="#" class="nav-item" onclick="switchTab('tools', this)">
-      <span>🛠️</span> Connected MCP Tools <span class="badge">14 Tools</span>
-    </a>
-    <a href="#" class="nav-item" onclick="switchTab('gateway', this)">
-      <span>🧠</span> Multi-Model Gateway <span class="badge">4 Models</span>
-    </a>
-
-    <div class="nav-section">Operations & Enforcement</div>
-    <a href="#" class="nav-item" onclick="switchTab('cases', this)">
-      <span>📈</span> Active Case Queue <span class="badge">10 Cases</span>
-    </a>
-    <a href="#" class="nav-item" onclick="switchTab('logs', this)">
-      <span>⚙️</span> Execution Logs & Audit
-    </a>
-
-    <div class="user-profile">
-      <div class="user-avatar">JM</div>
-      <div>
-        <div style="font-size: 12px; font-weight: 800;">Jeffrin Merino</div>
-        <div style="font-size: 10px; color: var(--text-muted);">Enterprise Operator</div>
-      </div>
+    <div class="status-badge">
+      <div class="dot"></div>
+      100% OPERATIONAL
     </div>
-  </aside>
+  </header>
 
-  <!-- Main Wrapper -->
-  <div class="main-wrapper">
+  <!-- Main Container -->
+  <div class="container">
     
-    <!-- Top Header -->
-    <header class="top-header">
-      <div class="global-search">
-        <span>🔍</span>
-        <input type="text" placeholder="Search AI Agents, MCP Tools, or Hospital Case IDs...">
+    <!-- Stats Row -->
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-lbl">AI Agents</div>
+        <div class="stat-val" style="color: var(--cyan);">6 Active</div>
       </div>
-
-      <div class="sys-status-group">
-        <div class="sys-badge">
-          <div class="sys-badge-dot"></div>
-          14 MCP TOOLS CONNECTED
-        </div>
-        <div class="sys-badge" style="background: rgba(99, 102, 241, 0.15); color: #818cf8; border-color: rgba(99, 102, 241, 0.3);">
-          GPT-4o • CLAUDE 3.5 • GEMINI 1.5
-        </div>
+      <div class="stat-box">
+        <div class="stat-lbl">MCP Tools</div>
+        <div class="stat-val" style="color: var(--emerald);">6 Core</div>
       </div>
-    </header>
-
-    <!-- Main Content Area -->
-    <main class="content-area">
-
-      <!-- Stats Overview Bar -->
-      <div class="stats-bar">
-        <div class="stat-card">
-          <div class="stat-title">Active Autonomous AI Agents</div>
-          <div class="stat-value">6 Agents</div>
-          <div class="stat-change up">● 100% Operational & Ready</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-title">Connected MCP Tools</div>
-          <div class="stat-value">14 Tools</div>
-          <div class="stat-change up">● Fast Ping (Avg 28ms)</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-title">Hospital Audit Savings</div>
-          <div class="stat-value">₹4,500,000</div>
-          <div class="stat-change up">▲ +14.2% Growth</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-title">NHA/Collector Notices Sent</div>
-          <div class="stat-value">47 Notices</div>
-          <div class="stat-change up">✓ 99.4% Approval Rate</div>
-        </div>
+      <div class="stat-box">
+        <div class="stat-lbl">Total Savings</div>
+        <div class="stat-val" style="color: white;">₹4.5M</div>
       </div>
-
-      <!-- TAB 1: AI AGENT MARKETPLACE -->
-      <div id="tab-agents">
-        <div class="header-group">
-          <div>
-            <h1 class="page-title">🤖 Autonomous AI Agents Marketplace</h1>
-            <p class="page-subtitle">Select and deploy specialized autonomous AI agents to execute end-to-end healthcare compliance workflows.</p>
-          </div>
-        </div>
-
-        <div class="agents-grid">
-          
-          <!-- Agent 1 -->
-          <div class="agent-card">
-            <div class="agent-header">
-              <div class="agent-avatar" style="background: linear-gradient(135deg, #0284c7, #2563eb);">👩‍⚕️</div>
-              <div>
-                <div class="agent-name">Dr. Aether Medical Auditor</div>
-                <div class="agent-role">Billing & Insurance Fraud Audit</div>
-              </div>
-            </div>
-            <p class="agent-desc">Autonomously parses complex hospital billing bills, verifies Drug-Eluting Stents and ICU bed caps against NPPA statutory DPCO 2013 rules.</p>
-            <div class="agent-tools-tags">
-              <span class="tool-tag">analyze_billing_fraud_risk</span>
-              <span class="tool-tag">verify_procedure_price_cap</span>
-            </div>
-            <button class="btn-book" onclick="openLaunchModal('Dr. Aether Medical Auditor', 'analyze_billing_fraud_risk')">
-              ⚡ Book & Deploy Agent
-            </button>
-          </div>
-
-          <!-- Agent 2 -->
-          <div class="agent-card">
-            <div class="agent-header">
-              <div class="agent-avatar" style="background: linear-gradient(135deg, #6366f1, #4f46e5);">⚖️</div>
-              <div>
-                <div class="agent-name">NPPA Legal Enforcement Agent</div>
-                <div class="agent-role">Statutory Form 14555 Legal Notices</div>
-              </div>
-            </div>
-            <p class="agent-desc">Generates binding Form 14555 legal enforcement notices for prohibited upfront cash deposit demands under CMCHIS TN & PM-JAY.</p>
-            <div class="agent-tools-tags">
-              <span class="tool-tag">dispatch_emergency_email_escalation</span>
-              <span class="tool-tag">grievance_notice_generator</span>
-            </div>
-            <button class="btn-book" onclick="openLaunchModal('NPPA Legal Enforcement Agent', 'dispatch_emergency_email_escalation')">
-              ⚡ Book & Deploy Agent
-            </button>
-          </div>
-
-          <!-- Agent 3 -->
-          <div class="agent-card">
-            <div class="agent-header">
-              <div class="agent-avatar" style="background: linear-gradient(135deg, #10b981, #059669);">🏛️</div>
-              <div>
-                <div class="agent-name">District Collector Escalation Bot</div>
-                <div class="agent-role">Emergency Government Escalation</div>
-              </div>
-            </div>
-            <p class="agent-desc">Dispatches immediate emergency email escalations to District Magistrates, NHA Officers, and SAFU South India Helplines.</p>
-            <div class="agent-tools-tags">
-              <span class="tool-tag">collector_escalation_dispatch</span>
-              <span class="tool-tag">safu_grievance_filing</span>
-            </div>
-            <button class="btn-book" onclick="openLaunchModal('District Collector Escalation Bot', 'dispatch_emergency_email_escalation')">
-              ⚡ Book & Deploy Agent
-            </button>
-          </div>
-
-          <!-- Agent 4 -->
-          <div class="agent-card">
-            <div class="agent-header">
-              <div class="agent-avatar" style="background: linear-gradient(135deg, #f59e0b, #d97706);">💊</div>
-              <div>
-                <div class="agent-name">NLEM Pharmacy Price Auditor</div>
-                <div class="agent-role">Essential Drug Markup Enforcement</div>
-              </div>
-            </div>
-            <p class="agent-desc">Audits pharmacy receipts for Human Insulin, IV Antibiotics, and Cardiac medications against NLEM statutory price ceilings.</p>
-            <div class="agent-tools-tags">
-              <span class="tool-tag">pharmacy_overcharge_audit</span>
-              <span class="tool-tag">calculate_cashless_rebate</span>
-            </div>
-            <button class="btn-book" onclick="openLaunchModal('NLEM Pharmacy Price Auditor', 'pharmacy_overcharge_audit')">
-              ⚡ Book & Deploy Agent
-            </button>
-          </div>
-
-          <!-- Agent 5 -->
-          <div class="agent-card">
-            <div class="agent-header">
-              <div class="agent-avatar" style="background: linear-gradient(135deg, #ec4899, #db2777);">🗣️</div>
-              <div>
-                <div class="agent-name">Multi-Lingual Patient Advocate</div>
-                <div class="agent-role">Tamil, Kannada, Malayalam, Hindi Support</div>
-              </div>
-            </div>
-            <p class="agent-desc">Provides real-time voice and text patient intake, scheme eligibility verification, and multi-lingual emergency triage.</p>
-            <div class="agent-tools-tags">
-              <span class="tool-tag">multilingual_patient_voice_assistant</span>
-              <span class="tool-tag">check_hospital_empanelment</span>
-            </div>
-            <button class="btn-book" onclick="openLaunchModal('Multi-Lingual Patient Advocate', 'multilingual_patient_voice_assistant')">
-              ⚡ Book & Deploy Agent
-            </button>
-          </div>
-
-          <!-- Agent 6 -->
-          <div class="agent-card">
-            <div class="agent-header">
-              <div class="agent-avatar" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">🧠</div>
-              <div>
-                <div class="agent-name">MoE Master Router Engine</div>
-                <div class="agent-role">5-Stage Autonomous Execution Pipeline</div>
-              </div>
-            </div>
-            <p class="agent-desc">Full 360-degree autonomous pipeline combining Perception, MoE Reasoning, Billing Audit, Legal Notice, and Webhook Enforcement.</p>
-            <div class="agent-tools-tags">
-              <span class="tool-tag">run_autonomous_agentic_workflow</span>
-              <span class="tool-tag">route_healthcare_query_moe</span>
-            </div>
-            <button class="btn-book" onclick="openLaunchModal('MoE Master Router Engine', 'run_autonomous_agentic_workflow')">
-              ⚡ Book & Deploy Agent
-            </button>
-          </div>
-
-        </div>
+      <div class="stat-box">
+        <div class="stat-lbl">Notices Sent</div>
+        <div class="stat-val" style="color: var(--secondary);">47 Sent</div>
       </div>
+    </div>
 
-      <!-- TAB 2: CONNECTED MCP TOOLS -->
-      <div id="tab-tools" style="display: none;">
-        <div class="header-group">
-          <div>
-            <h1 class="page-title">🛠️ Connected MCP Tools Studio</h1>
-            <p class="page-subtitle">14 MCP Tools connected to the NitroStack transport layer (STDIO & SSE).</p>
+    <!-- Nav Tabs -->
+    <div class="tabs-row">
+      <button class="tab-btn active" onclick="showTab('agents', this)">🤖 AI Agent Marketplace</button>
+      <button class="tab-btn" onclick="showTab('tools', this)">🛠️ Core MCP Tools (6)</button>
+      <button class="tab-btn" onclick="showTab('cases', this)">📋 Priority Cases (10)</button>
+    </div>
+
+    <!-- TAB 1: AI AGENT MARKETPLACE -->
+    <div id="tab-agents">
+      <div class="agents-grid">
+        
+        <!-- Agent 1 -->
+        <div class="agent-card">
+          <div class="agent-top">
+            <div class="agent-ico" style="background: linear-gradient(135deg, #0284c7, #2563eb);">👩‍⚕️</div>
+            <div>
+              <div class="agent-title">Dr. Aether Medical Auditor</div>
+              <div class="agent-role">Billing & Insurance Fraud</div>
+            </div>
           </div>
+          <div class="agent-body">Parses hospital bills, verifies Cardiac Stents & ICU bed caps against statutory NPPA rules.</div>
+          <span class="agent-tag">tool: analyze_billing_fraud_risk</span>
+          <button class="btn-action" onclick="openModal('Dr. Aether Medical Auditor')">⚡ Book Agent</button>
         </div>
 
-        <div class="tools-grid">
-          <div class="tool-card"><div class="tool-info"><div class="tool-icon">⚡</div><div><div class="tool-title">analyze_billing_fraud_risk</div><div class="tool-ping">Ping: 34ms • SSE Active</div></div></div><span class="status-pill">CONNECTED</span></div>
-          <div class="tool-card"><div class="tool-info"><div class="tool-icon">📊</div><div><div class="tool-title">verify_procedure_price_cap</div><div class="tool-ping">Ping: 28ms • SSE Active</div></div></div><span class="status-pill">CONNECTED</span></div>
-          <div class="tool-card"><div class="tool-info"><div class="tool-icon">📧</div><div><div class="tool-title">dispatch_emergency_email_escalation</div><div class="tool-ping">Ping: 45ms • SSE Active</div></div></div><span class="status-pill">CONNECTED</span></div>
-          <div class="tool-card"><div class="tool-info"><div class="tool-icon">💰</div><div><div class="tool-title">calculate_out_of_pocket_cashless_rebate</div><div class="tool-ping">Ping: 22ms • SSE Active</div></div></div><span class="status-pill">CONNECTED</span></div>
-          <div class="tool-card"><div class="tool-info"><div class="tool-icon">🏥</div><div><div class="tool-title">check_hospital_empanelment</div><div class="tool-ping">Ping: 31ms • SSE Active</div></div></div><span class="status-pill">CONNECTED</span></div>
-          <div class="tool-card"><div class="tool-info"><div class="tool-icon">⚙️</div><div><div class="tool-title">track_agentic_action_progress</div><div class="tool-ping">Ping: 19ms • SSE Active</div></div></div><span class="status-pill">CONNECTED</span></div>
-          <div class="tool-card"><div class="tool-info"><div class="tool-icon">🧠</div><div><div class="tool-title">configure_external_ai_gateway</div><div class="tool-ping">Ping: 25ms • SSE Active</div></div></div><span class="status-pill">CONNECTED</span></div>
-          <div class="tool-card"><div class="tool-info"><div class="tool-icon">🤖</div><div><div class="tool-title">run_autonomous_agentic_workflow</div><div class="tool-ping">Ping: 50ms • SSE Active</div></div></div><span class="status-pill">CONNECTED</span></div>
+        <!-- Agent 2 -->
+        <div class="agent-card">
+          <div class="agent-top">
+            <div class="agent-ico" style="background: linear-gradient(135deg, #6366f1, #4f46e5);">⚖️</div>
+            <div>
+              <div class="agent-title">NPPA Legal Enforcement</div>
+              <div class="agent-role">Statutory Form 14555 Notice</div>
+            </div>
+          </div>
+          <div class="agent-body">Generates binding Form 14555 legal enforcement notices for prohibited cash deposits.</div>
+          <span class="agent-tag">tool: dispatch_emergency_email_escalation</span>
+          <button class="btn-action" onclick="openModal('NPPA Legal Enforcement Agent')">⚡ Book Agent</button>
         </div>
+
+        <!-- Agent 3 -->
+        <div class="agent-card">
+          <div class="agent-top">
+            <div class="agent-ico" style="background: linear-gradient(135deg, #10b981, #059669);">🏛️</div>
+            <div>
+              <div class="agent-title">District Collector Escalation</div>
+              <div class="agent-role">Government Emergency Desk</div>
+            </div>
+          </div>
+          <div class="agent-body">Dispatches immediate emergency complaints to District Magistrates & NHA Officers.</div>
+          <span class="agent-tag">tool: collector_escalation_dispatch</span>
+          <button class="btn-action" onclick="openModal('District Collector Escalation Bot')">⚡ Book Agent</button>
+        </div>
+
+        <!-- Agent 4 -->
+        <div class="agent-card">
+          <div class="agent-top">
+            <div class="agent-ico" style="background: linear-gradient(135deg, #f59e0b, #d97706);">💊</div>
+            <div>
+              <div class="agent-title">NLEM Pharmacy Auditor</div>
+              <div class="agent-role">Essential Drug Markup</div>
+            </div>
+          </div>
+          <div class="agent-body">Audits pharmacy receipts for Human Insulin & Antibiotics against NLEM price ceilings.</div>
+          <span class="agent-tag">tool: pharmacy_overcharge_audit</span>
+          <button class="btn-action" onclick="openModal('NLEM Pharmacy Auditor')">⚡ Book Agent</button>
+        </div>
+
+        <!-- Agent 5 -->
+        <div class="agent-card">
+          <div class="agent-top">
+            <div class="agent-ico" style="background: linear-gradient(135deg, #ec4899, #db2777);">🗣️</div>
+            <div>
+              <div class="agent-title">Multi-Lingual Advocate</div>
+              <div class="agent-role">TN, KA, KL, TS Triage</div>
+            </div>
+          </div>
+          <div class="agent-body">Provides real-time voice and text patient intake in Tamil, Kannada, Malayalam, and Hindi.</div>
+          <span class="agent-tag">tool: multilingual_patient_voice_assistant</span>
+          <button class="btn-action" onclick="openModal('Multi-Lingual Patient Advocate')">⚡ Book Agent</button>
+        </div>
+
+        <!-- Agent 6 -->
+        <div class="agent-card">
+          <div class="agent-top">
+            <div class="agent-ico" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">🧠</div>
+            <div>
+              <div class="agent-title">MoE Autonomous Pipeline</div>
+              <div class="agent-role">5-Stage Execution Loop</div>
+            </div>
+          </div>
+          <div class="agent-body">Full 360-degree pipeline: Perception ➔ MoE Reasoning ➔ Billing Audit ➔ Legal Notice.</div>
+          <span class="agent-tag">tool: run_autonomous_agentic_workflow</span>
+          <button class="btn-action" onclick="openModal('MoE Master Router Engine')">⚡ Book Agent</button>
+        </div>
+
       </div>
+    </div>
 
-      <!-- TAB 3: MULTI-MODEL GATEWAY -->
-      <div id="tab-gateway" style="display: none;">
-        <div class="header-group">
-          <div>
-            <h1 class="page-title">🧠 Multi-Model AI Gateway</h1>
-            <p class="page-subtitle">Connect external LLM provider API keys to power specialized AI Agents.</p>
-          </div>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-          <div class="agent-card">
-            <div style="font-size: 16px; font-weight: 800; margin-bottom: 10px;">🟢 OpenAI (GPT-4o / GPT-4 Turbo)</div>
-            <div class="form-group"><label class="form-label">API Key</label><input type="password" class="form-input" value="sk-proj-9920148810239418294"></div>
-            <span class="status-pill" style="align-self: flex-start;">ACTIVE & CONNECTED</span>
-          </div>
-
-          <div class="agent-card">
-            <div style="font-size: 16px; font-weight: 800; margin-bottom: 10px;">🟣 Anthropic (Claude 3.5 Sonnet)</div>
-            <div class="form-group"><label class="form-label">API Key</label><input type="password" class="form-input" value="sk-ant-8820148810239418294"></div>
-            <span class="status-pill" style="align-self: flex-start;">ACTIVE & CONNECTED</span>
-          </div>
-        </div>
+    <!-- TAB 2: CORE MCP TOOLS -->
+    <div id="tab-tools" style="display: none;">
+      <div class="agents-grid">
+        <div class="agent-card"><div class="agent-title">analyze_billing_fraud_risk</div><div class="agent-role">Ping: 34ms • SSE Active</div><span class="agent-tag" style="color: #34d399;">CONNECTED</span></div>
+        <div class="agent-card"><div class="agent-title">verify_procedure_price_cap</div><div class="agent-role">Ping: 28ms • SSE Active</div><span class="agent-tag" style="color: #34d399;">CONNECTED</span></div>
+        <div class="agent-card"><div class="agent-title">dispatch_emergency_email_escalation</div><div class="agent-role">Ping: 45ms • SSE Active</div><span class="agent-tag" style="color: #34d399;">CONNECTED</span></div>
+        <div class="agent-card"><div class="agent-title">calculate_out_of_pocket_cashless_rebate</div><div class="agent-role">Ping: 22ms • SSE Active</div><span class="agent-tag" style="color: #34d399;">CONNECTED</span></div>
+        <div class="agent-card"><div class="agent-title">check_hospital_empanelment</div><div class="agent-role">Ping: 31ms • SSE Active</div><span class="agent-tag" style="color: #34d399;">CONNECTED</span></div>
+        <div class="agent-card"><div class="agent-title">run_autonomous_agentic_workflow</div><div class="agent-role">Ping: 50ms • SSE Active</div><span class="agent-tag" style="color: #34d399;">CONNECTED</span></div>
       </div>
+    </div>
 
-      <!-- TAB 4: CASE QUEUE -->
-      <div id="tab-cases" style="display: none;">
-        <div class="header-group">
-          <div>
-            <h1 class="page-title">📈 Active Autonomous Case Queue</h1>
-            <p class="page-subtitle">10 priority hospital compliance cases under active monitoring.</p>
-          </div>
-        </div>
-
-        <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 20px;">
-          <div style="font-size: 14px; font-weight: 800; margin-bottom: 12px;">Active Case Records (Kauvery Chennai, Apollo Delhi, Aster Bengaluru, KIMSHEALTH Trivandrum)</div>
-          <p style="font-size: 12px; color: var(--text-muted);">All 10 active cases are automatically assigned to specialized AI agents.</p>
-        </div>
+    <!-- TAB 3: CASES -->
+    <div id="tab-cases" style="display: none;">
+      <div class="agent-card" style="margin-bottom: 10px;">
+        <div style="font-size: 13px; font-weight: 800;">CSE-2024-0089: Rajesh Kumar (Kauvery Chennai)</div>
+        <div style="font-size: 11px; color: var(--rose);">Violation: Illegal ₹45,000 upfront cash demand under CMCHIS</div>
       </div>
+      <div class="agent-card" style="margin-bottom: 10px;">
+        <div style="font-size: 13px; font-weight: 800;">CSE-2024-0090: Priya Singh (Apollo Delhi)</div>
+        <div style="font-size: 11px; color: var(--cyan);">Violation: DES Stent Overcharge (Quoted ₹52,000 vs Cap ₹38,260)</div>
+      </div>
+      <div class="agent-card">
+        <div style="font-size: 13px; font-weight: 800;">CSE-2024-0095: Karthik Raman (Aster CMI Bengaluru)</div>
+        <div style="font-size: 11px; color: var(--rose);">Violation: Knee Implant Breach (Quoted ₹85,000 vs Cap ₹64,180)</div>
+      </div>
+    </div>
 
-    </main>
   </div>
 
-  <!-- Modal Task Booking Launcher -->
+  <!-- Modal Booking Launcher -->
   <div id="launchModal" class="modal-overlay">
     <div class="modal-box">
-      <div class="modal-header">
-        <div>
-          <div id="modalAgentName" class="modal-title">Book & Deploy AI Agent</div>
-          <div style="font-size: 11px; color: var(--cyan); font-weight: 700;">AUTONOMOUS AGENT TASK LAUNCHER</div>
-        </div>
-        <button class="btn-close" onclick="closeLaunchModal()">✕</button>
+      <div class="modal-head">
+        <div id="modalTitle" class="modal-title">Book & Deploy AI Agent</div>
+        <button class="modal-close" onclick="closeModal()">✕</button>
       </div>
 
       <div class="form-group">
-        <label class="form-label">Target Patient & Case Statement</label>
-        <input id="taskInput" type="text" class="form-input" value="Rajesh Kumar admitted at Kauvery Hospital Chennai under CMCHIS, hospital demands 45,000 cash deposit.">
+        <label class="form-lbl">Target Case Statement</label>
+        <input id="taskStmt" type="text" class="form-input" value="Rajesh Kumar admitted at Kauvery Hospital Chennai, hospital demands 45,000 cash under CMCHIS.">
       </div>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;" class="form-group">
-        <div>
-          <label class="form-label">AI Intelligence Model</label>
-          <select class="form-select">
-            <option>OpenAI GPT-4o (Recommended)</option>
-            <option>Claude 3.5 Sonnet</option>
-            <option>Gemini 1.5 Pro</option>
-            <option>DeepSeek R1</option>
-          </select>
-        </div>
-        <div>
-          <label class="form-label">Target Region</label>
-          <select class="form-select">
-            <option>Tamil Nadu (CMCHIS TN & SAFU)</option>
-            <option>Karnataka (SAST KA)</option>
-            <option>Kerala (Karunya KHIIS)</option>
-            <option>Telangana (Aarogyasri TS)</option>
-          </select>
-        </div>
-      </div>
-
-      <button id="btnLaunchTask" class="btn-book" onclick="executeAutonomousTask()">
+      <button id="btnRun" class="btn-action" style="background: linear-gradient(135deg, var(--emerald), #059669);" onclick="runTask()">
         🚀 Launch Autonomous Agent Task
       </button>
 
-      <!-- Task Progress Drawer -->
-      <div id="progressBox" class="task-progress-box">
-        <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 800;">
-          <span id="progressTitle">Executing Autonomous 5-Stage Agentic Loop...</span>
-          <span id="progressPercent" style="color: var(--cyan);">0%</span>
+      <div id="progBox" class="progress-box">
+        <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 800;">
+          <span id="progTitle">Executing 5-Stage Agentic Loop...</span>
+          <span id="progVal" style="color: var(--cyan);">0%</span>
         </div>
-        <div class="progress-bar-bg">
-          <div id="progressBarFill" class="progress-bar-fill"></div>
-        </div>
-        <div id="progressLogs" style="font-size: 11px; line-height: 1.5; color: #cbd5e1; max-height: 120px; overflow-y: auto;">
-          • Ingesting hospital empanelment & scheme rules...
-        </div>
+        <div class="bar-bg"><div id="barFill" class="bar-fill"></div></div>
+        <div id="progLogs" style="font-size: 10px; line-height: 1.5; color: #cbd5e1;"></div>
       </div>
     </div>
   </div>
 
   <script>
-    function switchTab(tabId, el) {
-      document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-      if(el) el.classList.add('active');
-      
-      ['agents', 'tools', 'gateway', 'cases', 'logs'].forEach(t => {
-        const div = document.getElementById('tab-' + t);
-        if(div) div.style.display = (t === tabId) ? 'block' : 'none';
+    function showTab(tabId, btn) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      ['agents', 'tools', 'cases'].forEach(t => {
+        document.getElementById('tab-' + t).style.display = (t === tabId) ? 'block' : 'none';
       });
     }
 
-    function openLaunchModal(agentName, toolName) {
-      document.getElementById('modalAgentName').innerText = 'Book & Deploy: ' + agentName;
+    function openModal(agentName) {
+      document.getElementById('modalTitle').innerText = 'Book & Deploy: ' + agentName;
       document.getElementById('launchModal').classList.add('active');
-      document.getElementById('progressBox').style.display = 'none';
-      document.getElementById('btnLaunchTask').style.display = 'flex';
+      document.getElementById('progBox').style.display = 'none';
+      document.getElementById('btnRun').style.display = 'block';
     }
 
-    function closeLaunchModal() {
+    function closeModal() {
       document.getElementById('launchModal').classList.remove('active');
     }
 
-    function executeAutonomousTask() {
-      document.getElementById('btnLaunchTask').style.display = 'none';
-      const pBox = document.getElementById('progressBox');
-      pBox.style.display = 'block';
-      
-      const pFill = document.getElementById('progressBarFill');
-      const pPercent = document.getElementById('progressPercent');
-      const pLogs = document.getElementById('progressLogs');
+    function runTask() {
+      document.getElementById('btnRun').style.display = 'none';
+      const box = document.getElementById('progBox');
+      box.style.display = 'block';
+      const fill = document.getElementById('barFill');
+      const val = document.getElementById('progVal');
+      const logs = document.getElementById('progLogs');
 
       let current = 0;
-      const logs = [
-        "✓ Stage 1: Perception — Ingested Kauvery Hospital Chennai empanelment status (EMPANELED_ACTIVE).",
-        "✓ Stage 2: MoE Reasoning — Verified Cardiac Stent against NPPA DPCO 2013 cap (Cap: ₹38,260 vs Quote: ₹45,000).",
-        "✓ Stage 3: Fraud Audit — Flagged ₹6,740 illegal overcharge & prohibited upfront deposit.",
-        "✓ Stage 4: Legal Formulation — Formulated Form 14555 Statutory Enforcement Notice.",
-        "✓ Stage 5: Enforcement Dispatch — Dispatched email escalation to District Collector Chennai & NHA Grievance Desk!"
+      const steps = [
+        "✓ Stage 1: Perception — Ingested Kauvery Hospital Chennai empanelment status.",
+        "✓ Stage 2: MoE Reasoning — Verified Cardiac Stent against NPPA DPCO cap (Cap: ₹38,260).",
+        "✓ Stage 3: Fraud Audit — Flagged ₹6,740 illegal overcharge & cash deposit.",
+        "✓ Stage 4: Legal Notice — Formulated Form 14555 Enforcement Notice.",
+        "✓ Stage 5: Webhook Dispatch — Sent email escalation to District Collector & NHA!"
       ];
 
-      let step = 0;
+      let idx = 0;
       const interval = setInterval(() => {
         current += 20;
-        pFill.style.width = current + '%';
-        pPercent.innerText = current + '%';
-        
-        if (step < logs.length) {
-          pLogs.innerHTML += '<br>' + logs[step];
-          pLogs.scrollTop = pLogs.scrollHeight;
-          step++;
+        fill.style.width = current + '%';
+        val.innerText = current + '%';
+        if (idx < steps.length) {
+          logs.innerHTML += (idx === 0 ? '' : '<br>') + steps[idx];
+          idx++;
         }
-
         if (current >= 100) {
           clearInterval(interval);
-          document.getElementById('progressTitle').innerText = '⚡ Autonomous Task Completed & Enforced!';
-          document.getElementById('progressTitle').style.color = '#34d399';
+          document.getElementById('progTitle').innerText = '⚡ Task Completed & Enforced!';
+          document.getElementById('progTitle').style.color = '#34d399';
         }
-      }, 700);
+      }, 600);
     }
   </script>
 </body>
