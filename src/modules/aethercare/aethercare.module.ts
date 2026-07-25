@@ -5,6 +5,7 @@ import { MoERouterTools } from './moe_router.tools.js';
 import { GeoEmpanelmentTools } from './geo_empanelment.tools.js';
 import { PharmacyAndRebateTools } from './pharmacy_and_rebate.tools.js';
 import { AgenticExecutionLoopTools } from './agentic_execution_loop.tools.js';
+import { EnterpriseActionsTools } from './enterprise_actions.tools.js';
 import { AetherCareResources } from './aethercare.resources.js';
 import { AetherCarePrompts } from './aethercare.prompts.js';
 
@@ -18,6 +19,7 @@ import { AetherCarePrompts } from './aethercare.prompts.js';
     GeoEmpanelmentTools,
     PharmacyAndRebateTools,
     AgenticExecutionLoopTools,
+    EnterpriseActionsTools,
     AetherCareResources,
     AetherCarePrompts
   ]

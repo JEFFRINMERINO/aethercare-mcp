@@ -16,6 +16,27 @@
       "tags": ["agentic", "execution", "loop", "pipeline", "autonomous"]
     },
     {
+      "uri": "/email-escalation",
+      "name": "District Collector & NHA Emergency Email Escalation Widget",
+      "description": "Automated email escalation packet generator for District Collectors, NHA Officers, and SAFU Helplines",
+      "examples": [],
+      "tags": ["email", "escalation", "collector", "nha", "complaint"]
+    },
+    {
+      "uri": "/agentic-progress-tracker",
+      "name": "Real-Time Agentic Action Progress Tracker Widget",
+      "description": "Interactive execution progress tracker showing multi-step agentic progress percentages, tool selections, and state mutations",
+      "examples": [],
+      "tags": ["progress", "tracker", "action", "agentic"]
+    },
+    {
+      "uri": "/external-ai-gateway",
+      "name": "External LLM API Key Gateway Configurator Widget",
+      "description": "Multi-provider AI model gateway for OpenAI GPT-4o, Anthropic Claude 3.5, Gemini 1.5 Pro, and DeepSeek",
+      "examples": [],
+      "tags": ["ai-gateway", "llm", "api-key", "openai", "claude"]
+    },
+    {
       "uri": "/empanelment-card",
       "name": "Hospital Empanelment & Blacklist Status Card",
       "description": "Interactive card showing hospital empanelment status, cashless facility availability, active scheme coverage across Tamil Nadu (CMCHIS), Karnataka (SAST), Kerala (Karunya), Telangana (Aarogyasri), PM-JAY, CGHS, and SAFU warnings",
@@ -72,5 +93,5 @@
       "tags": ["rebate", "cashless", "refund", "penalty"]
     }
   ],
-  "generatedAt": "2026-07-25T23:25:00.000Z"
+  "generatedAt": "2026-07-26T01:35:00.000Z"
 }
