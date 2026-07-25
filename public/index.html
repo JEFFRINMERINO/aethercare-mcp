@@ -46,7 +46,7 @@
     .nav-btn .count { margin-left: auto; background: rgba(16, 185, 129, 0.2); color: #34d399; padding: 2px 6px; border-radius: 8px; font-size: 10px; font-weight: 800; }
 
     /* Recent Chats Sidebar List */
-    .recent-chats-list { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; }
+    .recent-chats-list { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; max-height: 200px; overflow-y: auto; }
     .recent-chat-item { font-size: 11px; color: var(--text-muted); padding: 8px 10px; border-radius: 8px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background: rgba(255,255,255,0.02); border: 1px solid transparent; }
     .recent-chat-item:hover { background: rgba(56,189,248,0.12); color: white; border-color: rgba(56,189,248,0.3); }
 
@@ -58,8 +58,8 @@
     .sos-title { font-size: 14px; font-weight: 800; color: #fca5a5; display: flex; align-items: center; gap: 8px; }
     .btn-sos { background: linear-gradient(135deg, var(--rose), #b91c1c); color: white; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 900; font-size: 11px; cursor: pointer; box-shadow: 0 0 16px rgba(239, 68, 68, 0.6); }
 
-    /* Confirmed Appointment Details Row */
-    .appointment-row-box { background: rgba(16, 185, 129, 0.08); border: 1px solid var(--emerald); padding: 16px; border-radius: 16px; margin-bottom: 20px; }
+    /* Dynamic Appointment Details Row (Hidden until booked) */
+    .appointment-row-box { background: rgba(16, 185, 129, 0.08); border: 1px solid var(--emerald); padding: 16px; border-radius: 16px; margin-bottom: 20px; display: none; }
     .appointment-head { font-size: 13px; font-weight: 800; color: #34d399; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
 
     /* Quick Launch Banner */
@@ -69,6 +69,9 @@
     .launch-input-row { display: flex; gap: 8px; }
     .launch-input { flex: 1; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; color: white; font-size: 12px; outline: none; }
     .btn-submit { background: linear-gradient(135deg, var(--emerald), #059669); color: white; border: none; border-radius: 10px; padding: 10px 18px; font-weight: 800; font-size: 11px; cursor: pointer; white-space: nowrap; }
+
+    /* Doctor Slot Card */
+    .doc-slot-card { background: rgba(0,0,0,0.4); border: 1px solid var(--border); padding: 12px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
 
     /* Grids */
     .grid-2 { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; margin-bottom: 24px; }
@@ -95,7 +98,6 @@
     .form-input, .form-select, .form-textarea { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 10px; padding: 10px; color: white; font-size: 12px; outline: none; }
     .form-textarea { height: 120px; font-family: monospace; line-height: 1.4; resize: vertical; background: #090d16; }
 
-    /* Government Complaint & Live Reply Box */
     .complaint-reply-box { background: rgba(2, 132, 199, 0.08); border: 1px solid var(--primary); padding: 14px; border-radius: 14px; margin-top: 14px; display: none; }
     .govt-reply-card { background: rgba(16, 185, 129, 0.12); border: 1px solid var(--emerald); padding: 12px; border-radius: 10px; margin-top: 10px; font-size: 11px; color: #34d399; }
 
@@ -137,7 +139,7 @@
       <div class="nav-label">Autonomous AI OS</div>
       <div class="sidebar-nav-container">
         <div class="nav-btn active" onclick="switchNav('agents', this)">
-          <span>🤖</span> AI Agents Marketplace <span class="count">7 Online</span>
+          <span>🤖</span> AI Agent Marketplace <span class="count">6 Online</span>
         </div>
         <div class="nav-btn" onclick="switchNav('tools', this)">
           <span>🛠️</span> Connected MCP Tools <span class="count">14 Tools</span>
@@ -150,42 +152,41 @@
         </div>
       </div>
 
-      <!-- RECENT CHATS & CASE STATUS SIDEBAR SECTION -->
-      <div class="nav-label">Recent Searches & Cases (Click to View)</div>
+      <!-- RECENT SEARCHES SIDEBAR SECTION (UPDATES ONLY WHEN SEARCHED) -->
+      <div class="nav-label">Recent Search History</div>
       <div id="recentChatsList" class="recent-chats-list">
-        <div class="recent-chat-item" onclick="openCaseStatusModal('CSE-2024-0089')">💬 CSE-2024-0089: Kauvery Chennai (₹45k Demand)</div>
-        <div class="recent-chat-item" onclick="openCaseStatusModal('CSE-2024-0090')">💬 CSE-2024-0090: Apollo Delhi (Stent Cap Breach)</div>
+        <div class="recent-chat-item" style="opacity: 0.6;">No recent search history</div>
       </div>
     </aside>
 
     <!-- Main Content -->
     <main class="main-content">
       
-      <!-- 🚨 FEATURE 4: AUTOMATIC EMERGENCY AMBULANCE BOOKING BAR -->
+      <!-- 🚨 108 EMERGENCY AMBULANCE BOOKING BAR -->
       <div class="sos-ambulance-bar">
         <div>
           <div class="sos-title">🚨 108 Emergency Ambulance Dispatch Engine</div>
-          <div style="font-size: 10px; color: #fecdd3; margin-top: 2px;">Automatically locates nearest Cardiac Life Support ambulance and alerts hospital ICU desk.</div>
+          <div style="font-size: 10px; color: #fecdd3; margin-top: 2px;">Locates nearest Cardiac Life Support ambulance and alerts hospital ICU desk.</div>
         </div>
         <button class="btn-sos" onclick="dispatchEmergencyAmbulance()">🚨 BOOK NEARBY AMBULANCE NOW</button>
       </div>
 
-      <!-- 📅 FEATURE 1: DEDICATED SEPARATE ROW FOR CONFIRMED APPOINTMENT DETAILS -->
-      <div class="appointment-row-box">
+      <!-- 📅 DYNAMIC APPOINTMENT ROW (VISIBLE ONLY IF BOOKED) -->
+      <div id="appointmentRowBox" class="appointment-row-box">
         <div class="appointment-head">
           <span>📅 Active Confirmed Doctor Appointment</span>
           <span style="font-size: 10px; background: rgba(16,185,129,0.2); color: #34d399; padding: 3px 8px; border-radius: 6px;">✓ CASHLESS APPROVED • CALENDAR SYNCED</span>
         </div>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; font-size: 11px; margin-top: 8px;">
-          <div><strong>Doctor:</strong> Dr. Aris Kumar (Cardiologist)</div>
-          <div><strong>Hospital:</strong> Kauvery Hospital Chennai</div>
-          <div><strong>Slot Time:</strong> 05:30 PM Today</div>
-          <div><strong>Consultation Fee:</strong> ₹800 (100% Cashless under CMCHIS)</div>
+          <div><strong>Doctor:</strong> <span id="appDocName">Dr. Aris Kumar (Cardiologist)</span></div>
+          <div><strong>Hospital:</strong> <span id="appHospital">Kauvery Hospital Chennai</span></div>
+          <div><strong>Slot Time:</strong> <span id="appSlot">05:30 PM Today</span></div>
+          <div><strong>Status:</strong> <span style="color: #34d399; font-weight: 700;">100% Cashless Verified</span></div>
         </div>
         <div style="display: flex; gap: 8px; margin-top: 12px;">
           <button style="background: var(--primary); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 10px; font-weight: 800; cursor: pointer;" onclick="alert('📅 Reschedule link sent to WhatsApp!')">📅 Reschedule</button>
-          <button style="background: transparent; border: 1px solid var(--border); color: white; padding: 6px 12px; border-radius: 6px; font-size: 10px; font-weight: 800; cursor: pointer;" onclick="alert('📍 Opening Google Maps directions to Kauvery Hospital Chennai...')">📍 Get Directions</button>
-          <button style="background: transparent; border: 1px solid var(--rose); color: var(--rose); padding: 6px 12px; border-radius: 6px; font-size: 10px; font-weight: 800; cursor: pointer;" onclick="alert('Appointment cancelled.')">✕ Cancel</button>
+          <button style="background: transparent; border: 1px solid var(--border); color: white; padding: 6px 12px; border-radius: 6px; font-size: 10px; font-weight: 800; cursor: pointer;" onclick="alert('📍 Opening Google Maps directions...')">📍 Get Directions</button>
+          <button style="background: transparent; border: 1px solid var(--rose); color: var(--rose); padding: 6px 12px; border-radius: 6px; font-size: 10px; font-weight: 800; cursor: pointer;" onclick="cancelAppointment()">✕ Cancel Appointment</button>
         </div>
       </div>
 
@@ -199,9 +200,49 @@
         </div>
       </div>
 
+      <!-- DOCTOR APPOINTMENT BOOKING MODULE -->
+      <div style="background: rgba(2, 132, 199, 0.08); border: 1px solid var(--cyan); padding: 16px; border-radius: 16px; margin-bottom: 24px;">
+        <div style="font-size: 14px; font-weight: 800; color: var(--cyan); margin-bottom: 4px;">📅 AI Smart Doctor Appointment Booking Agent</div>
+        <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;">Searches doctor availability in nearby empaneled hospitals, verifies cashless eligibility, and books consultation slots.</div>
+
+        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+          <input id="docSearchQuery" type="text" class="launch-input" placeholder="Search doctor specialty or hospital (e.g. Cardiologist Chennai, Dermatologist Bangalore)...">
+          <button class="btn-submit" style="background: linear-gradient(135deg, var(--primary), var(--secondary));" onclick="searchNearbyDoctors()">Search Doctor Availability</button>
+        </div>
+
+        <div id="doctorAvailabilityList">
+          <div class="doc-slot-card">
+            <div>
+              <div style="font-size: 12px; font-weight: 800;">Dr. Aris Kumar (Senior Cardiologist)</div>
+              <div style="font-size: 10px; color: var(--cyan);">Kauvery Hospital Chennai (1.2 km away) • Fee: ₹800</div>
+              <div style="font-size: 9px; color: #34d399; font-weight: 700;">✓ CMCHIS Cashless Approved • Rating: 4.9 ★</div>
+            </div>
+            <button class="btn-submit" onclick="bookDoctorSlot('Dr. Aris Kumar (Cardiologist)', 'Kauvery Hospital Chennai', '05:30 PM Today')">Book Slot (05:30 PM Today)</button>
+          </div>
+
+          <div class="doc-slot-card">
+            <div>
+              <div style="font-size: 12px; font-weight: 800;">Dr. Priya Sharma (Neurologist & Spine Specialist)</div>
+              <div style="font-size: 10px; color: var(--cyan);">Apollo Lifecare Delhi (2.4 km away) • Fee: ₹1,000</div>
+              <div style="font-size: 9px; color: #34d399; font-weight: 700;">✓ PM-JAY Cashless Approved • Rating: 4.8 ★</div>
+            </div>
+            <button class="btn-submit" onclick="bookDoctorSlot('Dr. Priya Sharma (Neurologist)', 'Apollo Lifecare Delhi', '06:00 PM Tomorrow')">Book Slot (06:00 PM Tomorrow)</button>
+          </div>
+
+          <div class="doc-slot-card">
+            <div>
+              <div style="font-size: 12px; font-weight: 800;">Dr. Amit Patel (Orthopedic Surgeon)</div>
+              <div style="font-size: 10px; color: var(--cyan);">Fortis Hospital Bangalore (3.1 km away) • Fee: ₹900</div>
+              <div style="font-size: 9px; color: #34d399; font-weight: 700;">✓ SAST KA Cashless Approved • Rating: 4.7 ★</div>
+            </div>
+            <button class="btn-submit" onclick="bookDoctorSlot('Dr. Amit Patel (Orthopedics)', 'Fortis Hospital Bangalore', '10:30 AM Tomorrow')">Book Slot (10:30 AM Tomorrow)</button>
+          </div>
+        </div>
+      </div>
+
       <!-- TAB 1: AI AGENTS MARKETPLACE -->
       <div id="tab-agents">
-        <div style="font-size: 13px; font-weight: 800; margin-bottom: 12px; color: var(--cyan);">🤖 AI Agent Marketplace (Original Enforcement Agents)</div>
+        <div style="font-size: 13px; font-weight: 800; margin-bottom: 12px; color: var(--cyan);">🤖 AI Agent Marketplace (6 Autonomous Enforcement Agents)</div>
         <div class="grid-2">
           
           <div class="card">
@@ -285,18 +326,28 @@
         </div>
       </div>
 
-      <!-- TAB 2: CONNECTED MCP TOOLS -->
+      <!-- TAB 2: CONNECTED MCP TOOLS (ALL 14 TOOLS EXPLICITLY SHOWN!) -->
       <div id="tab-tools" style="display: none;">
-        <div style="font-size: 13px; font-weight: 800; margin-bottom: 12px; color: var(--cyan);">🛠️ All 14 Connected MCP Tools</div>
+        <div style="font-size: 13px; font-weight: 800; margin-bottom: 12px; color: var(--cyan);">🛠️ All 14 Connected MCP Tools (SSE & STDIO Active)</div>
         <div class="grid-2">
           <div class="card"><div class="card-title">analyze_billing_fraud_risk</div><div class="card-body">Ping: 34ms • Active</div><span class="card-badge" style="color: #34d399;">● CONNECTED</span></div>
           <div class="card"><div class="card-title">verify_procedure_price_cap</div><div class="card-body">Ping: 28ms • Active</div><span class="card-badge" style="color: #34d399;">● CONNECTED</span></div>
           <div class="card"><div class="card-title">dispatch_emergency_email_escalation</div><div class="card-body">Ping: 45ms • Active</div><span class="card-badge" style="color: #34d399;">● CONNECTED</span></div>
           <div class="card"><div class="card-title">calculate_out_of_pocket_cashless_rebate</div><div class="card-body">Ping: 22ms • Active</div><span class="card-badge" style="color: #34d399;">● CONNECTED</span></div>
+          <div class="card"><div class="card-title">check_hospital_empanelment</div><div class="card-body">Ping: 31ms • Active</div><span class="card-badge" style="color: #34d399;">● CONNECTED</span></div>
+          <div class="card"><div class="card-title">track_agentic_action_progress</div><div class="card-body">Ping: 19ms • Active</div><span class="card-badge" style="color: #34d399;">● CONNECTED</span></div>
+          <div class="card"><div class="card-title">configure_external_ai_gateway</div><div class="card-body">Ping: 25ms • Active</div><span class="card-badge" style="color: #34d399;">● CONNECTED</span></div>
+          <div class="card"><div class="card-title">run_autonomous_agentic_workflow</div><div class="card-body">Ping: 50ms • Active</div><span class="card-badge" style="color: #34d399;">● CONNECTED</span></div>
+          <div class="card"><div class="card-title">route_healthcare_query_moe</div><div class="card-body">Ping: 40ms • Active</div><span class="card-badge" style="color: #34d399;">● CONNECTED</span></div>
+          <div class="card"><div class="card-title">illegal_cash_demand_negotiator</div><div class="card-body">Ping: 33ms • Active</div><span class="card-badge" style="color: #34d399;">● CONNECTED</span></div>
+          <div class="card"><div class="card-title">pharmacy_overcharge_audit</div><div class="card-body">Ping: 27ms • Active</div><span class="card-badge" style="color: #34d399;">● CONNECTED</span></div>
+          <div class="card"><div class="card-title">multilingual_patient_voice_assistant</div><div class="card-body">Ping: 48ms • Active</div><span class="card-badge" style="color: #34d399;">● CONNECTED</span></div>
+          <div class="card"><div class="card-title">patient_intake_triage</div><div class="card-body">Ping: 29ms • Active</div><span class="card-badge" style="color: #34d399;">● CONNECTED</span></div>
+          <div class="card"><div class="card-title">open_agentic_command_center</div><div class="card-body">Ping: 15ms • Active</div><span class="card-badge" style="color: #34d399;">● CONNECTED</span></div>
         </div>
       </div>
 
-      <!-- TAB 3: MULTI-MODEL GATEWAY -->
+      <!-- TAB 3: MULTI-MODEL GATEWAY (ALL 4 AI MODELS SHOWN!) -->
       <div id="tab-gateway" style="display: none;">
         <div style="font-size: 13px; font-weight: 800; margin-bottom: 12px; color: var(--cyan);">🧠 Multi-Model AI Gateway (4 Providers Configured)</div>
         <div class="grid-2">
@@ -307,25 +358,58 @@
         </div>
       </div>
 
-      <!-- TAB 4: ACTIVE CASE QUEUE -->
+      <!-- TAB 4: ACTIVE CASE QUEUE (ALL 10 PRIORITY CASES EXPLICITLY SHOWN!) -->
       <div id="tab-cases" style="display: none;">
-        <div style="font-size: 13px; font-weight: 800; margin-bottom: 12px; color: var(--cyan);">📈 Active Case Queue (Click Any Case to Open Audit Status)</div>
+        <div style="font-size: 13px; font-weight: 800; margin-bottom: 12px; color: var(--cyan);">📈 Active Case Queue (All 10 Priority Cases - Click to Open Audit Status)</div>
         <div style="display: flex; flex-direction: column; gap: 8px;">
           <div class="card" onclick="openCaseStatusModal('CSE-2024-0089')" style="cursor: pointer;"><div class="card-title">CSE-2024-0089: Rajesh Kumar (Kauvery Chennai)</div><div class="card-body">Violation: Illegal ₹45,000 upfront cash deposit demand under CMCHIS TN</div><span class="card-badge" style="color: var(--rose);">Click to View Full Case Status ➔</span></div>
           <div class="card" onclick="openCaseStatusModal('CSE-2024-0090')" style="cursor: pointer;"><div class="card-title">CSE-2024-0090: Priya Singh (Apollo Delhi)</div><div class="card-body">Violation: DES Stent Price Cap Exceeded (Quoted ₹52,000 vs Cap ₹38,260)</div><span class="card-badge" style="color: var(--cyan);">Click to View Full Case Status ➔</span></div>
+          <div class="card" onclick="openCaseStatusModal('CSE-2024-0091')" style="cursor: pointer;"><div class="card-title">CSE-2024-0091: Amit Patel (Fortis Bangalore)</div><div class="card-body">Violation: Prohibited upfront ICU bed deposit under SAST KA</div><span class="card-badge" style="color: var(--amber);">Click to View Full Case Status ➔</span></div>
+          <div class="card" onclick="openCaseStatusModal('CSE-2024-0092')" style="cursor: pointer;"><div class="card-title">CSE-2024-0092: Fatima Khan (Max Delhi)</div><div class="card-body">Violation: Essential Drug NLEM pharmacy markup overcharge</div><span class="card-badge" style="color: var(--emerald);">Click to View Full Case Status ➔</span></div>
+          <div class="card" onclick="openCaseStatusModal('CSE-2024-0093')" style="cursor: pointer;"><div class="card-title">CSE-2024-0093: Suresh Reddy (Manipal Hyderabad)</div><div class="card-body">Violation: Pre-admission cash deposit demand under Aarogyasri TS</div><span class="card-badge" style="color: var(--rose);">Click to View Full Case Status ➔</span></div>
+          <div class="card" onclick="openCaseStatusModal('CSE-2024-0094')" style="cursor: pointer;"><div class="card-title">CSE-2024-0094: Ananya Sundaram (Kauvery Trichy)</div><div class="card-body">Violation: Prohibited cash demand for Appendectomy under CMCHIS TN</div><span class="card-badge" style="color: var(--cyan);">Click to View Full Case Status ➔</span></div>
+          <div class="card" onclick="openCaseStatusModal('CSE-2024-0095')" style="cursor: pointer;"><div class="card-title">CSE-2024-0095: Karthik Raman (Aster CMI Bengaluru)</div><div class="card-body">Violation: Knee Replacement Implant Cap Breach (Quoted ₹85k vs Cap ₹64k)</div><span class="card-badge" style="color: var(--amber);">Click to View Full Case Status ➔</span></div>
+          <div class="card" onclick="openCaseStatusModal('CSE-2024-0096')" style="cursor: pointer;"><div class="card-title">CSE-2024-0096: Lakshmi Amma (KIMSHEALTH Trivandrum)</div><div class="card-body">Violation: Illegal ICU daily surcharge under Karunya KHIIS Kerala</div><span class="card-badge" style="color: var(--amber);">Click to View Full Case Status ➔</span></div>
+          <div class="card" onclick="openCaseStatusModal('CSE-2024-0097')" style="cursor: pointer;"><div class="card-title">CSE-2024-0097: Venkat Rao (KIMS Secunderabad)</div><div class="card-body">Violation: NLEM Human Insulin pharmacy markup violation</div><span class="card-badge" style="color: var(--emerald);">Click to View Full Case Status ➔</span></div>
+          <div class="card" onclick="openCaseStatusModal('CSE-2024-0098')" style="cursor: pointer;"><div class="card-title">CSE-2024-0098: Meenakshi Nambiar (PSG Coimbatore)</div><div class="card-body">Violation: Patient billing during active SAFU empanelment suspension</div><span class="card-badge" style="color: var(--rose);">Click to View Full Case Status ➔</span></div>
         </div>
       </div>
 
     </main>
   </div>
 
-  <!-- Interactive Modal for Agent Execution & Government Reply -->
+  <!-- User Login Profile Modal -->
+  <div id="loginModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-head">
+        <div class="modal-title">👤 User Mobile Profile Login</div>
+        <button class="modal-close" onclick="closeModal('loginModal')">✕</button>
+      </div>
+
+      <div class="form-group"><label class="form-lbl">Full Name</label><input id="profName" type="text" class="form-input" value="Jeffrin Merino"></div>
+      <div class="form-group"><label class="form-lbl">Mobile Number</label><input id="profPhone" type="text" class="form-input" value="9840123456"></div>
+      <div class="form-group">
+        <label class="form-lbl">Active Health Scheme</label>
+        <select id="profScheme" class="form-select">
+          <option>CMCHIS Tamil Nadu</option>
+          <option>PM-JAY National</option>
+          <option>SAST Karnataka</option>
+          <option>Karunya Kerala</option>
+          <option>Aarogyasri Telangana/AP</option>
+        </select>
+      </div>
+
+      <button class="btn-submit" style="width: 100%; padding: 12px;" onclick="saveProfile()">Save Profile & Continue</button>
+    </div>
+  </div>
+
+  <!-- Interactive Complaint & Notice Launcher Modal -->
   <div id="agentModal" class="modal-overlay">
     <div class="modal-box">
       <div class="modal-head">
         <div>
-          <div id="agentModalTitle" class="modal-title">District Collector Escalation Bot</div>
-          <div style="font-size: 10px; color: var(--cyan); font-weight: 700;">INTERACTIVE COMPLAINT & LIVE GOVT REPLY</div>
+          <div id="agentModalTitle" class="modal-title">AI Agent Launcher</div>
+          <div style="font-size: 10px; color: var(--cyan); font-weight: 700;">INTERACTIVE TASK EXECUTOR</div>
         </div>
         <button class="modal-close" onclick="closeModal('agentModal')">✕</button>
       </div>
@@ -347,8 +431,10 @@
           <div>
             <label class="form-lbl">AI Model</label>
             <select class="form-select">
-              <option>OpenAI GPT-4o</option>
+              <option>OpenAI GPT-4o (Recommended)</option>
               <option>Claude 3.5 Sonnet</option>
+              <option>Gemini 1.5 Pro</option>
+              <option>DeepSeek R1</option>
             </select>
           </div>
         </div>
@@ -358,7 +444,6 @@
         </button>
       </div>
 
-      <!-- FEATURE 3: SEE COMPLAINT + GET LIVE GOVERNMENT REPLY -->
       <div id="stepDynamicBox" class="complaint-reply-box">
         <div class="dynamic-head">
           <span>📜 Submitted Complaint Document (Ref: CMP-2024-99120)</span>
@@ -369,10 +454,9 @@
           <textarea id="noticeTextarea" class="form-textarea" readonly></textarea>
         </div>
 
-        <!-- LIVE OFFICIAL REPLY CARD -->
         <div class="govt-reply-card">
           <div style="font-weight: 800; margin-bottom: 4px;">🏛️ OFFICIAL LIVE REPLY FROM DISTRICT MAGISTRATE / NHA DESK:</div>
-          <div id="govtReplyText">"ACKNOWLEDGED: Emergency Injunction #TN-14555 issued to Kauvery Hospital Chennai. Hospital directed to convert patient Rajesh Kumar to 100% Cashless Admission within 2 hours without cash deposit demand. SAFU inspection team dispatched."</div>
+          <div id="govtReplyText">"ACKNOWLEDGED: Emergency Injunction Issued. Hospital instructed to convert patient to 100% Cashless Admission within 2 hours without cash deposit demand."</div>
         </div>
 
         <div class="action-btn-group">
@@ -388,7 +472,7 @@
     </div>
   </div>
 
-  <!-- FEATURE 2: HISTORICAL CASE STATUS MODAL -->
+  <!-- Historical Case Status Modal -->
   <div id="caseStatusModal" class="modal-overlay">
     <div class="modal-box">
       <div class="modal-head">
@@ -417,7 +501,7 @@
   </div>
 
   <script>
-    let chatHistoryList = ["CSE-2024-0089: Kauvery Chennai", "CSE-2024-0090: Apollo Delhi"];
+    let chatHistoryList = [];
 
     function switchNav(id, el) {
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -426,6 +510,8 @@
         document.getElementById('tab-' + t).style.display = (t === id) ? 'block' : 'none';
       });
     }
+
+    function openLoginModal() { document.getElementById('loginModal').classList.add('active'); }
 
     function openAgentModal(agentName, agentMode) {
       document.getElementById('agentModalTitle').innerText = agentName;
@@ -452,20 +538,43 @@
 
     function launchQuickTask() {
       const query = document.getElementById('quickTaskInput').value;
+      if (query) {
+        // Dynamic search history addition (ONLY after user searches!)
+        chatHistoryList.unshift(query);
+        renderRecentChats();
+      }
       openAgentModal('MoE Master Router Engine', 'FULL_MOE');
       if(query) document.getElementById('complaintInput').value = query;
     }
 
-    // FEATURE 4: DISPATCH AMBULANCE AUTOMATICALLY
-    function dispatchEmergencyAmbulance() {
-      alert("🚨 108 EMERGENCY AMBULANCE DISPATCHED!\n\nAmbulance ID: TN-01-AMB-9912 (Advanced Cardiac Life Support)\nDistance: 1.8 km away\nEstimated Time of Arrival (ETA): 4 Minutes\n\n✓ GPS Location sent to 108 Control Room\n✓ Kauvery Hospital ICU Desk Notified for Emergency Reception!");
+    function bookDoctorSlot(docName, hospital, slotTime) {
+      document.getElementById('appDocName').innerText = docName;
+      document.getElementById('appHospital').innerText = hospital;
+      document.getElementById('appSlot').innerText = slotTime;
+      document.getElementById('appointmentRowBox').style.display = 'block';
+      alert('⚡ APPOINTMENT CONFIRMED!\n\nDoctor: ' + docName + '\nHospital: ' + hospital + '\nSlot Time: ' + slotTime + '\n\n✓ Cashless Clearance Approved\n✓ Synced to Google Calendar');
     }
 
-    // FEATURE 3: COMPLAINT SUBMISSION + LIVE GOVERNMENT REPLY
+    function cancelAppointment() {
+      if (confirm("Are you sure you want to cancel this appointment?")) {
+        document.getElementById('appointmentRowBox').style.display = 'none';
+        alert("Appointment cancelled successfully.");
+      }
+    }
+
+    function dispatchEmergencyAmbulance() {
+      alert("🚨 108 EMERGENCY AMBULANCE DISPATCHED!\n\nAmbulance ID: TN-01-AMB-9912 (Advanced Cardiac Life Support)\nDistance: 1.8 km away\nEstimated Time of Arrival (ETA): 4 Minutes\n\n✓ GPS Location sent to 108 Control Room\n✓ Kauvery Hospital ICU Desk Notified!");
+    }
+
     function generateDynamicNotice() {
       const complaintText = document.getElementById('complaintInput').value || 'Kauvery Hospital Chennai demanding cash deposit under CMCHIS TN';
       const recipient = document.getElementById('recipientSelect').value;
       const userName = document.getElementById('profName').value;
+
+      if(complaintText) {
+        chatHistoryList.unshift(complaintText);
+        renderRecentChats();
+      }
 
       document.getElementById('btnGenerateNotice').innerText = '⏳ Submitting & Fetching Government Reply...';
       
@@ -478,7 +587,7 @@
           `LEGAL DEMAND: Conversion to 100% Cashless Admission within 2 hours under DPCO 2013.`;
 
         document.getElementById('noticeTextarea').value = generatedNotice;
-        document.getElementById('govtReplyText').innerText = `"ACKNOWLEDGED (${new Date().toLocaleTimeString()}): Emergency Injunction Issued by District Magistrate. Kauvery Hospital Chennai directed to convert patient to 100% Cashless Admission within 2 hours."`;
+        document.getElementById('govtReplyText').innerText = `"ACKNOWLEDGED (${new Date().toLocaleTimeString()}): Emergency Injunction Issued by District Magistrate. Hospital directed to convert patient to 100% Cashless Admission within 2 hours."`;
         document.getElementById('stepDynamicBox').style.display = 'block';
         document.getElementById('btnGenerateNotice').innerText = '⚡ Submit Complaint & Fetch Live Government Reply';
       }, 700);
@@ -493,6 +602,15 @@
       txt.select();
       document.execCommand('copy');
       alert('✓ Notice copied to clipboard!');
+    }
+
+    function renderRecentChats() {
+      const container = document.getElementById('recentChatsList');
+      if (chatHistoryList.length === 0) {
+        container.innerHTML = '<div class="recent-chat-item" style="opacity: 0.6;">No recent search history</div>';
+        return;
+      }
+      container.innerHTML = chatHistoryList.slice(0, 5).map(q => `<div class="recent-chat-item" title="${q}">💬 ${q}</div>`).join('');
     }
   </script>
 </body>
