@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>AetherOS — Unified Enterprise AI Healthcare Platform</title>
+  <title>AetherOS — Autonomous Patient AI Operating System</title>
   <style>
     :root {
       --bg: #07090e;
@@ -17,21 +17,32 @@
       --rose: #ef4444;
       --amber: #f59e0b;
       --cyan: #38bdf8;
+      --purple: #a855f7;
+      --pink: #ec4899;
       --text: #f8fafc;
       --text-muted: #94a3b8;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
     body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
 
-    /* Top Navbar */
-    .navbar { background: var(--sidebar-bg); border-bottom: 1px solid var(--border); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
+    /* Top Navbar & Floating AI Command Palette */
+    .navbar { background: var(--sidebar-bg); border-bottom: 1px solid var(--border); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(12px); }
     .brand { display: flex; align-items: center; gap: 10px; }
-    .brand-icon { background: linear-gradient(135deg, var(--primary), var(--secondary)); width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; box-shadow: 0 0 16px rgba(2, 132, 199, 0.5); }
+    .brand-icon { background: linear-gradient(135deg, var(--primary), var(--secondary)); width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; box-shadow: 0 0 16px rgba(2, 132, 199, 0.5); }
     .brand-title { font-size: 17px; font-weight: 800; }
     .brand-sub { font-size: 9px; color: var(--cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
 
+    /* AI Command Bar */
+    .cmd-bar-wrap { position: relative; flex: 1; max-width: 460px; margin: 0 20px; }
+    .cmd-bar { width: 100%; background: rgba(0, 0, 0, 0.5); border: 1px solid var(--border); border-radius: 20px; padding: 8px 16px 8px 38px; color: white; font-size: 12px; outline: none; transition: all 0.2s; }
+    .cmd-bar:focus { border-color: var(--cyan); box-shadow: 0 0 15px rgba(56, 189, 248, 0.3); }
+    .cmd-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; opacity: 0.6; }
+    .cmd-shortcut { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 700; color: var(--text-muted); }
+
     .nav-actions { display: flex; align-items: center; gap: 10px; }
     .btn-new-chat { background: linear-gradient(135deg, var(--emerald), #059669); color: white; border: none; padding: 6px 14px; border-radius: 14px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+    .nav-icon-btn { background: rgba(255,255,255,0.06); border: 1px solid var(--border); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; }
+    .nav-icon-btn .badge-dot { position: absolute; top: 2px; right: 2px; width: 8px; height: 8px; background: var(--rose); border-radius: 50%; border: 2px solid var(--sidebar-bg); }
     .user-pill { background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border); padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 8px; cursor: pointer; }
     .user-avatar-sm { width: 22px; height: 22px; border-radius: 50%; background: var(--emerald); display: flex; align-items: center; justify-content: center; font-size: 10px; color: white; font-weight: 800; }
 
@@ -53,30 +64,55 @@
     /* Main Section */
     .main-content { flex: 1; padding: 20px; overflow-y: auto; }
 
+    /* Executive Patient Health Dashboard Widgets Banner */
+    .dash-widgets-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px; }
+    .dash-widget { background: var(--card-bg); border: 1px solid var(--border); padding: 14px; border-radius: 14px; backdrop-filter: blur(8px); }
+    .dash-widget-val { font-size: 20px; font-weight: 800; color: white; margin: 4px 0; }
+    .dash-widget-lbl { font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
+    .dash-widget-sub { font-size: 10px; color: var(--emerald); font-weight: 700; }
+
     /* Quick Launch Banner */
-    .launch-banner { background: linear-gradient(135deg, rgba(2, 132, 199, 0.2), rgba(99, 102, 241, 0.2)); border: 1px solid var(--border); padding: 16px; border-radius: 16px; margin-bottom: 20px; }
+    .launch-banner { background: linear-gradient(135deg, rgba(2, 132, 199, 0.2), rgba(99, 102, 241, 0.2)); border: 1px solid var(--border); padding: 16px; border-radius: 16px; margin-bottom: 24px; }
     .launch-title { font-size: 15px; font-weight: 800; margin-bottom: 4px; }
     .launch-desc { font-size: 11px; color: var(--text-muted); margin-bottom: 12px; }
     .launch-input-row { display: flex; gap: 8px; }
     .launch-input { flex: 1; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; color: white; font-size: 12px; outline: none; }
     .btn-submit { background: linear-gradient(135deg, var(--emerald), #059669); color: white; border: none; border-radius: 10px; padding: 10px 18px; font-weight: 800; font-size: 11px; cursor: pointer; white-space: nowrap; }
 
+    /* Section Headings */
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin: 24px 0 14px 0; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    .section-title { font-size: 15px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+
     /* Grids */
     .grid-2 { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; margin-bottom: 24px; }
-    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; transition: all 0.2s; }
-    .card:hover { border-color: var(--cyan); background: var(--card-hover); }
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; transition: all 0.25s ease; position: relative; overflow: hidden; }
+    .card:hover { border-color: var(--cyan); background: var(--card-hover); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
     .card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-    .card-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: white; flex-shrink: 0; }
+    .card-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
     .card-title { font-size: 13px; font-weight: 800; }
     .card-sub { font-size: 10px; color: var(--cyan); font-weight: 700; text-transform: uppercase; }
     .card-body { font-size: 11px; color: var(--text-muted); line-height: 1.4; margin-bottom: 12px; flex: 1; }
-    .card-badge { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 3px 6px; border-radius: 6px; font-size: 9px; color: #cbd5e1; display: inline-block; margin-bottom: 10px; }
-    .btn-card { width: 100%; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; border-radius: 10px; padding: 9px; font-weight: 800; font-size: 11px; cursor: pointer; }
+    .card-badge { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 3px 8px; border-radius: 6px; font-size: 9px; color: #cbd5e1; display: inline-block; margin-bottom: 10px; }
+    .btn-card { width: 100%; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; border-radius: 10px; padding: 10px; font-weight: 800; font-size: 11px; cursor: pointer; transition: opacity 0.2s; }
+    .btn-card:hover { opacity: 0.9; }
 
-    /* Interactive Modal */
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3, 7, 18, 0.85); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: all 0.2s; padding: 16px; }
+    /* Animated Patient Journey Tracker Timeline */
+    .journey-timeline-box { background: var(--card-bg); border: 1px solid var(--border); padding: 20px; border-radius: 16px; margin-bottom: 28px; }
+    .journey-steps-wrap { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-top: 14px; }
+    .journey-step { flex: 0 0 140px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); padding: 10px; border-radius: 10px; font-size: 10px; text-align: center; }
+    .journey-step.done { border-color: var(--emerald); background: rgba(16,185,129,0.1); }
+    .journey-step.active { border-color: var(--cyan); background: rgba(56,189,248,0.15); box-shadow: 0 0 12px rgba(56,189,248,0.3); }
+
+    /* Multi-Agent Orchestration Graph */
+    .orchestration-graph-box { background: rgba(11, 15, 25, 0.9); border: 1px solid var(--border); padding: 18px; border-radius: 16px; margin-bottom: 28px; }
+    .graph-nodes-row { display: flex; align-items: center; justify-content: space-between; overflow-x: auto; padding: 10px 0; }
+    .graph-node { background: rgba(2, 132, 199, 0.15); border: 1px solid var(--cyan); padding: 8px 12px; border-radius: 20px; font-size: 10px; font-weight: 800; color: white; white-space: nowrap; }
+    .graph-arrow { color: var(--cyan); font-weight: 800; font-size: 14px; margin: 0 6px; }
+
+    /* Interactive Modals */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3, 7, 18, 0.88); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: all 0.2s; padding: 16px; }
     .modal-overlay.active { opacity: 1; pointer-events: auto; }
-    .modal-box { background: #0b0f19; border: 1px solid var(--border); width: 100%; max-width: 520px; border-radius: 20px; padding: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
+    .modal-box { background: #0b0f19; border: 1px solid var(--border); width: 100%; max-width: 580px; border-radius: 20px; padding: 22px; box-shadow: 0 25px 60px rgba(0,0,0,0.9); max-height: 90vh; overflow-y: auto; }
     .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
     .modal-title { font-size: 15px; font-weight: 800; }
     .modal-close { background: transparent; border: none; color: var(--rose); font-size: 18px; font-weight: 800; cursor: pointer; }
@@ -89,22 +125,48 @@
     .dynamic-notice-box { background: rgba(2, 132, 199, 0.08); border: 1px solid var(--primary); padding: 14px; border-radius: 14px; margin-top: 14px; display: none; }
     .dynamic-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 12px; font-weight: 800; color: var(--cyan); }
     .action-btn-group { display: flex; gap: 8px; margin-top: 12px; }
+
+    /* Official Printable / Downloadable E-Copy Document Box */
+    .ecopy-document-paper { background: #ffffff; color: #0f172a; padding: 20px; border-radius: 12px; margin-top: 14px; font-family: 'Times New Roman', serif; border: 2px solid #0284c7; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: none; }
+    .ecopy-header { text-align: center; border-bottom: 2px double #0284c7; padding-bottom: 10px; margin-bottom: 12px; }
+    .ecopy-title { font-size: 16px; font-weight: 900; color: #0284c7; text-transform: uppercase; }
+    .ecopy-body { font-size: 11px; line-height: 1.5; color: #1e293b; white-space: pre-wrap; margin-bottom: 16px; }
+    .ecopy-footer { display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px solid #cbd5e1; padding-top: 10px; font-size: 10px; }
+    .stamp-badge { border: 2px dashed #10b981; color: #059669; padding: 6px 12px; border-radius: 8px; font-weight: 900; text-transform: uppercase; font-size: 11px; }
+
+    @media (max-width: 768px) {
+      .app-layout { flex-direction: column; }
+      .sidebar { width: 100%; padding: 10px; border-right: none; border-bottom: 1px solid var(--border); }
+      .cmd-bar-wrap { max-width: 100%; margin: 10px 0; }
+      .dash-widgets-row { grid-template-columns: 1fr 1fr; }
+    }
   </style>
 </head>
 <body>
 
-  <!-- Top Navbar -->
+  <!-- Top Navbar & Command Center -->
   <header class="navbar">
     <div class="brand">
       <div class="brand-icon">⚡</div>
       <div>
         <div class="brand-title">AetherOS</div>
-        <div class="brand-sub">Unified Healthcare AI Platform</div>
+        <div class="brand-sub">Autonomous Patient AI Platform</div>
       </div>
+    </div>
+
+    <!-- Floating AI Command Center -->
+    <div class="cmd-bar-wrap">
+      <span class="cmd-icon">🔍</span>
+      <input id="globalCmdInput" type="text" class="cmd-bar" placeholder="Ask AI: 'Book appointment', 'Track my bill', 'Explain medicines', 'Verify insurance'..." onkeypress="handleCmdKey(event)">
+      <span class="cmd-shortcut">Ctrl K</span>
     </div>
 
     <div class="nav-actions">
       <button class="btn-new-chat" onclick="startNewChat()"><span>+</span> New Chat</button>
+      <div class="nav-icon-btn" onclick="toggleNotifications()" title="Notifications">
+        <span>🔔</span>
+        <div class="badge-dot"></div>
+      </div>
       <div class="user-pill" onclick="openLoginModal()">
         <div class="user-avatar-sm" id="userAvatarInit">JM</div>
         <span id="userNameDisplay">Jeffrin (98401****)</span>
@@ -120,7 +182,7 @@
       <div class="nav-label">Autonomous AI OS</div>
       <div class="sidebar-nav-container">
         <div class="nav-btn active" onclick="switchNav('agents', this)">
-          <span>🤖</span> AI Agents Marketplace <span class="count">6 Online</span>
+          <span>🤖</span> AI Agent Marketplace <span class="count">13 Agents</span>
         </div>
         <div class="nav-btn" onclick="switchNav('tools', this)">
           <span>🛠️</span> Connected MCP Tools <span class="count">14 Tools</span>
@@ -143,6 +205,30 @@
     <!-- Main Content -->
     <main class="main-content">
       
+      <!-- Executive Patient Health Dashboard Widgets Banner -->
+      <div class="dash-widgets-row">
+        <div class="dash-widget">
+          <div class="dash-widget-lbl">Health Score</div>
+          <div class="dash-widget-val" style="color: var(--emerald);">94 / 100</div>
+          <div class="dash-widget-sub">● Optimal Recovery Track</div>
+        </div>
+        <div class="dash-widget">
+          <div class="dash-widget-lbl">Insurance Coverage</div>
+          <div class="dash-widget-val" style="color: var(--cyan);">₹5,00,000</div>
+          <div class="dash-widget-sub">CMCHIS Active & Verified</div>
+        </div>
+        <div class="dash-widget">
+          <div class="dash-widget-lbl">Medicine Adherence</div>
+          <div class="dash-widget-val" style="color: var(--purple);">96%</div>
+          <div class="dash-widget-sub">Next Dose: 08:00 PM</div>
+        </div>
+        <div class="dash-widget">
+          <div class="dash-widget-lbl">Active AI Agents</div>
+          <div class="dash-widget-val" style="color: var(--amber);">13 Online</div>
+          <div class="dash-widget-sub">3 Fraud Alerts Prevented</div>
+        </div>
+      </div>
+
       <!-- Quick Launch Banner -->
       <div class="launch-banner">
         <div class="launch-title">🚀 Quick Mobile Task Launcher</div>
@@ -153,89 +239,196 @@
         </div>
       </div>
 
-      <!-- TAB 1: AI AGENTS MARKETPLACE -->
+      <!-- 🧠 MULTI-AGENT AUTONOMOUS ORCHESTRATION GRAPH -->
+      <div class="orchestration-graph-box">
+        <div style="font-size: 12px; font-weight: 800; color: var(--cyan); margin-bottom: 8px;">🧠 Multi-Agent Autonomous Orchestration Pipeline (Active Node Collaboration)</div>
+        <div class="graph-nodes-row">
+          <div class="graph-node">1. Symptom Perception</div>
+          <span class="graph-arrow">➔</span>
+          <div class="graph-node">2. Medical Routing</div>
+          <span class="graph-arrow">➔</span>
+          <div class="graph-node">3. Doctor Booking</div>
+          <span class="graph-arrow">➔</span>
+          <div class="graph-node">4. Insurance Verification</div>
+          <span class="graph-arrow">➔</span>
+          <div class="graph-node">5. Live Bill Audit</div>
+          <span class="graph-arrow">➔</span>
+          <div class="graph-node">6. Recovery Tracker</div>
+        </div>
+      </div>
+
+      <!-- TAB 1: AI AGENTS MARKETPLACE & NEW INTELLIGENT AGENTS SECTION -->
       <div id="tab-agents">
+        
+        <!-- SECTION 1: EXISTING AI AGENT MARKETPLACE -->
+        <div class="section-header">
+          <div class="section-title">🏛️ Healthcare Enforcement & Audit Agents (Existing Marketplace)</div>
+        </div>
         <div class="grid-2">
-          
           <div class="card">
-            <div class="card-head">
-              <div class="card-icon" style="background: linear-gradient(135deg, #0284c7, #2563eb);">👩‍⚕️</div>
-              <div>
-                <div class="card-title">Dr. Aether Medical Auditor</div>
-                <div class="card-sub">Billing & Insurance Fraud</div>
-              </div>
-            </div>
+            <div class="card-head"><div class="card-icon" style="background: linear-gradient(135deg, #0284c7, #2563eb);">👩‍⚕️</div><div><div class="card-title">Dr. Aether Medical Auditor</div><div class="card-sub">Billing Fraud & Itemized Audit</div></div></div>
             <div class="card-body">Parses hospital bills, audits Drug-Eluting Stents & ICU bed daily rates against statutory NPPA price caps.</div>
             <span class="card-badge">tools: analyze_billing_fraud_risk, verify_price_cap</span>
             <button class="btn-card" onclick="openAgentModal('Dr. Aether Medical Auditor', 'AUDIT')">⚡ Book Agent & Audit Bill</button>
           </div>
-
           <div class="card">
-            <div class="card-head">
-              <div class="card-icon" style="background: linear-gradient(135deg, #6366f1, #4f46e5);">⚖️</div>
-              <div>
-                <div class="card-title">NPPA Legal Enforcement Agent</div>
-                <div class="card-sub">Statutory Form 14555 Notice</div>
-              </div>
-            </div>
+            <div class="card-head"><div class="card-icon" style="background: linear-gradient(135deg, #6366f1, #4f46e5);">⚖️</div><div><div class="card-title">NPPA Legal Enforcement Agent</div><div class="card-sub">Statutory Form 14555 Notice</div></div></div>
             <div class="card-body">Generates binding Form 14555 statutory enforcement notices for prohibited upfront cash deposit demands.</div>
             <span class="card-badge">tools: dispatch_emergency_email_escalation</span>
             <button class="btn-card" onclick="openAgentModal('NPPA Legal Enforcement Agent', 'NOTICE')">⚡ Book Agent & Formulate Notice</button>
           </div>
-
           <div class="card">
-            <div class="card-head">
-              <div class="card-icon" style="background: linear-gradient(135deg, #10b981, #059669);">🏛️</div>
-              <div>
-                <div class="card-title">District Collector Escalation Bot</div>
-                <div class="card-sub">Emergency Government Desk</div>
-              </div>
-            </div>
+            <div class="card-head"><div class="card-icon" style="background: linear-gradient(135deg, #10b981, #059669);">🏛️</div><div><div class="card-title">District Collector Escalation Bot</div><div class="card-sub">Emergency Government Complaint Desk</div></div></div>
             <div class="card-body">Generates and dispatches official emergency complaint emails directly to District Magistrates & NHA Grievance Officers.</div>
             <span class="card-badge">tools: collector_escalation_dispatch, safu_filing</span>
             <button class="btn-card" onclick="openAgentModal('District Collector Escalation Bot', 'COLLECTOR')">⚡ Raise Complaint to Collector</button>
           </div>
-
           <div class="card">
-            <div class="card-head">
-              <div class="card-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">💊</div>
-              <div>
-                <div class="card-title">NLEM Pharmacy Price Auditor</div>
-                <div class="card-sub">Essential Drug Markup</div>
-              </div>
-            </div>
+            <div class="card-head"><div class="card-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">💊</div><div><div class="card-title">NLEM Pharmacy Price Auditor</div><div class="card-sub">Essential Drug Markup Enforcement</div></div></div>
             <div class="card-body">Audits pharmacy receipts for Human Insulin & IV Antibiotics against NLEM statutory price ceilings.</div>
             <span class="card-badge">tools: pharmacy_overcharge_audit, calculate_rebate</span>
             <button class="btn-card" onclick="openAgentModal('NLEM Pharmacy Price Auditor', 'PHARMACY')">⚡ Audit Medicine Overcharges</button>
           </div>
-
           <div class="card">
-            <div class="card-head">
-              <div class="card-icon" style="background: linear-gradient(135deg, #ec4899, #db2777);">🗣️</div>
-              <div>
-                <div class="card-title">Multi-Lingual Patient Advocate</div>
-                <div class="card-sub">TN, KA, KL, TS Emergency Triage</div>
-              </div>
-            </div>
+            <div class="card-head"><div class="card-icon" style="background: linear-gradient(135deg, #ec4899, #db2777);">🗣️</div><div><div class="card-title">Multi-Lingual Patient Advocate</div><div class="card-sub">TN, KA, KL, TS Emergency Triage</div></div></div>
             <div class="card-body">Provides real-time voice and text patient intake in Tamil, Kannada, Malayalam, and Hindi.</div>
             <span class="card-badge">tools: multilingual_patient_voice_assistant</span>
             <button class="btn-card" onclick="openAgentModal('Multi-Lingual Patient Advocate', 'VOICE')">⚡ Book Patient Triage Advocate</button>
           </div>
-
           <div class="card">
-            <div class="card-head">
-              <div class="card-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">🧠</div>
-              <div>
-                <div class="card-title">MoE Master Router Engine</div>
-                <div class="card-sub">5-Stage Execution Pipeline</div>
-              </div>
-            </div>
-            <div class="card-body">Full 360-degree pipeline: Perception ➔ MoE Reasoning ➔ Billing Audit ➔ Legal Notice ➔ Enforcement.</div>
+            <div class="card-head"><div class="card-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">🧠</div><div><div class="card-title">MoE Master Router Engine</div><div class="card-sub">5-Stage Execution Pipeline</div></div></div>
+            <div class="card-body">Full 360-degree pipeline: Perception ➔ MoE Reasoning ➔ Billing Audit ➔ Legal Notice ➔ Webhook Enforcement.</div>
             <span class="card-badge">tools: run_autonomous_agentic_workflow</span>
             <button class="btn-card" onclick="openAgentModal('MoE Master Router Engine', 'FULL_MOE')">⚡ Launch Full MoE Pipeline</button>
           </div>
+        </div>
+
+        <!-- NEW SECTION: 🚀 INTELLIGENT PATIENT AI AGENTS -->
+        <div class="section-header">
+          <div class="section-title">🚀 Intelligent Patient AI Agents (Pre, During & Post Hospital Journey)</div>
+        </div>
+        <div class="grid-2">
+          
+          <!-- AGENT 1 -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-icon" style="background: linear-gradient(135deg, #0284c7, #38bdf8);">📅</div>
+              <div>
+                <div class="card-title">AI Smart Appointment Booking Agent</div>
+                <div class="card-sub">Autonomous Hospital & Doctor Booking</div>
+              </div>
+            </div>
+            <div class="card-body">Autonomously searches doctors, compares consultation fees & ratings, verifies cashless scheme compatibility, and syncs Google Calendar with WhatsApp reminders.</div>
+            <span class="card-badge">tools: search_hospitals, check_cashless, book_slot</span>
+            <button class="btn-card" onclick="openAgentModal('AI Smart Appointment Booking Agent', 'BOOKING')">📅 Book Doctor Appointment</button>
+          </div>
+
+          <!-- AGENT 2 -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-icon" style="background: linear-gradient(135deg, #e11d48, #f43f5e);">🩺</div>
+              <div>
+                <div class="card-title">AI Medical Routing Agent</div>
+                <div class="card-sub">Symptom Intake & Urgency Triage</div>
+              </div>
+            </div>
+            <div class="card-body">Analyzes symptoms (e.g. chest pain ➔ Cardiology/Emergency), assesses urgency, recommends correct specialty, and guides nearby hospital network.</div>
+            <span class="card-badge">tools: symptom_analysis, specialty_recommendation</span>
+            <button class="btn-card" onclick="openAgentModal('AI Medical Routing Agent', 'ROUTING')">🩺 Find My Specialist</button>
+          </div>
+
+          <!-- AGENT 3 -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-icon" style="background: linear-gradient(135deg, #059669, #10b981);">🛡️</div>
+              <div>
+                <div class="card-title">AI Insurance Intelligence Agent</div>
+                <div class="card-sub">Policy & Cashless Coverage Verifier</div>
+              </div>
+            </div>
+            <div class="card-body">Extracts room rent caps, deductibles, and pre-existing disease waiting periods from insurance PDFs/cards to predict 100% claim approval success.</div>
+            <span class="card-badge">tools: parse_insurance_pdf, cashless_check</span>
+            <button class="btn-card" onclick="openAgentModal('AI Insurance Intelligence Agent', 'INSURANCE')">🛡️ Verify Insurance Policy</button>
+          </div>
+
+          <!-- AGENT 4 -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-icon" style="background: linear-gradient(135deg, #d97706, #f59e0b);">📊</div>
+              <div>
+                <div class="card-title">Live Hospital Bill Tracker</div>
+                <div class="card-sub">Real-Time Overcharge Fraud Audit</div>
+              </div>
+            </div>
+            <div class="card-body">Monitors running consultation, ICU bed, and lab fees in real time. Automatically flags NPPA DPCO overcharge violations with 1-click legal action.</div>
+            <span class="card-badge">tools: live_bill_tracker, nppa_violation_flag</span>
+            <button class="btn-card" onclick="openAgentModal('Live Hospital Bill Tracker', 'BILL_TRACKER')">📊 Track My Hospital Bill</button>
+          </div>
+
+          <!-- AGENT 5 -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-icon" style="background: linear-gradient(135deg, #7c3aed, #a855f7);">💊</div>
+              <div>
+                <div class="card-title">AI Medicine Explainer</div>
+                <div class="card-sub">Prescription & Generic Drug Auditor</div>
+              </div>
+            </div>
+            <div class="card-body">Extracts medicines from prescriptions & discharge summaries. Explains exact dosage (Morning/Night), side effects, food warnings, and cheaper NLEM generic alternatives.</div>
+            <span class="card-badge">tools: rx_parser, generic_alternative_finder</span>
+            <button class="btn-card" onclick="openAgentModal('AI Medicine Explainer', 'MEDICINE')">💊 Explain My Medicines</button>
+          </div>
+
+          <!-- AGENT 6 -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-icon" style="background: linear-gradient(135deg, #2563eb, #3b82f6);">📄</div>
+              <div>
+                <div class="card-title">AI Medical Records & Report Summarizer</div>
+                <div class="card-sub">Lab, MRI & Discharge PDF Summarizer</div>
+              </div>
+            </div>
+            <div class="card-body">Parses blood tests, MRI scans, and discharge summaries. Highlights abnormal values in plain text and generates a downloadable PDF visit summary.</div>
+            <span class="card-badge">tools: lab_report_summarizer, mri_analyzer</span>
+            <button class="btn-card" onclick="openAgentModal('AI Medical Records & Report Summarizer', 'RECORDS')">📄 Analyze Medical Records</button>
+          </div>
+
+          <!-- AGENT 7 -->
+          <div class="card">
+            <div class="card-head">
+              <div class="card-icon" style="background: linear-gradient(135deg, #db2777, #ec4899);">❤️</div>
+              <div>
+                <div class="card-title">AI Follow-up & Recovery Manager</div>
+                <div class="card-sub">Post-Discharge Health Score Coach</div>
+              </div>
+            </div>
+            <div class="card-body">Tracks pain levels, blood pressure, sugar readings, and medicine adherence. Automatically schedules doctor follow-up visits and lab re-tests.</div>
+            <span class="card-badge">tools: recovery_score_tracker, bp_sugar_log</span>
+            <button class="btn-card" onclick="openAgentModal('AI Follow-up & Recovery Manager', 'RECOVERY')">❤️ Start Recovery Tracking</button>
+          </div>
 
         </div>
+
+        <!-- 🗺️ PATIENT JOURNEY TRACKER TIMELINE DASHBOARD -->
+        <div class="journey-timeline-box">
+          <div style="font-size: 13px; font-weight: 800; color: var(--cyan);">🗺️ Patient Journey Healthcare Timeline</div>
+          <div class="journey-steps-wrap">
+            <div class="journey-step done">✓ Profile Created</div>
+            <div class="journey-step done">✓ Hospital Selected</div>
+            <div class="journey-step done">✓ Appointment Confirmed</div>
+            <div class="journey-step active">● Doctor Consultation</div>
+            <div class="journey-step">Tests Ordered</div>
+            <div class="journey-step">Reports Ready</div>
+            <div class="journey-step">Medicines Dispensed</div>
+            <div class="journey-step">Live Bill Tracking</div>
+            <div class="journey-step">Insurance Verified</div>
+            <div class="journey-step">Billing Audit Completed</div>
+            <div class="journey-step">Discharge Summary</div>
+            <div class="journey-step">Recovery Monitoring</div>
+            <div class="journey-step">Follow-up Visit</div>
+          </div>
+        </div>
+
       </div>
 
       <!-- TAB 2: CONNECTED MCP TOOLS (ALL 14 TOOLS) -->
@@ -259,7 +452,7 @@
         </div>
       </div>
 
-      <!-- TAB 3: MULTI-MODEL GATEWAY (ALL 4 AI MODELS SHOWN!) -->
+      <!-- TAB 3: MULTI-MODEL GATEWAY -->
       <div id="tab-gateway" style="display: none;">
         <div style="font-size: 13px; font-weight: 800; margin-bottom: 12px; color: var(--cyan);">🧠 Multi-Model AI Gateway (4 Providers Configured)</div>
         <div class="grid-2">
@@ -270,7 +463,7 @@
         </div>
       </div>
 
-      <!-- TAB 4: ACTIVE CASE QUEUE (ALL 10 PRIORITY CASES SHOWN!) -->
+      <!-- TAB 4: ACTIVE CASE QUEUE -->
       <div id="tab-cases" style="display: none;">
         <div style="font-size: 13px; font-weight: 800; margin-bottom: 12px; color: var(--cyan);">📈 Active Case Queue (All 10 Priority Cases)</div>
         <div style="display: flex; flex-direction: column; gap: 8px;">
@@ -290,61 +483,36 @@
     </main>
   </div>
 
-  <!-- User Login Profile Modal -->
-  <div id="loginModal" class="modal-overlay">
-    <div class="modal-box">
-      <div class="modal-head">
-        <div class="modal-title">👤 User Mobile Profile Login</div>
-        <button class="modal-close" onclick="closeModal('loginModal')">✕</button>
-      </div>
-
-      <div class="form-group"><label class="form-lbl">Full Name</label><input id="profName" type="text" class="form-input" value="Jeffrin Merino"></div>
-      <div class="form-group"><label class="form-lbl">Mobile Number</label><input id="profPhone" type="text" class="form-input" value="9840123456"></div>
-      <div class="form-group">
-        <label class="form-lbl">Active Health Scheme</label>
-        <select id="profScheme" class="form-select">
-          <option>CMCHIS Tamil Nadu</option>
-          <option>PM-JAY National</option>
-          <option>SAST Karnataka</option>
-          <option>Karunya Kerala</option>
-          <option>Aarogyasri Telangana/AP</option>
-        </select>
-      </div>
-
-      <button class="btn-submit" style="width: 100%; padding: 12px;" onclick="saveProfile()">Save Profile & Continue</button>
-    </div>
-  </div>
-
-  <!-- Agent Execution Modal Launcher -->
+  <!-- Interactive Agent Modal Launcher & Dynamic E-Copy Document Box -->
   <div id="agentModal" class="modal-overlay">
     <div class="modal-box">
       <div class="modal-head">
         <div>
-          <div id="agentModalTitle" class="modal-title">District Collector Escalation Bot</div>
-          <div style="font-size: 10px; color: var(--cyan); font-weight: 700;">INTERACTIVE COMPLAINT & LEGAL NOTICE GENERATOR</div>
+          <div id="agentModalTitle" class="modal-title">AI Patient Agent</div>
+          <div style="font-size: 10px; color: var(--cyan); font-weight: 700;">AUTONOMOUS PATIENT OPERATING SYSTEM</div>
         </div>
         <button class="modal-close" onclick="closeModal('agentModal')">✕</button>
       </div>
 
-      <!-- Step 1: Input Complaint Form -->
+      <!-- Step 1: Input Complaint / Task Form -->
       <div id="stepInput">
         <div class="form-group">
-          <label class="form-lbl">Type your Complaint / Query Statement</label>
-          <textarea id="complaintInput" class="form-input" style="height: 80px;" placeholder="Type your complaint query here (e.g. Kauvery Hospital Chennai demands 45,000 cash)..."></textarea>
+          <label class="form-lbl">Type your Complaint / Patient Task Query</label>
+          <textarea id="complaintInput" class="form-input" style="height: 80px;" placeholder="Type your patient task or complaint query here..."></textarea>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;" class="form-group">
           <div>
-            <label class="form-lbl">Recipient District Magistrate / Officer</label>
+            <label class="form-lbl">Recipient / Target Desk</label>
             <select id="recipientSelect" class="form-select">
-              <option value="collector.chennai@tn.gov.in">District Collector Chennai (collector.chennai@tn.gov.in)</option>
-              <option value="collector.bengaluru@ka.gov.in">District Magistrate Bengaluru (collector.bengaluru@ka.gov.in)</option>
-              <option value="grievance@nha.gov.in">NHA National Grievance Officer (grievance@nha.gov.in)</option>
-              <option value="safu.tn@gov.in">Tamil Nadu SAFU Desk (Helpline 1800-425-3993)</option>
+              <option value="collector.chennai@tn.gov.in">District Collector Desk (collector.chennai@tn.gov.in)</option>
+              <option value="grievance@nha.gov.in">NHA National Grievance Desk (grievance@nha.gov.in)</option>
+              <option value="safu.tn@gov.in">State SAFU Executive Helpline (1800-425-3993)</option>
+              <option value="apollo.billing@hospital.com">Apollo / Kauvery Billing Audit Desk</option>
             </select>
           </div>
           <div>
-            <label class="form-lbl">AI Intelligence Model</label>
+            <label class="form-lbl">AI Model Gateway</label>
             <select class="form-select">
               <option>OpenAI GPT-4o (Recommended)</option>
               <option>Claude 3.5 Sonnet</option>
@@ -355,33 +523,53 @@
         </div>
 
         <button id="btnGenerateNotice" class="btn-submit" style="width: 100%; padding: 12px; margin-top: 6px;" onclick="generateDynamicNotice()">
-          ⚡ Generate Official Legal Complaint
+          ⚡ Execute Task & Generate E-Copy Complaint
         </button>
       </div>
 
-      <!-- Step 2: Dynamic Generation & Editable Notice Box -->
+      <!-- Step 2: Dynamic Text Notice Box -->
       <div id="stepDynamicBox" class="dynamic-notice-box">
         <div class="dynamic-head">
-          <span>📜 Generated Official Statutory Complaint (Editable)</span>
+          <span>📜 Generated Complaint Notice (Editable)</span>
           <span style="font-size: 10px; color: var(--emerald);">AI GENERATED • READY TO DISPATCH</span>
         </div>
 
         <div class="form-group">
-          <label class="form-lbl">Review and Edit / Refine Notice Text before Dispatching:</label>
           <textarea id="noticeTextarea" class="form-textarea"></textarea>
         </div>
 
         <div class="action-btn-group">
-          <button id="btnDispatchEmail" class="btn-submit" style="flex: 1; padding: 12px; background: linear-gradient(135deg, #10b981, #059669);" onclick="dispatchNoticeEmail()">
-            📤 Dispatch to Authorized Email
+          <button id="btnDispatchEmail" class="btn-submit" style="flex: 1; padding: 10px; background: linear-gradient(135deg, #10b981, #059669);" onclick="dispatchNoticeEmail()">
+            📤 Dispatch Authorized Email
           </button>
-          <button class="btn-submit" style="background: transparent; border: 1px solid var(--border); color: white;" onclick="copyNoticeText()">
-            📋 Copy Text
+          <button class="btn-submit" style="background: transparent; border: 1px solid var(--border); color: white;" onclick="showECopyPaper()">
+            📄 Generate Official E-Copy PDF
           </button>
         </div>
 
         <div id="dispatchLog" style="display: none; margin-top: 12px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); padding: 10px; border-radius: 10px; font-size: 11px; color: #34d399; font-weight: 700; text-align: center;">
-          ✓ Complaint & Statutory Form 14555 Notice Successfully Dispatched to Authorized Email!
+          ✓ Complaint & Statutory Notice Successfully Dispatched to Authorized Email!
+        </div>
+      </div>
+
+      <!-- Step 3: Official Printable & Downloadable E-Copy Document Paper -->
+      <div id="ecopyPaper" class="ecopy-document-paper">
+        <div class="ecopy-header">
+          <div class="ecopy-title">GOVERNMENT OF INDIA / NHA STATUTORY E-COPY</div>
+          <div style="font-size: 9px; color: #64748b; font-weight: bold;">OFFICIAL PATIENT COMPLAINT & LEGAL ENFORCEMENT RECORD</div>
+        </div>
+        <div id="ecopyDocContent" class="ecopy-body"></div>
+        <div class="ecopy-footer">
+          <div>
+            <div><strong>Ref ID:</strong> CMP-2024-99120</div>
+            <div><strong>Timestamp:</strong> ${new Date().toLocaleString()}</div>
+            <div><strong>Digital Verification:</strong> QR Code Verified ✓</div>
+          </div>
+          <div class="stamp-badge">OFFICIAL E-COPY ISSUED</div>
+        </div>
+        <div style="margin-top: 12px; display: flex; gap: 8px;">
+          <button style="flex: 1; background: #0284c7; color: white; border: none; padding: 8px; border-radius: 6px; font-weight: bold; cursor: pointer;" onclick="window.print()">🖨️ Print / Download PDF</button>
+          <button style="background: #e2e8f0; color: #0f172a; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer;" onclick="document.getElementById('ecopyPaper').style.display='none'">Close E-Copy</button>
         </div>
       </div>
 
@@ -406,6 +594,7 @@
       document.getElementById('agentModal').classList.add('active');
       document.getElementById('stepInput').style.display = 'block';
       document.getElementById('stepDynamicBox').style.display = 'none';
+      document.getElementById('ecopyPaper').style.display = 'none';
       document.getElementById('dispatchLog').style.display = 'none';
       document.getElementById('complaintInput').value = '';
     }
@@ -414,10 +603,20 @@
 
     function startNewChat() {
       document.getElementById('quickTaskInput').value = '';
+      document.getElementById('globalCmdInput').value = '';
       document.getElementById('complaintInput').value = '';
       document.getElementById('stepDynamicBox').style.display = 'none';
+      document.getElementById('ecopyPaper').style.display = 'none';
       document.getElementById('stepInput').style.display = 'block';
       closeModal('agentModal');
+    }
+
+    function handleCmdKey(e) {
+      if(e.key === 'Enter') {
+        const val = e.target.value;
+        openAgentModal('AI Smart Patient Command Center', 'CMD');
+        document.getElementById('complaintInput').value = val;
+      }
     }
 
     function saveProfile() {
@@ -439,30 +638,34 @@
       const recipient = document.getElementById('recipientSelect').value;
       const userName = document.getElementById('profName').value;
 
-      // Add query to recent chats list
       chatHistoryList.unshift(complaintText);
       renderRecentChats();
 
-      document.getElementById('btnGenerateNotice').innerText = '⏳ AI Generating Complaint Notice...';
+      document.getElementById('btnGenerateNotice').innerText = '⏳ AI Generating Complaint & E-Copy Record...';
       
       setTimeout(() => {
         const generatedNotice = `FORM 14555 - STATUTORY EMERGENCY COMPLAINT & LEGAL NOTICE\n` +
           `----------------------------------------------------------------------\n` +
           `TO: Authorized Officer (${recipient})\n` +
-          `FROM: Advocate / Patient Representative (${userName})\n` +
+          `FROM: Patient Representative (${userName})\n` +
           `DATE: ${new Date().toLocaleDateString('en-IN')}\n` +
-          `SUBJECT: URGENT COMPLAINT REGARDING PROHIBITED CASH DEMAND & VIOLATION\n\n` +
+          `SUBJECT: URGENT PATIENT COMPLAINT REGARDING CASH DEMAND / OVERCHARGE\n\n` +
           `COMPLAINT DETAILS:\n"${complaintText}"\n\n` +
           `STATUTORY LEGAL DEMAND:\n` +
-          `1. Citing Drug Price Control Order (DPCO) 2013 & NHA Circular #14555, the quoted upfront cash demand is ILLEGAL under scheme rules.\n` +
+          `1. Citing DPCO 2013 & NHA Statutory Circular #14555, the quoted upfront cash demand is ILLEGAL under scheme rules.\n` +
           `2. Demanding immediate conversion to 100% CASHLESS admission within 2 hours.\n` +
           `3. Penalty Clause 16 will be invoked if cashless clearance is withheld.\n\n` +
-          `SUBMITTED FOR IMMEDIATE INJUNCTION AND DISPATCH.`;
+          `SUBMITTED FOR IMMEDIATE DISPATCH & ENFORCEMENT.`;
 
         document.getElementById('noticeTextarea').value = generatedNotice;
+        document.getElementById('ecopyDocContent').innerText = generatedNotice;
         document.getElementById('stepDynamicBox').style.display = 'block';
-        document.getElementById('btnGenerateNotice').innerText = '⚡ Generate Official Legal Complaint';
+        document.getElementById('btnGenerateNotice').innerText = '⚡ Execute Task & Generate E-Copy Complaint';
       }, 700);
+    }
+
+    function showECopyPaper() {
+      document.getElementById('ecopyPaper').style.display = 'block';
     }
 
     function dispatchNoticeEmail() {
@@ -476,13 +679,6 @@
       }, 900);
     }
 
-    function copyNoticeText() {
-      const txt = document.getElementById('noticeTextarea');
-      txt.select();
-      document.execCommand('copy');
-      alert('✓ Generated Complaint Notice copied to clipboard!');
-    }
-
     function renderRecentChats() {
       const container = document.getElementById('recentChatsList');
       if (chatHistoryList.length === 0) {
@@ -490,6 +686,10 @@
         return;
       }
       container.innerHTML = chatHistoryList.slice(0, 5).map(q => `<div class="recent-chat-item" title="${q}">💬 ${q}</div>`).join('');
+    }
+
+    function toggleNotifications() {
+      alert("🔔 Notifications:\n1. Appointment Confirmed with Dr. Aris (Cardiology)\n2. Fraud Alert Flagged on Kauvery Hospital Bill (₹6,740 Overcharge)\n3. Medicine Refill Due at 08:00 PM");
     }
   </script>
 </body>
