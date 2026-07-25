@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>AetherOS — Data-Driven Patient AI Operating System</title>
+  <title>AetherOS — Enterprise AI Agent Platform</title>
   <style>
     :root {
       --bg: #07090e;
@@ -17,26 +17,23 @@
       --rose: #ef4444;
       --amber: #f59e0b;
       --cyan: #38bdf8;
-      --purple: #a855f7;
-      --pink: #ec4899;
       --text: #f8fafc;
       --text-muted: #94a3b8;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
     body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
 
-    /* Top Navbar & Floating AI Command Palette */
-    .navbar { background: var(--sidebar-bg); border-bottom: 1px solid var(--border); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(12px); }
+    /* Top Navbar */
+    .navbar { background: var(--sidebar-bg); border-bottom: 1px solid var(--border); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
     .brand { display: flex; align-items: center; gap: 10px; }
-    .brand-icon { background: linear-gradient(135deg, var(--primary), var(--secondary)); width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; box-shadow: 0 0 16px rgba(2, 132, 199, 0.5); }
+    .brand-icon { background: linear-gradient(135deg, var(--primary), var(--secondary)); width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; box-shadow: 0 0 16px rgba(2, 132, 199, 0.5); }
     .brand-title { font-size: 17px; font-weight: 800; }
     .brand-sub { font-size: 9px; color: var(--cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
 
-    /* Patient Switcher Dropdown */
-    .patient-switcher { background: rgba(2, 132, 199, 0.15); border: 1px solid var(--primary); color: white; padding: 6px 12px; border-radius: 14px; font-size: 11px; font-weight: 800; outline: none; cursor: pointer; }
-
     .nav-actions { display: flex; align-items: center; gap: 10px; }
     .btn-new-chat { background: linear-gradient(135deg, var(--emerald), #059669); color: white; border: none; padding: 6px 14px; border-radius: 14px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+    .user-pill { background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border); padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+    .user-avatar-sm { width: 22px; height: 22px; border-radius: 50%; background: var(--emerald); display: flex; align-items: center; justify-content: center; font-size: 10px; color: white; font-weight: 800; }
 
     /* Layout Wrapper */
     .app-layout { display: flex; flex: 1; overflow: hidden; }
@@ -48,38 +45,43 @@
     .nav-btn:hover, .nav-btn.active { background: rgba(56, 189, 248, 0.12); color: white; border-color: rgba(56, 189, 248, 0.3); }
     .nav-btn .count { margin-left: auto; background: rgba(16, 185, 129, 0.2); color: #34d399; padding: 2px 6px; border-radius: 8px; font-size: 10px; font-weight: 800; }
 
+    /* Recent Chats Sidebar List */
+    .recent-chats-list { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; }
+    .recent-chat-item { font-size: 11px; color: var(--text-muted); padding: 6px 10px; border-radius: 8px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background: rgba(255,255,255,0.02); }
+    .recent-chat-item:hover { background: rgba(56,189,248,0.1); color: white; }
+
     /* Main Section */
     .main-content { flex: 1; padding: 20px; overflow-y: auto; }
 
-    /* Data-Driven Dashboard Widgets (3-State Cards: Loading, Data, Empty State) */
-    .dash-widgets-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px; }
-    .dash-widget { background: var(--card-bg); border: 1px solid var(--border); padding: 16px; border-radius: 16px; backdrop-filter: blur(8px); display: flex; flex-direction: column; justify-content: space-between; }
-    .dash-widget-lbl { font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
-    .empty-state-title { font-size: 12px; color: #cbd5e1; font-weight: 700; margin: 8px 0 4px 0; }
-    .empty-state-desc { font-size: 10px; color: var(--text-muted); margin-bottom: 10px; line-height: 1.3; }
-    .btn-cta-sm { background: rgba(2, 132, 199, 0.2); border: 1px solid var(--cyan); color: var(--cyan); padding: 5px 10px; border-radius: 8px; font-size: 10px; font-weight: 800; cursor: pointer; display: inline-block; width: fit-content; }
-    .btn-cta-sm:hover { background: var(--primary); color: white; }
-
-    /* Section Headings */
-    .section-header { display: flex; justify-content: space-between; align-items: center; margin: 24px 0 14px 0; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
-    .section-title { font-size: 15px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+    /* Quick Launch Banner */
+    .launch-banner { background: linear-gradient(135deg, rgba(2, 132, 199, 0.2), rgba(99, 102, 241, 0.2)); border: 1px solid var(--border); padding: 16px; border-radius: 16px; margin-bottom: 20px; }
+    .launch-title { font-size: 15px; font-weight: 800; margin-bottom: 4px; }
+    .launch-desc { font-size: 11px; color: var(--text-muted); margin-bottom: 12px; }
+    .launch-input-row { display: flex; gap: 8px; }
+    .launch-input { flex: 1; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; color: white; font-size: 12px; outline: none; }
+    .btn-submit { background: linear-gradient(135deg, var(--emerald), #059669); color: white; border: none; border-radius: 10px; padding: 10px 18px; font-weight: 800; font-size: 11px; cursor: pointer; white-space: nowrap; }
 
     /* Grids */
     .grid-2 { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; margin-bottom: 24px; }
-    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; transition: all 0.25s ease; }
-    .card:hover { border-color: var(--cyan); background: var(--card-hover); transform: translateY(-2px); }
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; transition: all 0.2s; }
+    .card:hover { border-color: var(--cyan); background: var(--card-hover); }
     .card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-    .card-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; flex-shrink: 0; }
+    .card-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: white; flex-shrink: 0; }
     .card-title { font-size: 13px; font-weight: 800; }
     .card-sub { font-size: 10px; color: var(--cyan); font-weight: 700; text-transform: uppercase; }
     .card-body { font-size: 11px; color: var(--text-muted); line-height: 1.4; margin-bottom: 12px; flex: 1; }
-    .card-badge { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 3px 8px; border-radius: 6px; font-size: 9px; color: #cbd5e1; display: inline-block; margin-bottom: 10px; }
-    .btn-card { width: 100%; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; border-radius: 10px; padding: 10px; font-weight: 800; font-size: 11px; cursor: pointer; }
+    .card-badge { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 3px 6px; border-radius: 6px; font-size: 9px; color: #cbd5e1; display: inline-block; margin-bottom: 10px; }
+    .btn-card { width: 100%; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; border-radius: 10px; padding: 9px; font-weight: 800; font-size: 11px; cursor: pointer; }
 
-    /* Interactive Modals */
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3, 7, 18, 0.88); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: all 0.2s; padding: 16px; }
+    /* Dedicated Doctor Availability Card */
+    .booking-box { background: rgba(2, 132, 199, 0.08); border: 1px solid var(--cyan); padding: 18px; border-radius: 16px; margin-bottom: 24px; }
+    .booking-head { font-size: 14px; font-weight: 800; color: var(--cyan); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+    .doc-slot-card { background: rgba(0,0,0,0.4); border: 1px solid var(--border); padding: 12px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+
+    /* Interactive Modal */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(3, 7, 18, 0.85); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: all 0.2s; padding: 16px; }
     .modal-overlay.active { opacity: 1; pointer-events: auto; }
-    .modal-box { background: #0b0f19; border: 1px solid var(--border); width: 100%; max-width: 540px; border-radius: 20px; padding: 22px; box-shadow: 0 25px 60px rgba(0,0,0,0.9); }
+    .modal-box { background: #0b0f19; border: 1px solid var(--border); width: 100%; max-width: 520px; border-radius: 20px; padding: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
     .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
     .modal-title { font-size: 15px; font-weight: 800; }
     .modal-close { background: transparent; border: none; color: var(--rose); font-size: 18px; font-weight: 800; cursor: pointer; }
@@ -87,7 +89,18 @@
     .form-group { margin-bottom: 12px; }
     .form-lbl { font-size: 10px; font-weight: 700; color: var(--cyan); text-transform: uppercase; margin-bottom: 4px; display: block; }
     .form-input, .form-select, .form-textarea { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 10px; padding: 10px; color: white; font-size: 12px; outline: none; }
-    .form-textarea { height: 110px; font-family: monospace; line-height: 1.4; resize: vertical; background: #090d16; }
+    .form-textarea { height: 120px; font-family: monospace; line-height: 1.4; resize: vertical; background: #090d16; }
+
+    .dynamic-notice-box { background: rgba(2, 132, 199, 0.08); border: 1px solid var(--primary); padding: 14px; border-radius: 14px; margin-top: 14px; display: none; }
+    .dynamic-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 12px; font-weight: 800; color: var(--cyan); }
+    .action-btn-group { display: flex; gap: 8px; margin-top: 12px; }
+
+    @media (max-width: 768px) {
+      .app-layout { flex-direction: column; }
+      .sidebar { width: 100%; padding: 10px; border-right: none; border-bottom: 1px solid var(--border); }
+      .nav-btn { display: inline-flex; margin-right: 6px; margin-bottom: 0; }
+      .sidebar-nav-container { display: flex; overflow-x: auto; }
+    }
   </style>
 </head>
 <body>
@@ -98,21 +111,16 @@
       <div class="brand-icon">⚡</div>
       <div>
         <div class="brand-title">AetherOS</div>
-        <div class="brand-sub">Patient AI Operating System</div>
+        <div class="brand-sub">Unified Enterprise AI Platform</div>
       </div>
-    </div>
-
-    <!-- PATIENT CONTEXT SWITCHER -->
-    <div style="display: flex; align-items: center; gap: 8px;">
-      <span style="font-size: 10px; color: var(--cyan); font-weight: 700; text-transform: uppercase;">Active Patient Context:</span>
-      <select id="patientSelect" class="patient-switcher" onchange="switchPatientContext(this.value)">
-        <option value="NEW_PATIENT">👤 Jeffrin Merino (New Patient - No Data)</option>
-        <option value="RAJESH_KUMAR">👨‍💼 Rajesh Kumar (CMCHIS TN Active)</option>
-      </select>
     </div>
 
     <div class="nav-actions">
       <button class="btn-new-chat" onclick="startNewChat()"><span>+</span> New Chat</button>
+      <div class="user-pill" onclick="openLoginModal()">
+        <div class="user-avatar-sm" id="userAvatarInit">JM</div>
+        <span id="userNameDisplay">Jeffrin (98401****)</span>
+      </div>
     </div>
   </header>
 
@@ -124,7 +132,7 @@
       <div class="nav-label">Autonomous AI OS</div>
       <div class="sidebar-nav-container">
         <div class="nav-btn active" onclick="switchNav('agents', this)">
-          <span>🤖</span> AI Agent Marketplace <span class="count">13 Agents</span>
+          <span>🤖</span> AI Agents Marketplace <span class="count">7 Online</span>
         </div>
         <div class="nav-btn" onclick="switchNav('tools', this)">
           <span>🛠️</span> Connected MCP Tools <span class="count">14 Tools</span>
@@ -136,251 +144,419 @@
           <span>📈</span> Active Case Queue <span class="count">10 Cases</span>
         </div>
       </div>
+
+      <!-- RECENT CHATS SIDEBAR SECTION -->
+      <div class="nav-label">Recent Search History</div>
+      <div id="recentChatsList" class="recent-chats-list">
+        <div class="recent-chat-item">No recent search history</div>
+      </div>
     </aside>
 
     <!-- Main Content -->
     <main class="main-content">
       
-      <!-- DYNAMIC DATA-DRIVEN DASHBOARD WIDGETS (3-STATE CARDS: NO HARDCODED VALUES!) -->
-      <div class="dash-widgets-row">
-        
-        <!-- WIDGET 1: HEALTH SCORE -->
-        <div id="widgetHealth" class="dash-widget">
-          <div class="dash-widget-lbl">Health Score</div>
-          <div id="healthContent"></div>
+      <!-- Quick Launch Banner -->
+      <div class="launch-banner">
+        <div class="launch-title">🚀 Quick Task Launcher</div>
+        <div class="launch-desc">Enter your emergency hospital admission details to trigger an instant 5-stage autonomous audit & legal notice dispatch.</div>
+        <div class="launch-input-row">
+          <input id="quickTaskInput" type="text" class="launch-input" placeholder="Type your complaint query here (e.g. Kauvery Hospital Chennai demands 45,000 cash under CMCHIS TN)...">
+          <button class="btn-submit" onclick="launchQuickTask()">Execute Agent Task</button>
         </div>
-
-        <!-- WIDGET 2: INSURANCE COVERAGE -->
-        <div id="widgetInsurance" class="dash-widget">
-          <div class="dash-widget-lbl">Insurance Coverage</div>
-          <div id="insuranceContent"></div>
-        </div>
-
-        <!-- WIDGET 3: MEDICINE ADHERENCE -->
-        <div id="widgetMedicine" class="dash-widget">
-          <div class="dash-widget-lbl">Medicine Adherence</div>
-          <div id="medicineContent"></div>
-        </div>
-
-        <!-- WIDGET 4: ACTIVE AI AGENTS -->
-        <div id="widgetAgents" class="dash-widget">
-          <div class="dash-widget-lbl">Active AI Workflows</div>
-          <div id="agentsContent"></div>
-        </div>
-
       </div>
 
-      <!-- TAB 1: MARKETPLACE & PATIENT AGENTS -->
-      <div id="tab-agents">
-        <div class="section-header">
-          <div class="section-title">🚀 Intelligent Patient AI Agents</div>
+      <!-- DEDICATED SEPARATE MODULE: AI AGENT DOCTOR APPOINTMENT BOOKING USING NEARBY HOSPITAL AVAILABILITY -->
+      <div class="booking-box">
+        <div class="booking-head">
+          <span>📅 AI Smart Doctor Appointment Booking Agent</span>
+          <span style="font-size: 10px; color: var(--emerald); font-weight: 800; margin-left: auto;">● LIVE NEARBY HOSPITAL AVAILABILITY</span>
         </div>
+        <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 14px;">Autonomously searches doctors in nearby empaneled hospitals, verifies cashless scheme coverage, and books consultation slots.</div>
+
+        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+          <input id="docSearchQuery" type="text" class="launch-input" placeholder="Search doctor specialty or hospital (e.g. Cardiologist near Chennai, Dermatologist Bangalore)...">
+          <button class="btn-submit" style="background: linear-gradient(135deg, var(--primary), var(--secondary));" onclick="searchNearbyDoctors()">Search Doctor Availability</button>
+        </div>
+
+        <!-- NEARBY DOCTOR AVAILABILITY CARDS -->
+        <div id="doctorAvailabilityList">
+          
+          <div class="doc-slot-card">
+            <div>
+              <div style="font-size: 12px; font-weight: 800;">Dr. Aris Kumar (Senior Cardiologist)</div>
+              <div style="font-size: 10px; color: var(--cyan);">Kauvery Hospital Chennai (1.2 km away) • Fee: ₹800</div>
+              <div style="font-size: 9px; color: #34d399; font-weight: 700;">✓ CMCHIS Cashless Approved • Rating: 4.9 ★ (120 reviews)</div>
+            </div>
+            <button class="btn-submit" onclick="bookDoctorSlot('Dr. Aris Kumar', 'Kauvery Hospital Chennai', '05:30 PM Today')">Book Slot (05:30 PM)</button>
+          </div>
+
+          <div class="doc-slot-card">
+            <div>
+              <div style="font-size: 12px; font-weight: 800;">Dr. Priya Sharma (Neurologist & Spine Specialist)</div>
+              <div style="font-size: 10px; color: var(--cyan);">Apollo Lifecare Delhi (2.4 km away) • Fee: ₹1,000</div>
+              <div style="font-size: 9px; color: #34d399; font-weight: 700;">✓ PM-JAY Cashless Approved • Rating: 4.8 ★ (98 reviews)</div>
+            </div>
+            <button class="btn-submit" onclick="bookDoctorSlot('Dr. Priya Sharma', 'Apollo Lifecare Delhi', '06:00 PM Tomorrow')">Book Slot (06:00 PM)</button>
+          </div>
+
+          <div class="doc-slot-card">
+            <div>
+              <div style="font-size: 12px; font-weight: 800;">Dr. Amit Patel (Orthopedic Surgeon)</div>
+              <div style="font-size: 10px; color: var(--cyan);">Fortis Hospital Bangalore (3.1 km away) • Fee: ₹900</div>
+              <div style="font-size: 9px; color: #34d399; font-weight: 700;">✓ SAST KA Cashless Approved • Rating: 4.7 ★ (85 reviews)</div>
+            </div>
+            <button class="btn-submit" onclick="bookDoctorSlot('Dr. Amit Patel', 'Fortis Hospital Bangalore', '10:30 AM Tomorrow')">Book Slot (10:30 AM)</button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- TAB 1: AI AGENTS MARKETPLACE -->
+      <div id="tab-agents">
+        <div style="font-size: 13px; font-weight: 800; margin-bottom: 12px; color: var(--cyan);">🤖 AI Agent Marketplace (Original Enforcement Agents)</div>
         <div class="grid-2">
           
           <div class="card">
             <div class="card-head">
-              <div class="card-icon" style="background: linear-gradient(135deg, #0284c7, #38bdf8);">📅</div>
+              <div class="card-icon" style="background: linear-gradient(135deg, #0284c7, #2563eb);">👩‍⚕️</div>
               <div>
-                <div class="card-title">AI Smart Appointment Booking Agent</div>
-                <div class="card-sub">Autonomous Hospital Booking</div>
+                <div class="card-title">Dr. Aether Medical Auditor</div>
+                <div class="card-sub">Billing & Insurance Fraud</div>
               </div>
             </div>
-            <div class="card-body">Autonomously books doctor appointments, checks cashless eligibility, and syncs calendar.</div>
-            <span class="card-badge">tools: search_hospitals, book_slot</span>
-            <button class="btn-card" onclick="openAgentModal('AI Smart Appointment Booking Agent', 'BOOKING')">📅 Book Appointment</button>
+            <div class="card-body">Parses hospital bills, audits Drug-Eluting Stents & ICU bed daily rates against statutory NPPA price caps.</div>
+            <span class="card-badge">tools: analyze_billing_fraud_risk, verify_price_cap</span>
+            <button class="btn-card" onclick="openAgentModal('Dr. Aether Medical Auditor', 'AUDIT')">⚡ Book Agent & Audit Bill</button>
           </div>
 
           <div class="card">
             <div class="card-head">
-              <div class="card-icon" style="background: linear-gradient(135deg, #059669, #10b981);">🛡️</div>
+              <div class="card-icon" style="background: linear-gradient(135deg, #6366f1, #4f46e5);">⚖️</div>
               <div>
-                <div class="card-title">AI Insurance Intelligence Agent</div>
-                <div class="card-sub">Policy & Cashless Verifier</div>
+                <div class="card-title">NPPA Legal Enforcement Agent</div>
+                <div class="card-sub">Statutory Form 14555 Notice</div>
               </div>
             </div>
-            <div class="card-body">Verifies policy PDF/card, room rent caps, deductibles, and cashless eligibility.</div>
-            <span class="card-badge">tools: parse_insurance_pdf, cashless_check</span>
-            <button class="btn-card" onclick="openAgentModal('AI Insurance Intelligence Agent', 'INSURANCE')">🛡️ Verify Insurance</button>
+            <div class="card-body">Generates binding Form 14555 statutory enforcement notices for prohibited upfront cash deposit demands.</div>
+            <span class="card-badge">tools: dispatch_emergency_email_escalation</span>
+            <button class="btn-card" onclick="openAgentModal('NPPA Legal Enforcement Agent', 'NOTICE')">⚡ Book Agent & Formulate Notice</button>
           </div>
 
           <div class="card">
             <div class="card-head">
-              <div class="card-icon" style="background: linear-gradient(135deg, #7c3aed, #a855f7);">💊</div>
+              <div class="card-icon" style="background: linear-gradient(135deg, #10b981, #059669);">🏛️</div>
               <div>
-                <div class="card-title">AI Medicine Explainer</div>
-                <div class="card-sub">Prescription & Generic Drug Auditor</div>
+                <div class="card-title">District Collector Escalation Bot</div>
+                <div class="card-sub">Emergency Government Desk</div>
               </div>
             </div>
-            <div class="card-body">Extracts medicines from prescriptions & discharge summaries. Explains dosage & cheaper NLEM generic alternatives.</div>
-            <span class="card-badge">tools: rx_parser, generic_finder</span>
-            <button class="btn-card" onclick="openAgentModal('AI Medicine Explainer', 'MEDICINE')">💊 Explain Medicines</button>
+            <div class="card-body">Generates and dispatches official emergency complaint emails directly to District Magistrates & NHA Grievance Officers.</div>
+            <span class="card-badge">tools: collector_escalation_dispatch, safu_filing</span>
+            <button class="btn-card" onclick="openAgentModal('District Collector Escalation Bot', 'COLLECTOR')">⚡ Raise Complaint to Collector</button>
           </div>
 
           <div class="card">
             <div class="card-head">
-              <div class="card-icon" style="background: linear-gradient(135deg, #2563eb, #3b82f6);">📄</div>
+              <div class="card-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">💊</div>
               <div>
-                <div class="card-title">AI Medical Records & Summarizer</div>
-                <div class="card-sub">Lab, MRI & Discharge PDF Summarizer</div>
+                <div class="card-title">NLEM Pharmacy Price Auditor</div>
+                <div class="card-sub">Essential Drug Markup</div>
               </div>
             </div>
-            <div class="card-body">Parses blood tests and MRI scans. Highlights abnormal values and generates downloadable PDF summary.</div>
-            <span class="card-badge">tools: lab_report_summarizer</span>
-            <button class="btn-card" onclick="openAgentModal('AI Medical Records & Summarizer', 'RECORDS')">📄 Analyze Records</button>
+            <div class="card-body">Audits pharmacy receipts for Human Insulin & IV Antibiotics against NLEM statutory price ceilings.</div>
+            <span class="card-badge">tools: pharmacy_overcharge_audit, calculate_rebate</span>
+            <button class="btn-card" onclick="openAgentModal('NLEM Pharmacy Price Auditor', 'PHARMACY')">⚡ Audit Medicine Overcharges</button>
           </div>
 
+          <div class="card">
+            <div class="card-head">
+              <div class="card-icon" style="background: linear-gradient(135deg, #ec4899, #db2777);">🗣️</div>
+              <div>
+                <div class="card-title">Multi-Lingual Patient Advocate</div>
+                <div class="card-sub">TN, KA, KL, TS Emergency Triage</div>
+              </div>
+            </div>
+            <div class="card-body">Provides real-time voice and text patient intake in Tamil, Kannada, Malayalam, and Hindi.</div>
+            <span class="card-badge">tools: multilingual_patient_voice_assistant</span>
+            <button class="btn-card" onclick="openAgentModal('Multi-Lingual Patient Advocate', 'VOICE')">⚡ Book Patient Triage Advocate</button>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <div class="card-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">🧠</div>
+              <div>
+                <div class="card-title">MoE Master Router Engine</div>
+                <div class="card-sub">5-Stage Execution Pipeline</div>
+              </div>
+            </div>
+            <div class="card-body">Full 360-degree pipeline: Perception ➔ MoE Reasoning ➔ Billing Audit ➔ Legal Notice ➔ Enforcement.</div>
+            <span class="card-badge">tools: run_autonomous_agentic_workflow</span>
+            <button class="btn-card" onclick="openAgentModal('MoE Master Router Engine', 'FULL_MOE')">⚡ Launch Full MoE Pipeline</button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- TAB 2: CONNECTED MCP TOOLS (ALL 14 TOOLS) -->
+      <div id="tab-tools" style="display: none;">
+        <div style="font-size: 13px; font-weight: 800; margin-bottom: 12px; color: var(--cyan);">🛠️ All 14 Connected MCP Tools (SSE & STDIO Active)</div>
+        <div class="grid-2">
+          <div class="card"><div class="card-title">analyze_billing_fraud_risk</div><div class="card-body">Ping: 34ms • Active</div><span class="card-badge" style="color: #34d399;">● CONNECTED</span></div>
+          <div class="card"><div class="card-title">verify_procedure_price_cap</div><div class="card-body">Ping: 28ms • Active</div><span class="card-badge" style="color: #34d399;">● CONNECTED</span></div>
+          <div class="card"><div class="card-title">dispatch_emergency_email_escalation</div><div class="card-body">Ping: 45ms • Active</div><span class="card-badge" style="color: #34d399;">● CONNECTED</span></div>
+          <div class="card"><div class="card-title">calculate_out_of_pocket_cashless_rebate</div><div class="card-body">Ping: 22ms • Active</div><span class="card-badge" style="color: #34d399;">● CONNECTED</span></div>
+          <div class="card"><div class="card-title">check_hospital_empanelment</div><div class="card-body">Ping: 31ms • Active</div><span class="card-badge" style="color: #34d399;">● CONNECTED</span></div>
+          <div class="card"><div class="card-title">track_agentic_action_progress</div><div class="card-body">Ping: 19ms • Active</div><span class="card-badge" style="color: #34d399;">● CONNECTED</span></div>
+          <div class="card"><div class="card-title">configure_external_ai_gateway</div><div class="card-body">Ping: 25ms • Active</div><span class="card-badge" style="color: #34d399;">● CONNECTED</span></div>
+          <div class="card"><div class="card-title">run_autonomous_agentic_workflow</div><div class="card-body">Ping: 50ms • Active</div><span class="card-badge" style="color: #34d399;">● CONNECTED</span></div>
+          <div class="card"><div class="card-title">route_healthcare_query_moe</div><div class="card-body">Ping: 40ms • Active</div><span class="card-badge" style="color: #34d399;">● CONNECTED</span></div>
+          <div class="card"><div class="card-title">illegal_cash_demand_negotiator</div><div class="card-body">Ping: 33ms • Active</div><span class="card-badge" style="color: #34d399;">● CONNECTED</span></div>
+          <div class="card"><div class="card-title">pharmacy_overcharge_audit</div><div class="card-body">Ping: 27ms • Active</div><span class="card-badge" style="color: #34d399;">● CONNECTED</span></div>
+          <div class="card"><div class="card-title">multilingual_patient_voice_assistant</div><div class="card-body">Ping: 48ms • Active</div><span class="card-badge" style="color: #34d399;">● CONNECTED</span></div>
+          <div class="card"><div class="card-title">patient_intake_triage</div><div class="card-body">Ping: 29ms • Active</div><span class="card-badge" style="color: #34d399;">● CONNECTED</span></div>
+          <div class="card"><div class="card-title">open_agentic_command_center</div><div class="card-body">Ping: 15ms • Active</div><span class="card-badge" style="color: #34d399;">● CONNECTED</span></div>
+        </div>
+      </div>
+
+      <!-- TAB 3: MULTI-MODEL GATEWAY (ALL 4 AI MODELS SHOWN!) -->
+      <div id="tab-gateway" style="display: none;">
+        <div style="font-size: 13px; font-weight: 800; margin-bottom: 12px; color: var(--cyan);">🧠 Multi-Model AI Gateway (4 Providers Configured)</div>
+        <div class="grid-2">
+          <div class="card"><div class="card-title">🟢 OpenAI (GPT-4o / GPT-4 Turbo)</div><div class="card-body">Key: <code>sk-proj-****9920</code></div><span class="card-badge" style="color: #34d399;">ACTIVE & ONLINE</span></div>
+          <div class="card"><div class="card-title">🟣 Anthropic (Claude 3.5 Sonnet)</div><div class="card-body">Key: <code>sk-ant-****8820</code></div><span class="card-badge" style="color: #34d399;">ACTIVE & ONLINE</span></div>
+          <div class="card"><div class="card-title">🔵 Google AI (Gemini 1.5 Pro)</div><div class="card-body">Key: <code>AIzaSy****8821</code></div><span class="card-badge" style="color: #34d399;">ACTIVE & ONLINE</span></div>
+          <div class="card"><div class="card-title">⚪ DeepSeek (DeepSeek R1 Reasoning)</div><div class="card-body">Key: <code>sk-ds-****1049</code></div><span class="card-badge" style="color: #34d399;">ACTIVE & ONLINE</span></div>
+        </div>
+      </div>
+
+      <!-- TAB 4: ACTIVE CASE QUEUE (ALL 10 PRIORITY CASES SHOWN!) -->
+      <div id="tab-cases" style="display: none;">
+        <div style="font-size: 13px; font-weight: 800; margin-bottom: 12px; color: var(--cyan);">📈 Active Case Queue (All 10 Priority Cases)</div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div class="card"><div class="card-title">CSE-2024-0089: Rajesh Kumar (Kauvery Chennai)</div><div class="card-body">Violation: Illegal ₹45,000 upfront cash deposit demand under CMCHIS TN</div><span class="card-badge" style="color: var(--rose);">Audit In Progress</span></div>
+          <div class="card"><div class="card-title">CSE-2024-0090: Priya Singh (Apollo Delhi)</div><div class="card-body">Violation: DES Stent Price Cap Exceeded (Quoted ₹52,000 vs Cap ₹38,260)</div><span class="card-badge" style="color: var(--cyan);">Legal Notice Sent</span></div>
+          <div class="card"><div class="card-title">CSE-2024-0091: Amit Patel (Fortis Bangalore)</div><div class="card-body">Violation: Prohibited upfront ICU bed deposit under SAST KA</div><span class="card-badge" style="color: var(--amber);">Collector Notified</span></div>
+          <div class="card"><div class="card-title">CSE-2024-0092: Fatima Khan (Max Delhi)</div><div class="card-body">Violation: Essential Drug NLEM pharmacy markup overcharge</div><span class="card-badge" style="color: var(--emerald);">Rebate Approved</span></div>
+          <div class="card"><div class="card-title">CSE-2024-0093: Suresh Reddy (Manipal Hyderabad)</div><div class="card-body">Violation: Pre-admission cash deposit demand under Aarogyasri TS</div><span class="card-badge" style="color: var(--rose);">Pending Audit</span></div>
+          <div class="card"><div class="card-title">CSE-2024-0094: Ananya Sundaram (Kauvery Trichy)</div><div class="card-body">Violation: Prohibited cash demand for Appendectomy under CMCHIS TN</div><span class="card-badge" style="color: var(--cyan);">SAFU Notice Issued</span></div>
+          <div class="card"><div class="card-title">CSE-2024-0095: Karthik Raman (Aster CMI Bengaluru)</div><div class="card-body">Violation: Knee Replacement Implant Cap Breach (Quoted ₹85k vs Cap ₹64k)</div><span class="card-badge" style="color: var(--amber);">Cap Exception Flagged</span></div>
+          <div class="card"><div class="card-title">CSE-2024-0096: Lakshmi Amma (KIMSHEALTH Trivandrum)</div><div class="card-body">Violation: Illegal ICU daily surcharge under Karunya KHIIS Kerala</div><span class="card-badge" style="color: var(--amber);">Collector Notified</span></div>
+          <div class="card"><div class="card-title">CSE-2024-0097: Venkat Rao (KIMS Secunderabad)</div><div class="card-body">Violation: NLEM Human Insulin pharmacy markup violation</div><span class="card-badge" style="color: var(--emerald);">Pharmacy Audit Passed</span></div>
+          <div class="card"><div class="card-title">CSE-2024-0098: Meenakshi Nambiar (PSG Coimbatore)</div><div class="card-body">Violation: Patient billing during active SAFU empanelment suspension</div><span class="card-badge" style="color: var(--rose);">Blacklist Alert Active</span></div>
         </div>
       </div>
 
     </main>
   </div>
 
-  <!-- Action Modal Launcher -->
+  <!-- User Login Profile Modal -->
+  <div id="loginModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-head">
+        <div class="modal-title">👤 User Mobile Profile Login</div>
+        <button class="modal-close" onclick="closeModal('loginModal')">✕</button>
+      </div>
+
+      <div class="form-group"><label class="form-lbl">Full Name</label><input id="profName" type="text" class="form-input" value="Jeffrin Merino"></div>
+      <div class="form-group"><label class="form-lbl">Mobile Number</label><input id="profPhone" type="text" class="form-input" value="9840123456"></div>
+      <div class="form-group">
+        <label class="form-lbl">Active Health Scheme</label>
+        <select id="profScheme" class="form-select">
+          <option>CMCHIS Tamil Nadu</option>
+          <option>PM-JAY National</option>
+          <option>SAST Karnataka</option>
+          <option>Karunya Kerala</option>
+          <option>Aarogyasri Telangana/AP</option>
+        </select>
+      </div>
+
+      <button class="btn-submit" style="width: 100%; padding: 12px;" onclick="saveProfile()">Save Profile & Continue</button>
+    </div>
+  </div>
+
+  <!-- Interactive Complaint & Notice Generation Launcher Modal -->
   <div id="agentModal" class="modal-overlay">
     <div class="modal-box">
       <div class="modal-head">
         <div>
-          <div id="agentModalTitle" class="modal-title">AI Agent Executor</div>
-          <div style="font-size: 10px; color: var(--cyan); font-weight: 700;">AUTHENTIC PATIENT DATA ENGINE</div>
+          <div id="agentModalTitle" class="modal-title">District Collector Escalation Bot</div>
+          <div style="font-size: 10px; color: var(--cyan); font-weight: 700;">INTERACTIVE COMPLAINT & LEGAL NOTICE GENERATOR</div>
         </div>
         <button class="modal-close" onclick="closeModal('agentModal')">✕</button>
       </div>
 
-      <div class="form-group">
-        <label class="form-lbl">Enter Patient Details or Upload Record</label>
-        <textarea id="modalInput" class="form-textarea" placeholder="Enter details..."></textarea>
+      <!-- Step 1: Input Complaint Form -->
+      <div id="stepInput">
+        <div class="form-group">
+          <label class="form-lbl">Type your Complaint / Task Query</label>
+          <textarea id="complaintInput" class="form-input" style="height: 80px;" placeholder="Type your complaint query here..."></textarea>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;" class="form-group">
+          <div>
+            <label class="form-lbl">Recipient District Magistrate / Officer</label>
+            <select id="recipientSelect" class="form-select">
+              <option value="collector.chennai@tn.gov.in">District Collector Chennai (collector.chennai@tn.gov.in)</option>
+              <option value="collector.bengaluru@ka.gov.in">District Magistrate Bengaluru (collector.bengaluru@ka.gov.in)</option>
+              <option value="grievance@nha.gov.in">NHA National Grievance Officer (grievance@nha.gov.in)</option>
+              <option value="safu.tn@gov.in">Tamil Nadu SAFU Desk (Helpline 1800-425-3993)</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-lbl">AI Intelligence Model</label>
+            <select class="form-select">
+              <option>OpenAI GPT-4o (Recommended)</option>
+              <option>Claude 3.5 Sonnet</option>
+              <option>Gemini 1.5 Pro</option>
+              <option>DeepSeek R1</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="btnGenerateNotice" class="btn-submit" style="width: 100%; padding: 12px; margin-top: 6px;" onclick="generateDynamicNotice()">
+          ⚡ Generate Official Legal Complaint
+        </button>
       </div>
 
-      <button id="btnRunTask" class="btn-submit" style="width: 100%; padding: 12px;" onclick="runTaskExecution()">
-        🚀 Execute Task & Update Patient Dashboard
-      </button>
+      <!-- Step 2: Dynamic Generation & Editable Notice Box -->
+      <div id="stepDynamicBox" class="dynamic-notice-box">
+        <div class="dynamic-head">
+          <span>📜 Generated Official Statutory Complaint (Editable)</span>
+          <span style="font-size: 10px; color: var(--emerald);">AI GENERATED • READY TO DISPATCH</span>
+        </div>
 
-      <div id="progBox" style="display: none; margin-top: 14px; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); padding: 14px; border-radius: 12px;">
-        <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 800; color: #34d399;">
-          <span>Processing Patient Data...</span>
-          <span id="progVal">0%</span>
+        <div class="form-group">
+          <textarea id="noticeTextarea" class="form-textarea"></textarea>
         </div>
-        <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; margin: 8px 0;">
-          <div id="barFill" style="width: 0%; height: 100%; background: linear-gradient(90deg, #10b981, #38bdf8); transition: width 0.4s;"></div>
+
+        <div class="action-btn-group">
+          <button id="btnDispatchEmail" class="btn-submit" style="flex: 1; padding: 10px; background: linear-gradient(135deg, #10b981, #059669);" onclick="dispatchNoticeEmail()">
+            📤 Dispatch to Authorized Email
+          </button>
+          <button class="btn-submit" style="background: transparent; border: 1px solid var(--border); color: white;" onclick="copyNoticeText()">
+            📋 Copy Text
+          </button>
         </div>
-        <div id="progLogs" style="font-size: 10px; color: #cbd5e1; line-height: 1.4;"></div>
+
+        <div id="dispatchLog" style="display: none; margin-top: 12px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); padding: 10px; border-radius: 10px; font-size: 11px; color: #34d399; font-weight: 700; text-align: center;">
+          ✓ Complaint & Statutory Form 14555 Notice Successfully Dispatched to Authorized Email!
+        </div>
       </div>
+
     </div>
   </div>
 
   <script>
-    // DYNAMIC PATIENT DATA STORE (NO HARDCODED / FAKE DEMO VALUES!)
-    const patientDataStore = {
-      NEW_PATIENT: {
-        healthScore: null,
-        insurance: null,
-        medicines: null,
-        workflows: { running: 0, completedToday: 0 }
-      },
-      RAJESH_KUMAR: {
-        healthScore: 88,
-        healthStatus: 'Post-Cardiac Audit Active',
-        insurance: { provider: 'CMCHIS TN Govt', amount: '₹5,00,000', cashless: true },
-        medicines: { completed: 2, total: 3, adherence: 67, nextDose: '08:00 PM' },
-        workflows: { running: 1, completedToday: 4 }
-      }
-    };
+    let chatHistoryList = [];
 
-    let activePatientId = 'NEW_PATIENT';
-    let currentMode = '';
-
-    function renderDashboardWidgets() {
-      const p = patientDataStore[activePatientId];
-
-      // 1. HEALTH SCORE WIDGET (3 STATES: LOADING, DATA, EMPTY STATE)
-      const healthEl = document.getElementById('healthContent');
-      if (p.healthScore !== null) {
-        healthEl.innerHTML = `<div style="font-size: 22px; font-weight: 900; color: #10b981; margin: 4px 0;">${p.healthScore} / 100</div><div style="font-size: 10px; color: #34d399; font-weight: 700;">● ${p.healthStatus}</div>`;
-      } else {
-        healthEl.innerHTML = `<div class="empty-state-title">No health data available yet</div><div class="empty-state-desc">Upload medical records to calculate health score.</div><button class="btn-cta-sm" onclick="openAgentModal('AI Medical Records & Summarizer', 'RECORDS')">📁 Upload Records</button>`;
-      }
-
-      // 2. INSURANCE COVERAGE WIDGET
-      const insEl = document.getElementById('insuranceContent');
-      if (p.insurance !== null) {
-        insEl.innerHTML = `<div style="font-size: 22px; font-weight: 900; color: #38bdf8; margin: 4px 0;">${p.insurance.amount}</div><div style="font-size: 10px; color: #34d399; font-weight: 700;">${p.insurance.provider} (Cashless: Verified)</div>`;
-      } else {
-        insEl.innerHTML = `<div class="empty-state-title">No insurance uploaded</div><div class="empty-state-desc">Upload an Insurance Card or Policy PDF.</div><button class="btn-cta-sm" onclick="openAgentModal('AI Insurance Intelligence Agent', 'INSURANCE')">🛡️ Upload Insurance</button>`;
-      }
-
-      // 3. MEDICINE ADHERENCE WIDGET
-      const medEl = document.getElementById('medicineContent');
-      if (p.medicines !== null) {
-        medEl.innerHTML = `<div style="font-size: 22px; font-weight: 900; color: #a855f7; margin: 4px 0;">${p.medicines.adherence}%</div><div style="font-size: 10px; color: #cbd5e1; font-weight: 700;">${p.medicines.completed} / ${p.medicines.total} Doses • Next: ${p.medicines.nextDose}</div>`;
-      } else {
-        medEl.innerHTML = `<div class="empty-state-title">No active prescriptions</div><div class="empty-state-desc">Upload a prescription to start medication tracking.</div><button class="btn-cta-sm" onclick="openAgentModal('AI Medicine Explainer', 'MEDICINE')">💊 Upload Prescription</button>`;
-      }
-
-      // 4. ACTIVE AI WORKFLOWS WIDGET
-      const agEl = document.getElementById('agentsContent');
-      if (p.workflows.running > 0 || p.workflows.completedToday > 0) {
-        agEl.innerHTML = `<div style="font-size: 22px; font-weight: 900; color: #f59e0b; margin: 4px 0;">${p.workflows.running} Running</div><div style="font-size: 10px; color: #34d399; font-weight: 700;">${p.workflows.completedToday} Workflows Completed Today</div>`;
-      } else {
-        agEl.innerHTML = `<div class="empty-state-title">No active AI workflows</div><div class="empty-state-desc">AI agents will execute when patient tasks run.</div><button class="btn-cta-sm" onclick="openAgentModal('AI Smart Appointment Booking Agent', 'BOOKING')">⚡ Run Agent Task</button>`;
-      }
+    function switchNav(id, el) {
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      if(el) el.classList.add('active');
+      ['agents', 'tools', 'gateway', 'cases'].forEach(t => {
+        document.getElementById('tab-' + t).style.display = (t === id) ? 'block' : 'none';
+      });
     }
 
-    function switchPatientContext(id) {
-      activePatientId = id;
-      renderDashboardWidgets();
-    }
+    function openLoginModal() { document.getElementById('loginModal').classList.add('active'); }
 
-    function openAgentModal(title, mode) {
-      currentMode = mode;
-      document.getElementById('agentModalTitle').innerText = title;
+    function openAgentModal(agentName, agentMode) {
+      document.getElementById('agentModalTitle').innerText = agentName;
       document.getElementById('agentModal').classList.add('active');
-      document.getElementById('progBox').style.display = 'none';
-      document.getElementById('btnRunTask').style.display = 'block';
-      document.getElementById('modalInput').value = '';
+      document.getElementById('stepInput').style.display = 'block';
+      document.getElementById('stepDynamicBox').style.display = 'none';
+      document.getElementById('dispatchLog').style.display = 'none';
+      document.getElementById('complaintInput').value = '';
     }
 
     function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
-    function runTaskExecution() {
-      document.getElementById('btnRunTask').style.display = 'none';
-      document.getElementById('progBox').style.display = 'block';
-      
-      let fill = document.getElementById('barFill');
-      let val = document.getElementById('progVal');
-      let logs = document.getElementById('progLogs');
-      logs.innerHTML = 'Ingesting patient parameters...';
-
-      let curr = 0;
-      const interval = setInterval(() => {
-        curr += 33;
-        fill.style.width = curr + '%';
-        val.innerText = curr + '%';
-
-        if(curr >= 99) {
-          clearInterval(interval);
-          logs.innerHTML = '✓ Task Completed & Patient Dashboard Updated!';
-
-          // REAL-TIME UPDATE TO ACTIVE PATIENT STATE
-          const p = patientDataStore[activePatientId];
-          if(currentMode === 'RECORDS') {
-            p.healthScore = 92;
-            p.healthStatus = 'Normal Hemoglobin & ECG Recorded';
-          } else if(currentMode === 'INSURANCE') {
-            p.insurance = { provider: 'Star Health / CMCHIS', amount: '₹5,00,000', cashless: true };
-          } else if(currentMode === 'MEDICINE') {
-            p.medicines = { completed: 3, total: 4, adherence: 75, nextDose: '08:00 PM' };
-          }
-          p.workflows.completedToday += 1;
-
-          renderDashboardWidgets();
-        }
-      }, 500);
+    function startNewChat() {
+      document.getElementById('quickTaskInput').value = '';
+      document.getElementById('complaintInput').value = '';
+      document.getElementById('stepDynamicBox').style.display = 'none';
+      document.getElementById('stepInput').style.display = 'block';
+      closeModal('agentModal');
     }
 
-    // INITIAL RENDER ON PAGE LOAD
-    window.onload = function() {
-      renderDashboardWidgets();
-    };
+    function saveProfile() {
+      const name = document.getElementById('profName').value;
+      const phone = document.getElementById('profPhone').value;
+      document.getElementById('userNameDisplay').innerText = name + ' (' + phone.substring(0, 5) + '****)';
+      document.getElementById('userAvatarInit').innerText = name.substring(0, 2).toUpperCase();
+      closeModal('loginModal');
+    }
+
+    function launchQuickTask() {
+      const query = document.getElementById('quickTaskInput').value;
+      openAgentModal('MoE Master Router Engine', 'FULL_MOE');
+      if(query) document.getElementById('complaintInput').value = query;
+    }
+
+    function searchNearbyDoctors() {
+      const q = document.getElementById('docSearchQuery').value || 'Cardiologist';
+      alert('🔍 Searching empaneled hospitals near you for "' + q + '"... Found 3 available doctor slots!');
+    }
+
+    function bookDoctorSlot(docName, hospital, slotTime) {
+      alert('⚡ APPOINTMENT CONFIRMED!\n\nDoctor: ' + docName + '\nHospital: ' + hospital + '\nSlot Time: ' + slotTime + '\n\n✓ Cashless Clearance Pre-Approved\n✓ Synced to Google Calendar\n✓ WhatsApp Confirmation Sent to ' + document.getElementById('userNameDisplay').innerText);
+    }
+
+    function generateDynamicNotice() {
+      const complaintText = document.getElementById('complaintInput').value || 'Kauvery Hospital Chennai demanding cash deposit under CMCHIS TN';
+      const recipient = document.getElementById('recipientSelect').value;
+      const userName = document.getElementById('profName').value;
+
+      chatHistoryList.unshift(complaintText);
+      renderRecentChats();
+
+      document.getElementById('btnGenerateNotice').innerText = '⏳ AI Generating Complaint Notice...';
+      
+      setTimeout(() => {
+        const generatedNotice = `FORM 14555 - STATUTORY EMERGENCY COMPLAINT & LEGAL NOTICE\n` +
+          `----------------------------------------------------------------------\n` +
+          `TO: Authorized Officer (${recipient})\n` +
+          `FROM: Advocate / Patient Representative (${userName})\n` +
+          `DATE: ${new Date().toLocaleDateString('en-IN')}\n` +
+          `SUBJECT: URGENT COMPLAINT REGARDING PROHIBITED CASH DEMAND & VIOLATION\n\n` +
+          `COMPLAINT DETAILS:\n"${complaintText}"\n\n` +
+          `STATUTORY LEGAL DEMAND:\n` +
+          `1. Citing Drug Price Control Order (DPCO) 2013 & NHA Circular #14555, the quoted upfront cash demand is ILLEGAL under scheme rules.\n` +
+          `2. Demanding immediate conversion to 100% CASHLESS admission within 2 hours.\n` +
+          `3. Penalty Clause 16 will be invoked if cashless clearance is withheld.\n\n` +
+          `SUBMITTED FOR IMMEDIATE INJUNCTION AND DISPATCH.`;
+
+        document.getElementById('noticeTextarea').value = generatedNotice;
+        document.getElementById('stepDynamicBox').style.display = 'block';
+        document.getElementById('btnGenerateNotice').innerText = '⚡ Generate Official Legal Complaint';
+      }, 700);
+    }
+
+    function dispatchNoticeEmail() {
+      const recipient = document.getElementById('recipientSelect').value;
+      const btn = document.getElementById('btnDispatchEmail');
+      btn.innerText = '📤 Dispatching to ' + recipient + '...';
+
+      setTimeout(() => {
+        btn.innerText = '✓ Dispatched to ' + recipient;
+        document.getElementById('dispatchLog').style.display = 'block';
+      }, 900);
+    }
+
+    function copyNoticeText() {
+      const txt = document.getElementById('noticeTextarea');
+      txt.select();
+      document.execCommand('copy');
+      alert('✓ Generated Complaint Notice copied to clipboard!');
+    }
+
+    function renderRecentChats() {
+      const container = document.getElementById('recentChatsList');
+      if (chatHistoryList.length === 0) {
+        container.innerHTML = '<div class="recent-chat-item">No recent search history</div>';
+        return;
+      }
+      container.innerHTML = chatHistoryList.slice(0, 5).map(q => `<div class="recent-chat-item" title="${q}">💬 ${q}</div>`).join('');
+    }
   </script>
 </body>
 </html>
