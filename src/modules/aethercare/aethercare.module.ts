@@ -1,0 +1,21 @@
+import { Module } from '@nitrostack/core';
+import { AetherCareTools } from './aethercare.tools.js';
+import { AutonomousScraperTools } from './autonomous_scraper.tools.js';
+import { MoERouterTools } from './moe_router.tools.js';
+import { GeoEmpanelmentTools } from './geo_empanelment.tools.js';
+import { AetherCareResources } from './aethercare.resources.js';
+import { AetherCarePrompts } from './aethercare.prompts.js';
+
+@Module({
+  name: 'aethercare',
+  description: 'Agentic MoE Healthcare Navigator for Indian Healthcare System',
+  controllers: [
+    AetherCareTools,
+    AutonomousScraperTools,
+    MoERouterTools,
+    GeoEmpanelmentTools,
+    AetherCareResources,
+    AetherCarePrompts
+  ]
+})
+export class AetherCareModule {}

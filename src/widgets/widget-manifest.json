@@ -1,0 +1,48 @@
+{
+  "version": "1.0.0",
+  "widgets": [
+    {
+      "uri": "/empanelment-card",
+      "name": "Hospital Empanelment & Blacklist Status Card",
+      "description": "Interactive card showing hospital empanelment status, cashless facility availability, active scheme coverage, and fraud warning alerts",
+      "examples": [],
+      "tags": ["healthcare", "hospital", "empanelment", "cashless"]
+    },
+    {
+      "uri": "/price-cap-audit",
+      "name": "NPPA Price Cap & Bill Audit Badge",
+      "description": "Side-by-side verification comparing quoted medical estimates against legal maximum caps under DPCO 2013 and NPPA orders",
+      "examples": [],
+      "tags": ["price-cap", "nppa", "billing", "audit", "fraud-risk"]
+    },
+    {
+      "uri": "/document-checklist",
+      "name": "Pre-Authorization Document Checklist Widget",
+      "description": "Interactive checklist tracking mandatory admission paperwork and Ayushman card requirements",
+      "examples": [],
+      "tags": ["eligibility", "documents", "pmjay", "checklist"]
+    },
+    {
+      "uri": "/moe-router",
+      "name": "Agentic MoE Decision Engine Widget",
+      "description": "Multi-agent intent classification and task orchestration dashboard across specialized Healthcare Expert Agents",
+      "examples": [],
+      "tags": ["moe", "router", "agentic", "decision-engine"]
+    },
+    {
+      "uri": "/grievance-notice",
+      "name": "NHA Form 14555 Legal Complaint Notice Widget",
+      "description": "Official legal grievance notice widget formatted for submission to National Grievance Portal & SAFU",
+      "examples": [],
+      "tags": ["grievance", "legal", "notice", "nha"]
+    },
+    {
+      "uri": "/hospital-map",
+      "name": "Nearest Empaneled Hospital Radius Radar Widget",
+      "description": "Interactive visual map card displaying nearest cashless hospitals sorted by GPS distance radius and free ICU beds",
+      "examples": [],
+      "tags": ["geo", "map", "nearest", "hospitals"]
+    }
+  ],
+  "generatedAt": "2026-07-25T19:00:00.000Z"
+}
