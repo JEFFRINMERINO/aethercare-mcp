@@ -10,323 +10,216 @@ export default function AgenticDashboardWidget() {
 
   const isDark = theme === 'dark';
 
-  // State matching NitroStack Spec
-  const [metrics, setMetrics] = useState({ activeCases: 17, pendingEscalations: 12, resolvedCases: 52 });
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCaseId, setSelectedCaseId] = useState<string | null>('CSE-2024-0089');
+  const [activeTab, setActiveTab] = useState<'agents' | 'tools' | 'gateway' | 'cases'>('agents');
+  const [showLaunchModal, setShowLaunchModal] = useState(false);
+  const [selectedAgentName, setSelectedAgentName] = useState('Dr. Aether Medical Auditor');
+  const [taskInput, setTaskInput] = useState('Rajesh Kumar admitted at Kauvery Hospital Chennai under CMCHIS TN, hospital demands 45,000 cash.');
   
-  // Modals
-  const [showLegalNoticeModal, setShowLegalNoticeModal] = useState(false);
-  const [showInspectorModal, setShowInspectorModal] = useState(false);
-  const [showAuditProgressModal, setShowAuditProgressModal] = useState(false);
+  // Progress states
+  const [progressPercent, setProgressPercent] = useState(0);
+  const [progressLogs, setProgressLogs] = useState<string[]>([]);
+  const [isExecuting, setIsExecuting] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
 
-  // Form & Action states
-  const [noticeSent, setNoticeSent] = useState(false);
-  const [rebateApproved, setRebateApproved] = useState(false);
-  const [lastRefreshed, setLastRefreshed] = useState<string | null>(null);
-
-  const cases = [
-    { caseId: 'CSE-2024-0089', patient: 'Rajesh Kumar', hospital: 'Kauvery Chennai', violation: 'Illegal upfront cash demand', amount: '₹45,000', status: 'Audit In Progress' },
-    { caseId: 'CSE-2024-0090', patient: 'Priya Singh', hospital: 'Apollo Delhi', violation: 'Price cap exceeded (DES stent)', amount: '₹52,000', status: 'Legal Notice Sent' },
-    { caseId: 'CSE-2024-0091', patient: 'Amit Patel', hospital: 'Fortis Bangalore', violation: 'Prohibited bed charges upfront', amount: '₹18,500', status: 'Collector Notified' },
-    { caseId: 'CSE-2024-0092', patient: 'Fatima Khan', hospital: 'Max Delhi', violation: 'Medicine markup violation', amount: '₹8,200', status: 'Rebate Approved' },
-    { caseId: 'CSE-2024-0093', patient: 'Suresh Reddy', hospital: 'Manipal Hyderabad', violation: 'Illegal deposit demand', amount: '₹35,000', status: 'Pending Audit' },
-    { caseId: 'CSE-2024-0094', patient: 'Ananya Sundaram', hospital: 'Kauvery Trichy (TN)', violation: 'Prohibited cash demand (Appendectomy)', amount: '₹28,000', status: 'SAFU Notice Issued' },
-    { caseId: 'CSE-2024-0095', patient: 'Karthik Raman', hospital: 'Aster CMI Bengaluru (KA)', violation: 'Knee implant cap breach (₹85k vs ₹64k)', amount: '₹85,000', status: 'Cap Exception Flagged' },
-    { caseId: 'CSE-2024-0096', patient: 'Lakshmi Amma', hospital: 'KIMSHEALTH Trivandrum (KL)', violation: 'Illegal ICU daily surcharge under Karunya', amount: '₹14,000', status: 'Collector Notified' },
-    { caseId: 'CSE-2024-0097', patient: 'Venkat Rao', hospital: 'KIMS Secunderabad (TS)', violation: 'NLEM Insulin pharmacy markup', amount: '₹4,350', status: 'Pharmacy Audit Passed' },
-    { caseId: 'CSE-2024-0098', patient: 'Meenakshi Nambiar', hospital: 'PSG Coimbatore (TN)', violation: 'Billing during SAFU suspension', amount: '₹62,000', status: 'Blacklist Alert Active' }
+  const agents = [
+    { name: 'Dr. Aether Medical Auditor', role: 'Billing & Insurance Fraud Audit', desc: 'Parses hospital bills, verifies Drug-Eluting Stents & ICU bed caps against NPPA DPCO statutory rules.', tools: ['analyze_billing_fraud_risk', 'verify_procedure_price_cap'], avatar: '👩‍⚕️', color: 'linear-gradient(135deg, #0284c7, #2563eb)' },
+    { name: 'NPPA Legal Enforcement Agent', role: 'Statutory Form 14555 Legal Notices', desc: 'Generates binding Form 14555 legal enforcement notices for prohibited upfront cash deposit demands.', tools: ['dispatch_emergency_email_escalation', 'grievance_notice_generator'], avatar: '⚖️', color: 'linear-gradient(135deg, #6366f1, #4f46e5)' },
+    { name: 'District Collector Escalation Bot', role: 'Emergency Government Escalation', desc: 'Dispatches immediate emergency email escalations to District Magistrates & SAFU Helplines.', tools: ['collector_escalation_dispatch', 'safu_grievance_filing'], avatar: '🏛️', color: 'linear-gradient(135deg, #10b981, #059669)' },
+    { name: 'NLEM Pharmacy Price Auditor', role: 'Essential Drug Markup Enforcement', desc: 'Audits pharmacy receipts for Human Insulin, IV Antibiotics, and Cardiac medications.', tools: ['pharmacy_overcharge_audit', 'calculate_cashless_rebate'], avatar: '💊', color: 'linear-gradient(135deg, #f59e0b, #d97706)' },
+    { name: 'Multi-Lingual Patient Advocate', role: 'Tamil, Kannada, Malayalam, Hindi Support', desc: 'Provides real-time voice and text patient intake, scheme eligibility, and emergency triage.', tools: ['multilingual_patient_voice_assistant', 'check_hospital_empanelment'], avatar: '🗣️', color: 'linear-gradient(135deg, #ec4899, #db2777)' },
+    { name: 'MoE Master Router Engine', role: '5-Stage Autonomous Execution Pipeline', desc: 'Full 360-degree autonomous pipeline combining Perception, Reasoning, Audit, Legal Notice, and Webhooks.', tools: ['run_autonomous_agentic_workflow', 'route_healthcare_query_moe'], avatar: '🧠', color: 'linear-gradient(135deg, #8b5cf6, #7c3aed)' }
   ];
 
-  const alerts = [
-    { id: 'alert-1', type: 'error', title: '🚨 Illegal Cash Demand Detected', message: 'Kauvery Chennai demanded ₹45,000 upfront for cardiac stent under CMCHIS. Patient protected. Legal notice queued.' },
-    { id: 'alert-2', type: 'warning', title: '⚠️ Price Cap Violation', message: 'Aster CMI Bengaluru charged ₹85,000 for Knee Implant (cap: ₹64,180). Audit initiated. Rebate: ₹20,820 + interest.' },
-    { id: 'alert-3', type: 'error', title: '🚨 Suspended Facility Violation', message: 'PSG Coimbatore attempted billing during active SAFU suspension. Case escalated for license review.' },
-    { id: 'alert-4', type: 'success', title: '✅ Legal Notice Dispatched', message: 'NHA Grievance Officer and Collector notified of KIMSHEALTH Trivandrum violation.' }
+  const toolsList = [
+    'analyze_billing_fraud_risk', 'verify_procedure_price_cap', 'dispatch_emergency_email_escalation',
+    'calculate_out_of_pocket_cashless_rebate', 'check_hospital_empanelment', 'track_agentic_action_progress',
+    'configure_external_ai_gateway', 'run_autonomous_agentic_workflow', 'illegal_cash_demand_negotiator',
+    'pharmacy_overcharge_audit', 'multilingual_patient_voice_assistant', 'patient_intake_triage',
+    'claim_audit_assistant', 'open_agentic_command_center'
   ];
 
-  const workflows = [
-    { id: 'WF-001', name: 'Billing Fraud Detection', progress: 87, status: 'Running', detail: 'Analyzing 10 active cases for price cap violations...' },
-    { id: 'WF-002', name: 'Price Cap Verification', progress: 100, status: 'Complete', detail: 'All 17 active cases verified against NPPA registry. 5 violations found.' },
-    { id: 'WF-003', name: 'Legal Notice Dispatch', progress: 75, status: 'Running', detail: 'Sending enforcement notices to NHA and District Collectors...' },
-    { id: 'WF-004', name: 'NHA Grievance Filing', progress: 60, status: 'Running', detail: 'Filing formal grievances for 5 high-priority violations...' }
-  ];
+  const startTask = () => {
+    setIsExecuting(true);
+    setIsCompleted(false);
+    setProgressPercent(0);
+    setProgressLogs(["Ingesting hospital empanelment & scheme rules..."]);
 
-  const toolExecutions = [
-    { name: 'analyze_billing_fraud_risk', status: 'Success', responseTime: 342, last: '2026-07-25T20:58:12Z' },
-    { name: 'verify_procedure_price_cap', status: 'Success', responseTime: 256, last: '2026-07-25T20:57:45Z' },
-    { name: 'dispatch_emergency_email_escalation', status: 'Running', responseTime: 0, last: '2026-07-25T20:59:00Z' },
-    { name: 'check_hospital_empanelment', status: 'Success', responseTime: 189, last: '2026-07-25T20:56:30Z' },
-    { name: 'calculate_out_of_pocket_cashless_rebate', status: 'Success', responseTime: 128, last: '2026-07-25T20:55:22Z' }
-  ];
+    const logsArray = [
+      "✓ Stage 1: Perception — Ingested Kauvery Hospital Chennai empanelment status (EMPANELED_ACTIVE).",
+      "✓ Stage 2: MoE Reasoning — Verified Cardiac Stent against NPPA DPCO 2013 cap (Cap: ₹38,260 vs Quote: ₹45,000).",
+      "✓ Stage 3: Fraud Audit — Flagged ₹6,740 illegal overcharge & prohibited upfront deposit.",
+      "✓ Stage 4: Legal Formulation — Formulated Form 14555 Statutory Enforcement Notice.",
+      "✓ Stage 5: Enforcement Dispatch — Dispatched email escalation to District Collector Chennai & NHA Desk!"
+    ];
+
+    let currentStep = 0;
+    const interval = setInterval(() => {
+      currentStep++;
+      setProgressPercent(currentStep * 20);
+      if (currentStep <= logsArray.length) {
+        setProgressLogs(prev => [...prev, logsArray[currentStep - 1]]);
+      }
+
+      if (currentStep >= 5) {
+        clearInterval(interval);
+        setIsExecuting(false);
+        setIsCompleted(true);
+      }
+    }, 600);
+  };
 
   return (
     <div style={{
       padding: '24px',
-      background: isDark
-        ? 'linear-gradient(135deg, #090d16 0%, #0f172a 40%, #1e1b4b 100%)'
-        : 'linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%)',
+      background: isDark ? '#07090e' : '#f8fafc',
       borderRadius: '24px',
       color: isDark ? '#ffffff' : '#0f172a',
-      maxWidth: '850px',
+      maxWidth: '860px',
       boxShadow: '0 25px 60px rgba(0,0,0,0.5)',
       fontFamily: 'system-ui, -apple-system, sans-serif',
       border: '1px solid ' + (isDark ? 'rgba(56, 189, 248, 0.4)' : '#cbd5e1')
     }}>
       
-      {/* 1. TOP TITLE */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span style={{ fontSize: '24px' }}>🏥</span>
+      {/* 1. TOP HEADER */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', paddingBottom: '16px', borderBottom: '1px solid ' + (isDark ? 'rgba(56, 189, 248, 0.2)' : '#e2e8f0') }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ background: 'linear-gradient(135deg, #0284c7, #6366f1)', width: '38px', height: '38px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', color: 'white' }}>⚡</div>
           <div>
-            <h2 style={{ margin: 0, fontSize: '19px', fontWeight: 800 }}>AetherCare Healthcare Audit Command Center</h2>
-            <span style={{ fontSize: '11px', color: '#38bdf8', fontWeight: 600 }}>
-              Real-time autonomous compliance monitoring, billing fraud detection, and enforcement dispatch
-            </span>
+            <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 800 }}>AetherOS — Enterprise AI Agent Platform</h2>
+            <span style={{ fontSize: '11px', color: '#38bdf8', fontWeight: 600 }}>14 CONNECTED MCP TOOLS • 6 AUTONOMOUS AGENTS</span>
           </div>
         </div>
-        <span style={{ background: '#0284c7', color: 'white', fontSize: '11px', fontWeight: 800, padding: '5px 12px', borderRadius: '20px' }}>
-          10 ACTIVE CASES
+        <span style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#34d399', fontSize: '11px', fontWeight: 800, padding: '5px 12px', borderRadius: '20px', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
+          ● 100% OPERATIONAL
         </span>
       </div>
 
-      {/* 2. TOP CENTRAL ACTION HUB */}
-      <div style={{ background: isDark ? 'rgba(255,255,255,0.04)' : '#ffffff', border: '1px solid ' + (isDark ? 'rgba(255,255,255,0.1)' : '#e2e8f0'), padding: '16px', borderRadius: '18px', marginBottom: '20px' }}>
-        
-        {/* Search Bar */}
-        <div style={{ display: 'flex', gap: '10px', marginBottom: '14px' }}>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Global Case Search (e.g. Kauvery Trichy, Aster Bengaluru, KIMSHEALTH Trivandrum)"
+      {/* 2. TAB CONTROLS */}
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
+        {[
+          { id: 'agents', label: '🤖 AI Agent Marketplace' },
+          { id: 'tools', label: '🛠️ Connected MCP Tools (14)' },
+          { id: 'gateway', label: '🧠 Multi-Model Gateway' },
+          { id: 'cases', label: '📈 Active Case Queue (10)' }
+        ].map(t => (
+          <button
+            key={t.id}
+            onClick={() => setActiveTab(t.id as any)}
             style={{
-              flex: 1,
-              background: isDark ? '#090d16' : '#f8fafc',
-              border: '1px solid ' + (isDark ? 'rgba(255,255,255,0.15)' : '#cbd5e1'),
+              padding: '8px 14px',
               borderRadius: '10px',
-              padding: '10px 14px',
-              color: isDark ? '#ffffff' : '#0f172a',
-              fontSize: '13px',
-              outline: 'none'
+              border: 'none',
+              fontWeight: 700,
+              fontSize: '11px',
+              cursor: 'pointer',
+              background: activeTab === t.id ? '#0284c7' : (isDark ? 'rgba(255,255,255,0.05)' : '#e2e8f0'),
+              color: activeTab === t.id ? '#ffffff' : (isDark ? '#cbd5e1' : '#475569')
             }}
-          />
-          <button style={{ background: 'linear-gradient(135deg, #0284c7, #2563eb)', color: 'white', border: 'none', borderRadius: '10px', padding: '10px 16px', fontWeight: 700, fontSize: '12px', cursor: 'pointer' }}>
-            🔍 Search Cases
+          >
+            {t.label}
           </button>
-        </div>
-
-        {/* Quick Metrics Bar */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginBottom: '14px' }}>
-          <div style={{ background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)', padding: '10px', borderRadius: '10px' }}>
-            <span style={{ fontSize: '11px', opacity: 0.7, display: 'block' }}>Active Cases</span>
-            <strong style={{ fontSize: '18px', color: '#38bdf8' }}>{metrics.activeCases}</strong>
-          </div>
-          <div style={{ background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)', padding: '10px', borderRadius: '10px' }}>
-            <span style={{ fontSize: '11px', opacity: 0.7, display: 'block' }}>Pending Escalations</span>
-            <strong style={{ fontSize: '18px', color: '#ef4444' }}>{metrics.pendingEscalations}</strong>
-          </div>
-          <div style={{ background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)', padding: '10px', borderRadius: '10px' }}>
-            <span style={{ fontSize: '11px', opacity: 0.7, display: 'block' }}>Resolved Cases</span>
-            <strong style={{ fontSize: '18px', color: '#10b981' }}>{metrics.resolvedCases}</strong>
-          </div>
-        </div>
-
-        {/* Quick Action Buttons */}
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <button onClick={() => setShowAuditProgressModal(true)} style={{ background: 'linear-gradient(135deg, #0284c7, #2563eb)', color: 'white', border: 'none', borderRadius: '10px', padding: '8px 14px', fontWeight: 700, fontSize: '11px', cursor: 'pointer' }}>
-            ▶ Trigger Audit
-          </button>
-          <button onClick={() => setShowLegalNoticeModal(true)} style={{ background: 'linear-gradient(135deg, #6366f1, #4f46e5)', color: 'white', border: 'none', borderRadius: '10px', padding: '8px 14px', fontWeight: 700, fontSize: '11px', cursor: 'pointer' }}>
-            📧 Legal Notice
-          </button>
-          <button onClick={() => setRebateApproved(true)} style={{ background: rebateApproved ? '#10b981' : 'linear-gradient(135deg, #10b981, #059669)', color: 'white', border: 'none', borderRadius: '10px', padding: '8px 14px', fontWeight: 700, fontSize: '11px', cursor: 'pointer' }}>
-            {rebateApproved ? '✓ Rebates Approved' : '✅ Approve Rebate'}
-          </button>
-          <button onClick={() => setLastRefreshed(new Date().toLocaleTimeString())} style={{ background: 'transparent', color: isDark ? '#cbd5e1' : '#475569', border: '1px solid ' + (isDark ? 'rgba(255,255,255,0.2)' : '#cbd5e1'), borderRadius: '10px', padding: '8px 14px', fontWeight: 700, fontSize: '11px', cursor: 'pointer' }}>
-            🔄 {lastRefreshed ? `Refreshed ${lastRefreshed}` : 'Refresh Status'}
-          </button>
-        </div>
+        ))}
       </div>
 
-      {/* 3. REAL-TIME SYSTEM ALERTS PANEL */}
-      <div style={{ marginBottom: '20px' }}>
-        <h4 style={{ margin: '0 0 10px 0', fontSize: '13px', fontWeight: 800 }}>🔔 Real-Time System Alerts</h4>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          {alerts.map((al) => (
-            <div key={al.id} style={{
-              background: al.type === 'error' ? (isDark ? 'rgba(239, 68, 68, 0.12)' : '#fff1f2') : al.type === 'warning' ? (isDark ? 'rgba(245, 158, 11, 0.12)' : '#fffbeb') : (isDark ? 'rgba(16, 185, 129, 0.12)' : '#f0fdf4'),
-              borderLeft: '4px solid ' + (al.type === 'error' ? '#ef4444' : al.type === 'warning' ? '#f59e0b' : '#10b981'),
-              padding: '10px 12px', borderRadius: '10px', fontSize: '11px'
-            }}>
-              <strong>{al.title}:</strong> {al.message}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* 4. ACTIVE CASE AUDIT QUEUE TABLE */}
-      <div style={{ background: isDark ? 'rgba(255,255,255,0.04)' : '#ffffff', border: '1px solid ' + (isDark ? 'rgba(255,255,255,0.1)' : '#e2e8f0'), padding: '16px', borderRadius: '18px', marginBottom: '20px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-          <h4 style={{ margin: 0, fontSize: '13px', fontWeight: 800 }}>📋 Active Case Audit Queue (10 Priority Cases)</h4>
-          <span style={{ fontSize: '11px', color: '#10b981', fontWeight: 700 }}>10 ACTIVE</span>
-        </div>
-
-        <div style={{ overflowX: 'auto', maxHeight: '280px' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '11px', textAlign: 'left' }}>
-            <thead>
-              <tr style={{ borderBottom: '1px solid ' + (isDark ? 'rgba(255,255,255,0.1)' : '#cbd5e1'), opacity: 0.7 }}>
-                <th style={{ padding: '8px' }}>Case ID</th>
-                <th style={{ padding: '8px' }}>Patient</th>
-                <th style={{ padding: '8px' }}>Hospital</th>
-                <th style={{ padding: '8px' }}>Violation</th>
-                <th style={{ padding: '8px' }}>Amount</th>
-                <th style={{ padding: '8px' }}>Status</th>
-                <th style={{ padding: '8px' }}>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cases.map((c) => (
-                <tr key={c.caseId} style={{ borderBottom: '1px solid ' + (isDark ? 'rgba(255,255,255,0.05)' : '#f1f5f9') }}>
-                  <td style={{ padding: '8px', fontWeight: 700, color: '#38bdf8' }}>{c.caseId}</td>
-                  <td style={{ padding: '8px' }}>{c.patient}</td>
-                  <td style={{ padding: '8px' }}>{c.hospital}</td>
-                  <td style={{ padding: '8px', color: '#ef4444' }}>{c.violation}</td>
-                  <td style={{ padding: '8px', fontWeight: 700 }}>{c.amount}</td>
-                  <td style={{ padding: '8px' }}>
-                    <span style={{ background: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8', padding: '2px 6px', borderRadius: '6px', fontSize: '10px' }}>{c.status}</span>
-                  </td>
-                  <td style={{ padding: '8px' }}>
-                    <button onClick={() => { setSelectedCaseId(c.caseId); setShowInspectorModal(true); }} style={{ background: '#0284c7', color: 'white', border: 'none', borderRadius: '6px', padding: '4px 8px', fontSize: '10px', cursor: 'pointer' }}>
-                      Inspect Case
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* 5. AUTONOMOUS WORKFLOW EXECUTION SECTION */}
-      <div style={{ marginBottom: '20px' }}>
-        <h4 style={{ margin: '0 0 10px 0', fontSize: '13px', fontWeight: 800 }}>⚙️ Autonomous Workflow Execution Monitoring</h4>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-          {workflows.map((wf) => (
-            <div key={wf.id} style={{ background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff', border: '1px solid ' + (isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0'), padding: '12px', borderRadius: '12px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: 700, marginBottom: '4px' }}>
-                <span>{wf.name} ({wf.id})</span>
-                <span style={{ color: wf.status === 'Complete' ? '#10b981' : '#38bdf8' }}>{wf.progressPercent}%</span>
-              </div>
-              <p style={{ margin: 0, fontSize: '10px', opacity: 0.75 }}>{wf.detail}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* 6. BACKGROUND MCP TOOL EXECUTION MONITOR */}
-      <div style={{ background: isDark ? 'rgba(0,0,0,0.4)' : '#ffffff', border: '1px solid ' + (isDark ? 'rgba(255,255,255,0.1)' : '#cbd5e1'), padding: '14px', borderRadius: '16px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: 700, marginBottom: '10px' }}>
-          <span>🔧 Background MCP Tool Execution Monitor</span>
-          <span style={{ color: '#10b981' }}>Total Calls: 47 • Success Rate: 98% • Avg Response: 263ms</span>
-        </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', fontSize: '10px' }}>
-          {toolExecutions.map((t, i) => (
-            <span key={i} style={{ background: isDark ? 'rgba(255,255,255,0.05)' : '#f1f5f9', padding: '4px 8px', borderRadius: '6px' }}>
-              <code>{t.name}</code> ({t.responseTime > 0 ? `${t.responseTime}ms` : 'Running'})
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* MODAL 1: LEGAL NOTICE DISPATCH MODAL */}
-      {showLegalNoticeModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div style={{ background: isDark ? '#0f172a' : '#ffffff', border: '1px solid rgba(56,189,248,0.4)', padding: '24px', borderRadius: '20px', width: '480px' }}>
-            <h3 style={{ margin: '0 0 10px 0', fontSize: '16px' }}>📧 Dispatch Legal Notice to NHA & District Collector</h3>
-            <p style={{ fontSize: '11px', opacity: 0.8, marginBottom: '14px' }}>Compose & send statutory Form 14555 legal enforcement notice to regulatory authorities.</p>
-            
-            <div style={{ fontSize: '11px', marginBottom: '10px' }}>
-              <strong>Patient:</strong> Rajesh Kumar | <strong>Hospital:</strong> Kauvery Chennai | <strong>Cash Demanded:</strong> ₹45,000
-            </div>
-            
-            <textarea
-              readOnly
-              value={`FORM 14555 - STATUTORY NHA LEGAL NOTICE\nTO: District Collector (collector.chennai@tn.gov.in) & NHA Grievance Officer\nRE: Prohibited upfront cash deposit demand at Kauvery Chennai.\nDEMAND: Convert admission to 100% cashless within 2 hours under CMCHIS TN Clause 16.`}
-              style={{ width: '100%', height: '120px', background: isDark ? '#090d16' : '#f8fafc', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', color: isDark ? '#ffffff' : '#0f172a', padding: '10px', fontSize: '11px', marginBottom: '14px' }}
-            />
-
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <button onClick={() => { setNoticeSent(true); setTimeout(() => setShowLegalNoticeModal(false), 1500); }} style={{ flex: 1, background: '#10b981', color: 'white', border: 'none', padding: '10px', borderRadius: '10px', fontWeight: 700, fontSize: '12px', cursor: 'pointer' }}>
-                {noticeSent ? '✓ Sent to Collector & NHA!' : '📤 Send Legal Notice'}
-              </button>
-              <button onClick={() => setShowLegalNoticeModal(false)} style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: isDark ? '#ffffff' : '#0f172a', padding: '10px 16px', borderRadius: '10px', fontSize: '12px', cursor: 'pointer' }}>
-                ✕ Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* MODAL 2: CASE INSPECTOR MODAL */}
-      {showInspectorModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div style={{ background: isDark ? '#0f172a' : '#ffffff', border: '1px solid rgba(56,189,248,0.4)', padding: '24px', borderRadius: '20px', width: '520px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-              <h3 style={{ margin: 0, fontSize: '16px' }}>🔍 Case Inspector: {selectedCaseId}</h3>
-              <button onClick={() => setShowInspectorModal(false)} style={{ background: 'transparent', border: 'none', color: '#ef4444', fontWeight: 800, cursor: 'pointer' }}>✕</button>
-            </div>
-
-            <div style={{ fontSize: '11px', marginBottom: '14px', background: 'rgba(255,255,255,0.03)', padding: '10px', borderRadius: '10px' }}>
-              Patient: <strong>Rajesh Kumar</strong> • Hospital: <strong>Kauvery Chennai</strong> • Status: <strong style={{ color: '#ef4444' }}>Illegal Cash Demand</strong>
-            </div>
-
-            <h4 style={{ margin: '0 0 8px 0', fontSize: '12px' }}>📊 Itemized Billing Audit Breakdown:</h4>
-            <div style={{ fontSize: '11px', marginBottom: '14px' }}>
-              • Cardiac Stent DES: Quoted <strong>₹48,000</strong> (NPPA Cap: ₹50,000) ✓ Compliant<br />
-              • ICU Bed (3 Days): Quoted <strong>₹19,500</strong> (Legal Cap: ₹18,000) ⚠️ <strong>₹1,500 Overcharge</strong><br />
-              • Anesthesia: Quoted <strong>₹4,200</strong> (Legal Cap: ₹4,000) ⚠️ <strong>₹200 Overcharge</strong>
-            </div>
-
-            <div style={{ background: 'rgba(16,185,129,0.15)', padding: '10px', borderRadius: '10px', fontSize: '11px', marginBottom: '14px' }}>
-              Total Charged: <strong>₹53,500</strong> • Legal Cap: <strong>₹50,000</strong> • Rebate Entitlement: <strong style={{ color: '#10b981' }}>₹3,920 + 12% Interest</strong>
-            </div>
-
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <button onClick={() => { setShowInspectorModal(false); setShowAuditProgressModal(true); }} style={{ flex: 1, background: '#0284c7', color: 'white', border: 'none', padding: '10px', borderRadius: '10px', fontWeight: 700, fontSize: '12px', cursor: 'pointer' }}>
-                ▶ Run Compliance Audit
-              </button>
-              <button onClick={() => { setShowInspectorModal(false); setShowLegalNoticeModal(true); }} style={{ flex: 1, background: '#6366f1', color: 'white', border: 'none', padding: '10px', borderRadius: '10px', fontWeight: 700, fontSize: '12px', cursor: 'pointer' }}>
-                📧 Dispatch Legal Notice
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* MODAL 3: AUDIT PROGRESS MODAL */}
-      {showAuditProgressModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div style={{ background: isDark ? '#0f172a' : '#ffffff', border: '1px solid rgba(56,189,248,0.4)', padding: '24px', borderRadius: '20px', width: '460px' }}>
-            <h3 style={{ margin: '0 0 10px 0', fontSize: '16px' }}>⚙️ Compliance Audit Workflow in Progress</h3>
-            <p style={{ fontSize: '11px', opacity: 0.8, marginBottom: '14px' }}>Real-time autonomous billing fraud detection and price cap verification.</p>
-
-            {[
-              { title: 'User Intent Perception & Task Parsing', percent: 100, status: 'DONE' },
-              { title: 'Autonomous Tool Selection', percent: 100, status: 'DONE' },
-              { title: 'Database & Regulatory Rule Retrieval', percent: 100, status: 'DONE' },
-              { title: 'Action Execution & State Mutation', percent: 100, status: 'DONE' },
-              { title: 'Verification & Final Delivery', percent: 100, status: 'COMPLETED' }
-            ].map((step, idx) => (
-              <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                <span>Step {idx + 1}: {step.title}</span>
-                <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓ {step.status}</span>
+      {/* TAB 1: AI AGENTS MARKETPLACE */}
+      {activeTab === 'agents' && (
+        <div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+            {agents.map((ag, i) => (
+              <div key={i} style={{ background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff', border: '1px solid ' + (isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0'), padding: '16px', borderRadius: '16px', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                  <div style={{ background: ag.color, width: '40px', height: '40px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', color: 'white', flexShrink: 0 }}>{ag.avatar}</div>
+                  <div>
+                    <div style={{ fontSize: '14px', fontWeight: 800 }}>{ag.name}</div>
+                    <div style={{ fontSize: '10px', color: '#38bdf8', fontWeight: 700 }}>{ag.role}</div>
+                  </div>
+                </div>
+                <p style={{ fontSize: '11px', opacity: 0.8, lineHeight: 1.4, marginBottom: '12px', flex: 1 }}>{ag.desc}</p>
+                <button
+                  onClick={() => { setSelectedAgentName(ag.name); setShowLaunchModal(true); setIsCompleted(false); setIsExecuting(false); setProgressPercent(0); }}
+                  style={{ width: '100%', background: 'linear-gradient(135deg, #0284c7, #2563eb)', color: 'white', border: 'none', padding: '10px', borderRadius: '10px', fontWeight: 800, fontSize: '11px', cursor: 'pointer' }}
+                >
+                  ⚡ Book & Deploy Agent
+                </button>
               </div>
             ))}
+          </div>
+        </div>
+      )}
 
-            <button onClick={() => setShowAuditProgressModal(false)} style={{ width: '100%', background: '#0284c7', color: 'white', border: 'none', padding: '10px', borderRadius: '10px', fontWeight: 700, fontSize: '12px', cursor: 'pointer', marginTop: '16px' }}>
-              ✕ Close Audit Progress
-            </button>
+      {/* TAB 2: CONNECTED MCP TOOLS */}
+      {activeTab === 'tools' && (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+          {toolsList.map((tName, idx) => (
+            <div key={idx} style={{ background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff', border: '1px solid ' + (isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0'), padding: '12px', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontSize: '11px' }}>
+                <code style={{ color: '#38bdf8', fontWeight: 700 }}>{tName}</code>
+                <div style={{ fontSize: '10px', opacity: 0.6 }}>Ping: {20 + (idx * 3)}ms • SSE Active</div>
+              </div>
+              <span style={{ background: 'rgba(16,185,129,0.15)', color: '#34d399', fontSize: '9px', fontWeight: 800, padding: '2px 6px', borderRadius: '6px' }}>CONNECTED</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* TAB 3: MULTI-MODEL GATEWAY */}
+      {activeTab === 'gateway' && (
+        <div style={{ fontSize: '12px' }}>
+          <div style={{ background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff', padding: '16px', borderRadius: '16px', marginBottom: '10px' }}>
+            <strong>🟢 OpenAI (GPT-4o / GPT-4 Turbo)</strong> — Key: <code>sk-proj-****9920</code> <span style={{ color: '#34d399', fontWeight: 800, marginLeft: '10px' }}>[ACTIVE]</span>
+          </div>
+          <div style={{ background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff', padding: '16px', borderRadius: '16px' }}>
+            <strong>🟣 Anthropic (Claude 3.5 Sonnet)</strong> — Key: <code>sk-ant-****8820</code> <span style={{ color: '#34d399', fontWeight: 800, marginLeft: '10px' }}>[ACTIVE]</span>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 4: CASES */}
+      {activeTab === 'cases' && (
+        <div style={{ fontSize: '11px' }}>
+          <div style={{ background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff', padding: '12px', borderRadius: '12px', marginBottom: '8px' }}>
+            <strong>CSE-2024-0089: Rajesh Kumar</strong> (Kauvery Hospital Chennai) — Demanded ₹45,000 cash under CMCHIS. Status: <span style={{ color: '#ef4444' }}>Illegal Overcharge Flagged</span>
+          </div>
+          <div style={{ background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff', padding: '12px', borderRadius: '12px' }}>
+            <strong>CSE-2024-0090: Priya Singh</strong> (Apollo Lifecare Delhi) — Quoted ₹52,000 for DES Stent (Cap ₹38.26k). Status: <span style={{ color: '#38bdf8' }}>Legal Notice Sent</span>
+          </div>
+        </div>
+      )}
+
+      {/* BOOKING LAUNCH MODAL */}
+      {showLaunchModal && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div style={{ background: isDark ? '#0b0f19' : '#ffffff', border: '1px solid rgba(56,189,248,0.4)', padding: '24px', borderRadius: '20px', width: '480px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+              <h3 style={{ margin: 0, fontSize: '16px' }}>Book & Deploy: {selectedAgentName}</h3>
+              <button onClick={() => setShowLaunchModal(false)} style={{ background: 'transparent', border: 'none', color: '#ef4444', fontWeight: 800, cursor: 'pointer' }}>✕</button>
+            </div>
+
+            <div style={{ marginBottom: '14px' }}>
+              <label style={{ fontSize: '10px', color: '#38bdf8', fontWeight: 700, display: 'block', marginBottom: '4px' }}>TARGET TASK STATEMENT</label>
+              <input type="text" value={taskInput} onChange={(e) => setTaskInput(e.target.value)} style={{ width: '100%', background: isDark ? '#090d16' : '#f8fafc', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', padding: '10px', color: isDark ? '#ffffff' : '#0f172a', fontSize: '12px' }} />
+            </div>
+
+            {!isExecuting && !isCompleted && (
+              <button onClick={startTask} style={{ width: '100%', background: 'linear-gradient(135deg, #10b981, #059669)', color: 'white', border: 'none', padding: '12px', borderRadius: '10px', fontWeight: 800, fontSize: '12px', cursor: 'pointer' }}>
+                🚀 Launch Autonomous Agent Task
+              </button>
+            )}
+
+            {(isExecuting || isCompleted) && (
+              <div style={{ background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.3)', padding: '14px', borderRadius: '12px', marginTop: '10px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: 800, marginBottom: '6px' }}>
+                  <span>{isCompleted ? '⚡ Autonomous Task Completed!' : 'Executing 5-Stage Agentic Loop...'}</span>
+                  <span style={{ color: '#38bdf8' }}>{progressPercent}%</span>
+                </div>
+                <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '3px', overflow: 'hidden', marginBottom: '10px' }}>
+                  <div style={{ width: `${progressPercent}%`, height: '100%', background: 'linear-gradient(90deg, #10b981, #38bdf8)', transition: 'width 0.4s' }}></div>
+                </div>
+                <div style={{ fontSize: '10px', color: '#cbd5e1', lineHeight: 1.5, maxHeight: '100px', overflowY: 'auto' }}>
+                  {progressLogs.map((lg, i) => <div key={i}>{lg}</div>)}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
