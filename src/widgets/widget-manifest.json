@@ -42,7 +42,21 @@
       "description": "Interactive visual map card displaying nearest cashless hospitals sorted by GPS distance radius and free ICU beds",
       "examples": [],
       "tags": ["geo", "map", "nearest", "hospitals"]
+    },
+    {
+      "uri": "/pharmacy-audit",
+      "name": "NLEM Drug Price Ceiling Audit Widget",
+      "description": "Interactive pharmacy audit badge checking medicine prices against NPPA NLEM 2026 statutory ceilings",
+      "examples": [],
+      "tags": ["pharmacy", "medicine", "nlem", "nppa"]
+    },
+    {
+      "uri": "/rebate-calculator",
+      "name": "Cashless Rebate & Interest Penalty Calculator Widget",
+      "description": "Calculates 100% legal reimbursement entitlement and statutory interest penalties for illegal out-of-pocket cash deposits",
+      "examples": [],
+      "tags": ["rebate", "cashless", "refund", "penalty"]
     }
   ],
-  "generatedAt": "2026-07-25T19:00:00.000Z"
+  "generatedAt": "2026-07-25T22:20:00.000Z"
 }

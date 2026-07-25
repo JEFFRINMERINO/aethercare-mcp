@@ -53,4 +53,70 @@ export class AetherCareResources {
       }
     };
   }
+
+  @Resource({
+    uri: 'aethercare://regulations/nlem_essential_medicines',
+    name: 'National List of Essential Medicines (NLEM 2026) Price Registry',
+    description: 'Statutory ceiling price registry for 380+ essential life-saving drugs under NPPA DPCO.',
+    mimeType: 'application/json'
+  })
+  async getNlemEssentialMedicines(ctx: ExecutionContext) {
+    ctx.logger.info('Fetching NLEM Essential Medicines resource');
+
+    return {
+      registryTitle: 'National List of Essential Medicines (NLEM 2026)',
+      authority: 'National Pharmaceutical Pricing Authority (NPPA)',
+      regulatedCategoriesCount: 388,
+      keyPriceCeilings: {
+        paracetamol650mg: '₹2.15 per tablet',
+        insulinHuman10ml: '₹145.50 per 10ml vial',
+        atorvastatin10mg: '₹4.80 per tablet',
+        azithromycin500mg: '₹23.40 per tablet',
+        pantoprazole40mg: '₹7.90 per tablet'
+      },
+      legalRights: 'Pharmacies charging above NLEM maximum retail price commit DPCO offenses subject to license revocation.'
+    };
+  }
+
+  @Resource({
+    uri: 'aethercare://rights/patient_charter',
+    name: 'Ministry of Health Patient Rights Charter',
+    description: 'National Human Rights Commission (NHRC) and MoHFW 17 inviolable patient consumer rights.',
+    mimeType: 'application/json'
+  })
+  async getPatientCharter(ctx: ExecutionContext) {
+    ctx.logger.info('Fetching Patient Charter resource');
+
+    return {
+      charterTitle: 'Charter of Patients Rights & Responsibilities',
+      authority: 'Ministry of Health & Family Welfare & NHRC India',
+      inviolableRights: [
+        'Right to Right to Information on itemized bill estimate before procedure',
+        'Right to Emergency Medical Care without mandatory upfront cash deposit',
+        'Right to Second Opinion & Discharge Summary within 24 hours',
+        'Right to Cashless Service under government entitlement schemes',
+        'Right to Confidentiality & Human Dignity'
+      ]
+    };
+  }
+
+  @Resource({
+    uri: 'aethercare://guidelines/ayushman_mitra_counter',
+    name: 'Hospital Ayushman Mitra Desk Standard Operating Procedure',
+    description: 'Standard Operating Procedure (SOP) for Ayushman Mitra helpdesks inside empaneled hospitals.',
+    mimeType: 'application/json'
+  })
+  async getAyushmanMitraSop(ctx: ExecutionContext) {
+    ctx.logger.info('Fetching Ayushman Mitra SOP resource');
+
+    return {
+      helpdeskTitle: 'Ayushman Mitra Kiosk Operating Procedure',
+      responsibilities: [
+        'Biometric authentication of Aadhaar & Golden Card',
+        'Electronic generation of TMS Pre-Authorization Requisition',
+        'Providing 100% cashless admission pass to patient relative',
+        'Resolving billing discrepancies prior to patient discharge'
+      ]
+    };
+  }
 }

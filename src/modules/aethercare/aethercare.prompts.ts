@@ -3,6 +3,77 @@ import { PromptDecorator as Prompt, ExecutionContext } from '@nitrostack/core';
 export class AetherCarePrompts {
 
   @Prompt({
+    name: 'illegal_cash_demand_negotiator',
+    description: 'Step-by-step negotiation script for distressed relatives standing at hospital billing desks when staff demand upfront cash.',
+    arguments: [
+      {
+        name: 'hospital_name',
+        description: 'Name of hospital demanding cash deposit',
+        required: true
+      },
+      {
+        name: 'demanded_amount_inr',
+        description: 'Amount of cash deposit demanded in INR',
+        required: true
+      }
+    ]
+  })
+  async illegalCashDemandNegotiator(args: any, ctx: ExecutionContext) {
+    ctx.logger.info('Executing cash demand negotiator prompt', args);
+
+    const hospital = args?.hospital_name || 'Hospital Desk';
+    const amount = args?.demanded_amount_inr || 25000;
+
+    return [
+      {
+        role: 'user' as const,
+        content: `I am at ${hospital} billing counter. They are demanding ₹${amount} upfront cash deposit despite our PM-JAY cashless card. Give me a polite but firm script to read to the billing manager right now.`
+      },
+      {
+        role: 'assistant' as const,
+        content: `Here is your step-by-step emergency billing counter script:
+1. "Sir/Madam, under Section 16 of NHA Guidelines, demanding cash from a PM-JAY beneficiary is strictly prohibited."
+2. "Please connect me to your Ayushman Mitra helpdesk coordinator to register electronic pre-auth."
+3. "If you refuse cashless admission, I am lodging an instant grievance on NHA National Portal (Ref 14555) right now."`
+      }
+    ];
+  }
+
+  @Prompt({
+    name: 'pharmacy_overcharge_audit',
+    description: 'Assistant prompt for checking pharmacy medicine bill receipts against National List of Essential Medicines (NLEM 2026) price caps.',
+    arguments: [
+      {
+        name: 'medicine_name',
+        description: 'Name of medicine (e.g. "Dolo 650", "Human Insulin")',
+        required: true
+      },
+      {
+        name: 'price_charged_per_unit_inr',
+        description: 'Price charged per tablet or vial in INR',
+        required: true
+      }
+    ]
+  })
+  async pharmacyOverchargeAudit(args: any, ctx: ExecutionContext) {
+    ctx.logger.info('Executing pharmacy overcharge audit prompt', args);
+
+    const medicine = args?.medicine_name || 'Medicine';
+    const price = args?.price_charged_per_unit_inr || 10;
+
+    return [
+      {
+        role: 'user' as const,
+        content: `Hospital pharmacy charged me ₹${price} per unit for ${medicine}. Please verify if this exceeds the statutory NLEM ceiling price.`
+      },
+      {
+        role: 'assistant' as const,
+        content: `Initiating NLEM drug price audit for ${medicine} at ₹${price}/unit against National Pharmaceutical Pricing Authority (NPPA) ceiling rules.`
+      }
+    ];
+  }
+
+  @Prompt({
     name: 'multilingual_patient_voice_assistant',
     description: 'Multilingual conversational assistant supporting Hindi, Tamil, Telugu, Marathi, Bengali, and English voice/text guidance for semi-literate citizens.',
     arguments: [

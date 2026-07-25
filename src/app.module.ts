@@ -1,6 +1,5 @@
 import { McpApp, Module, ConfigModule } from '@nitrostack/core';
 import { AetherCareModule } from './modules/aethercare/aethercare.module.js';
-import { CalculatorModule } from './modules/calculator/calculator.module.js';
 import { SystemHealthCheck } from './health/system.health.js';
 
 /**
@@ -21,8 +20,7 @@ import { SystemHealthCheck } from './health/system.health.js';
   description: 'Root application module for AetherCare Agentic MoE Healthcare Navigator',
   imports: [
     ConfigModule.forRoot(),
-    AetherCareModule,
-    CalculatorModule
+    AetherCareModule
   ],
   providers: [
     SystemHealthCheck,
