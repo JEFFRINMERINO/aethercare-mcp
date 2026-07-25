@@ -3,16 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AetherCare — Enterprise Agentic AI Control Hub</title>
+  <title>AetherCare — Agentic AI Command Center</title>
   <style>
     :root {
       --bg: #090d16;
       --card-bg: rgba(255, 255, 255, 0.04);
-      --border: rgba(255, 255, 255, 0.12);
+      --border: rgba(56, 189, 248, 0.25);
       --primary: #0284c7;
       --secondary: #6366f1;
       --emerald: #10b981;
       --rose: #ef4444;
+      --cyan: #38bdf8;
       --text: #ffffff;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
@@ -21,193 +22,162 @@
     
     /* Top Header Bar */
     .top-bar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 16px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
-    .title-group { display: flex; align-items: center; gap: 12px; }
-    .title-icon { font-size: 26px; }
+    .logo-group { display: flex; align-items: center; gap: 12px; }
+    .logo-icon { background: linear-gradient(135deg, var(--primary), var(--secondary)); padding: 12px 16px; border-radius: 18px; font-size: 22px; color: white; font-weight: bold; box-shadow: 0 0 24px rgba(2, 132, 199, 0.6); }
     .main-title { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
-    .sub-title { font-size: 11px; color: #38bdf8; font-weight: 600; }
-    .version-badge { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 800; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4); }
+    .sub-title { font-size: 11px; color: var(--cyan); font-weight: 600; }
+    .status-badge { background: rgba(16, 185, 129, 0.15); color: #34d399; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 800; border: 1px solid rgba(16, 185, 129, 0.3); }
 
-    /* Universal Assist Search Bar */
-    .search-box { background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border); padding: 12px 16px; border-radius: 16px; margin-bottom: 20px; display: flex; gap: 12px; align-items: center; }
-    .search-input { flex: 1; background: transparent; border: none; color: white; font-size: 13px; outline: none; font-weight: 600; }
-    .search-btn { background: linear-gradient(135deg, var(--primary), #2563eb); color: white; border: none; border-radius: 10px; padding: 10px 18px; font-weight: 700; font-size: 12px; cursor: pointer; }
-
-    /* Key Metrics Bar */
-    .metrics-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 20px; }
-    .metric-card { background: var(--card-bg); border: 1px solid var(--border); padding: 14px; border-radius: 14px; }
-    .metric-label { font-size: 11px; opacity: 0.7; display: block; margin-bottom: 4px; }
-    .metric-val { font-size: 22px; font-weight: 800; }
+    /* Centered Search & Execution Box */
+    .search-box { background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border); padding: 14px 18px; border-radius: 20px; margin-bottom: 24px; display: flex; gap: 12px; align-items: center; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+    .search-input { flex: 1; background: transparent; border: none; color: white; font-size: 14px; outline: none; font-weight: 600; }
+    .search-btn { background: linear-gradient(135deg, var(--primary), #2563eb); color: white; border: none; border-radius: 12px; padding: 10px 20px; font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4); }
 
     /* Dual AI Avatars */
-    .avatars-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+    .avatars-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
     .avatar-card { display: flex; align-items: center; gap: 12px; }
-    .avatar-img { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; color: white; flex-shrink: 0; }
-    .speech-bubble { background: rgba(255,255,255,0.06); border: 1px solid var(--border); padding: 10px 14px; border-radius: 14px; font-size: 11px; line-height: 1.4; flex: 1; }
+    .avatar-img { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; color: white; flex-shrink: 0; box-shadow: 0 0 16px rgba(2, 132, 199, 0.5); }
+    .speech-bubble { background: rgba(255,255,255,0.06); border: 1px solid var(--border); padding: 12px 14px; border-radius: 16px; font-size: 12px; line-height: 1.4; flex: 1; }
 
-    /* 4-Panel Grid (Matched to Picture) */
+    /* 4-Panel Grid */
     .panels-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
-    .panel-card { background: var(--card-bg); border: 1px solid var(--border); padding: 18px; border-radius: 18px; }
-    .panel-title { font-size: 14px; font-weight: 800; margin-bottom: 12px; display: flex; justify-content: space-between; }
-    .action-btn { width: 100%; padding: 10px; border: none; border-radius: 10px; font-weight: 700; font-size: 12px; cursor: pointer; margin-top: 10px; color: white; transition: all 0.2s; }
+    .panel-card { background: var(--card-bg); border: 1px solid var(--border); padding: 18px; border-radius: 20px; }
+    .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .panel-title { font-size: 14px; font-weight: 800; }
+    .panel-tag { font-size: 11px; font-weight: 700; }
+    .btn-action { width: 100%; padding: 10px; border: none; border-radius: 10px; font-weight: 700; font-size: 11px; cursor: pointer; color: white; transition: all 0.2s; margin-top: 8px; }
 
-    /* Auth Modal */
-    .auth-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-    .auth-modal { background: #0f172a; border: 1px solid var(--border); padding: 32px; border-radius: 20px; width: 400px; text-align: center; box-shadow: 0 25px 60px rgba(0,0,0,0.6); }
-    .auth-input { width: 100%; padding: 12px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 10px; color: white; margin-bottom: 12px; outline: none; }
+    /* Footer Module */
+    .footer-module { background: rgba(0,0,0,0.4); border: 1px solid var(--border); padding: 14px 18px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
   </style>
 </head>
 <body>
   
-  <!-- Auth Overlay Modal -->
-  <div id="authOverlay" class="auth-overlay">
-    <div class="auth-modal">
-      <h2 style="margin-bottom: 8px;">AetherCare Login</h2>
-      <p style="font-size: 12px; opacity: 0.75; margin-bottom: 20px;">Enter your Email or Mobile Number to access Enterprise Dashboard</p>
-      <input type="text" id="userAccount" class="auth-input" placeholder="User Email or Mobile Number" value="jeffrin@amrita.edu">
-      <input type="password" id="userPass" class="auth-input" placeholder="Password" value="password123">
-      <button class="action-btn" style="background: linear-gradient(135deg, var(--primary), var(--secondary));" onclick="loginUser()">Login to Agentic Platform</button>
-    </div>
-  </div>
-
   <div class="container">
     
-    <!-- Top Header Bar -->
+    <!-- Top Header -->
     <div class="top-bar">
-      <div class="title-group">
-        <span class="title-icon">⚡</span>
+      <div class="logo-group">
+        <div class="logo-icon">⚡</div>
         <div>
-          <div class="main-title">AetherCare Enterprise Health Operations Center</div>
-          <div class="sub-title">CONNECTED AGENTIC ECOSYSTEM • INTERCONNECTED MULTI-MODEL STATE</div>
+          <div class="main-title">AetherCare Agentic AI Command Center</div>
+          <div class="sub-title">● DUAL SSE+STDIO ACTIVE • 14 TOOLS CONNECTED • 5 RESOURCES SYNCED</div>
         </div>
       </div>
-      <div class="version-badge">ENTERPRISE V2.0</div>
+      <div class="status-badge">HEALTH: 100% OPERATIONAL</div>
     </div>
 
-    <!-- Universal Search Bar -->
+    <!-- Centered Search Box -->
     <div class="search-box">
-      <span style="opacity: 0.7;">🔍</span>
-      <input type="text" class="search-input" value="Analyze patient billing & audit hospital empanelment for Kauvery Chennai">
-      <button class="search-btn" onclick="triggerReport()">Generate Report</button>
+      <span style="font-size: 20px; opacity: 0.8;">🔍</span>
+      <input type="text" class="search-input" value="How can I assist your healthcare operations today?">
+      <button class="search-btn" onclick="executeTask()">Execute Agent Task</button>
     </div>
 
-    <!-- Key Metrics Bar -->
-    <div class="metrics-grid">
-      <div class="metric-card">
-        <span class="metric-label">Total Patients Saved</span>
-        <div class="metric-val" style="color: #38bdf8;">₹4,500,000</div>
-      </div>
-      <div class="metric-card">
-        <span class="metric-label">Overdue Fraud Claims</span>
-        <div class="metric-val" style="color: #ef4444;">₹66,000</div>
-      </div>
-      <div class="metric-card">
-        <span class="metric-label">Active Scheme Coverage</span>
-        <div class="metric-val" style="color: #10b981;">99.4%</div>
-      </div>
-    </div>
-
-    <!-- Dual AI Avatars (Matched to Picture) -->
+    <!-- Dual AI Avatars -->
     <div class="avatars-grid">
       <div class="avatar-card">
         <div class="avatar-img" style="background: #0284c7;">👩‍⚕️</div>
         <div class="speech-bubble">
-          <strong>Health Audit Agent:</strong><br />
-          "Sure! I've executed the full 360-degree hospital audit for Kauvery Hospital Chennai."
+          <strong>Dr. Aether AI Navigator:</strong><br />
+          "Sure! I've generated the empanelment trend analysis and hospital audit report for you."
         </div>
       </div>
 
       <div class="avatar-card">
         <div class="speech-bubble" style="text-align: right;">
           <strong>Legal Enforcement Agent:</strong><br />
-          "Reminder: Approve 5 pending Form 14555 legal notices for dispatch."
+          "Reminder: Review 5 pending claim audits and NHA Form 14555 legal notices."
         </div>
         <div class="avatar-img" style="background: #6366f1;">🤖</div>
       </div>
     </div>
 
-    <!-- 4 Interconnected Panels Grid (Matched to Picture) -->
+    <!-- Notification Banner -->
+    <div id="notifBanner" style="display: none; background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 10px 16px; border-radius: 12px; font-size: 12px; font-weight: 700; margin-bottom: 20px; text-align: center;">
+      ⚡ Task Executed Successfully!
+    </div>
+
+    <!-- 4-Panel Dashboard Grid -->
     <div class="panels-grid">
       
-      <!-- Panel 1: Billing Overcharge Analysis -->
+      <!-- Panel 1: Claims & Revenue Trend Analysis -->
       <div class="panel-card">
-        <div class="panel-title">
-          <span>📈 Billing Overcharge Analysis</span>
-          <span style="color: #ef4444; font-size: 11px;">VIOLATION DETECTED</span>
+        <div class="panel-header">
+          <span class="panel-title">📈 Claims & Revenue Trend Analysis</span>
+          <span class="panel-tag" style="color: #10b981;">+14.2% Growth</span>
         </div>
-        <div style="font-size: 12px; opacity: 0.8; margin-bottom: 8px;">Procedure: <strong>Drug-Eluting Cardiac Stent (DES)</strong></div>
-        <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
-          <span>Quoted Estimate:</span>
-          <strong style="color: #ef4444;">₹45,000</strong>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+          <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 10px;">
+            <span style="font-size: 11px; opacity: 0.7; display: block;">Total Saved</span>
+            <strong style="font-size: 18px; color: var(--cyan);">₹4,500,000</strong>
+          </div>
+          <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 10px;">
+            <span style="font-size: 11px; opacity: 0.7; display: block;">Overdue Claims</span>
+            <strong style="font-size: 18px; color: var(--rose);">₹66,000</strong>
+          </div>
         </div>
-        <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px;">
-          <span>NPPA Legal Cap:</span>
-          <strong style="color: #10b981;">₹38,260</strong>
-        </div>
-        <div style="background: rgba(239, 68, 68, 0.15); padding: 8px; border-radius: 8px; font-size: 11px; color: #fca5a5; font-weight: 700;">
-          Illegal Overcharge: +₹6,740 (DPCO Violation)
-        </div>
+        <div style="font-size: 11px; opacity: 0.8;">Top Schemes: <strong>CMCHIS (TN)</strong> • <strong>PM-JAY</strong> • <strong>SAST (KA)</strong></div>
       </div>
 
-      <!-- Panel 2: Predictive Health AI Insights -->
+      <!-- Panel 2: Predictive MoE Insights -->
       <div class="panel-card">
-        <div class="panel-title">
-          <span>📊 Predictive Health AI Insights</span>
-          <span style="color: #38bdf8; font-size: 11px;">AI ANALYSIS</span>
+        <div class="panel-header">
+          <span class="panel-title">📊 Predictive MoE Insights Panel</span>
+          <span class="panel-tag" style="color: var(--cyan);">99.4% Confidence</span>
         </div>
-        <div style="font-size: 12px; opacity: 0.85; margin-bottom: 12px;">
-          <strong>AI Forecast:</strong> Hospital Compliance Score Up 15% after SAFU audit notice.
+        <div style="background: rgba(56, 189, 248, 0.12); padding: 12px; border-radius: 12px; margin-bottom: 10px; font-size: 12px;">
+          <strong>AI Forecast:</strong> Scheme utilization spikes +15% across Chennai & Bengaluru empanelled facilities.
         </div>
-        <div style="background: rgba(56, 189, 248, 0.15); padding: 10px; border-radius: 8px; font-size: 11px; color: #7dd3fc; font-weight: 700;">
-          Predicted Approval Probability: 99.4% Cashless Guarantee
-        </div>
+        <div style="font-size: 11px; opacity: 0.85;">MoE Routing: <strong>4 Expert Agents Active</strong></div>
       </div>
 
       <!-- Panel 3: Smart AI Recommendations -->
       <div class="panel-card">
-        <div class="panel-title">
-          <span>💡 Smart AI Recommendations</span>
-          <span style="color: #10b981; font-size: 11px;">ACTION READY</span>
+        <div class="panel-header">
+          <span class="panel-title">💡 Smart AI Recommendations</span>
+          <span class="panel-tag" style="color: var(--emerald);">ACTION READY</span>
         </div>
-        <div style="font-size: 12px; opacity: 0.85; margin-bottom: 10px;">
-          <strong>AI Suggestion:</strong> Convert Kauvery Hospital Chennai admission to 100% Cashless under CMCHIS TN.
+        <div style="font-size: 11px; opacity: 0.85; margin-bottom: 10px;">
+          AI Suggestion: Convert Kauvery Chennai admission to 100% Cashless under CMCHIS TN.
         </div>
-        <button id="escBtn" class="action-btn" style="background: linear-gradient(135deg, #0284c7, #2563eb);" onclick="dispatchEscalation()">Create Emergency Collector Escalation</button>
+        <button class="btn-action" style="background: linear-gradient(135deg, var(--emerald), #059669);" onclick="notify('Approved All 5 Pending Claims!')">✓ Approve All Claims</button>
+        <button class="btn-action" style="background: linear-gradient(135deg, var(--primary), #2563eb);" onclick="notify('Dispatched Emergency District Collector Escalation!')">📧 Dispatch Collector Escalation</button>
       </div>
 
-      <!-- Panel 4: Invoice / Legal Notice Approval Panel -->
+      <!-- Panel 4: Pending Legal Approvals -->
       <div class="panel-card">
-        <div class="panel-title">
-          <span>📋 Legal Form 14555 Approval</span>
-          <span style="color: #818cf8; font-size: 11px;">5 PENDING</span>
+        <div class="panel-header">
+          <span class="panel-title">📋 Pending Legal Approvals</span>
+          <span class="panel-tag" style="color: #818cf8;">5 PENDING</span>
         </div>
-        <div style="font-size: 12px; opacity: 0.85; margin-bottom: 10px;">
-          5 Complaints Pending • Total: <strong>₹32,750</strong>
+        <div style="font-size: 12px; font-weight: 700; margin-bottom: 10px;">
+          5 Complaints Pending • Total: <span style="color: var(--cyan);">₹32,750</span>
         </div>
-        <button id="appBtn" class="action-btn" style="background: linear-gradient(135deg, #2563eb, #1d4ed8);" onclick="approveAll()">Approve All Legal Notices</button>
-        <div style="font-size: 10px; opacity: 0.6; text-align: center; margin-top: 8px;">
-          Automated Actions: <strong>Task Scheduled</strong>
-        </div>
+        <button class="btn-action" style="background: linear-gradient(135deg, var(--secondary), #4f46e5);" onclick="notify('Generated Statutory Form 14555 Notice!')">📜 Generate Form 14555 Notice</button>
       </div>
+    </div>
+
+    <!-- Footer System Health Hub -->
+    <div class="footer-module">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span style="font-size: 16px;">⚙️</span>
+        <div><strong>Automated Actions Hub:</strong> Task Scheduled (NHA & SAFU Circular Ingestion Active)</div>
+      </div>
+      <span style="color: var(--emerald); font-weight: 700;">MCP SERVER HEALTH: 100%</span>
     </div>
 
   </div>
 
   <script>
-    function loginUser() {
-      document.getElementById('authOverlay').style.display = 'none';
+    function executeTask() {
+      notify('Executed Autonomous Healthcare Task!');
     }
-    function dispatchEscalation() {
-      const btn = document.getElementById('escBtn');
-      btn.innerText = '✓ District Collector Escalation Dispatched';
-      btn.style.background = '#10b981';
-    }
-    function approveAll() {
-      const btn = document.getElementById('appBtn');
-      btn.innerText = '✓ All Legal Notices Approved & Issued';
-      btn.style.background = '#10b981';
-    }
-    function triggerReport() {
-      alert('⚡ Executing 360-Degree Agentic Report for Kauvery Hospital Chennai...');
+    function notify(msg) {
+      const banner = document.getElementById('notifBanner');
+      banner.innerText = '⚡ ' + msg;
+      banner.style.display = 'block';
+      setTimeout(() => { banner.style.display = 'none'; }, 4000);
     }
   </script>
 </body>

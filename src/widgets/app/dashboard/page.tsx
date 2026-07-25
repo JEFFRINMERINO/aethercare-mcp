@@ -9,273 +9,308 @@ export default function AgenticDashboardWidget() {
   const rawData = getToolOutput<any>();
 
   const isDark = theme === 'dark';
-  const [searchQuery, setSearchQuery] = useState('Analyze patient billing & audit hospital empanelment for Kauvery Chennai');
-  const [approved, setApproved] = useState(false);
-  const [dispatched, setDispatched] = useState(false);
+  const [searchPrompt, setSearchPrompt] = useState('How can I assist your healthcare operations today?');
+  const [activeTab, setActiveTab] = useState<'analytics' | 'moe' | 'actions' | 'tasks'>('analytics');
+  const [actionDone, setActionDone] = useState<string | null>(null);
+
+  const handleAction = (msg: string) => {
+    setActionDone(msg);
+    setTimeout(() => setActionDone(null), 4000);
+  };
 
   return (
     <div style={{
-      padding: '24px',
+      padding: '28px',
       background: isDark
-        ? 'linear-gradient(135deg, #090d16 0%, #1e1b4b 40%, #0f172a 100%)'
+        ? 'linear-gradient(135deg, #090d16 0%, #0f172a 40%, #1e1b4b 100%)'
         : 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)',
-      borderRadius: '24px',
+      borderRadius: '28px',
       color: isDark ? '#ffffff' : '#0f172a',
-      maxWidth: '780px',
-      boxShadow: '0 25px 60px rgba(0,0,0,0.5)',
+      maxWidth: '850px',
+      boxShadow: '0 30px 70px rgba(0,0,0,0.6)',
       fontFamily: 'system-ui, -apple-system, sans-serif',
-      border: '1px solid ' + (isDark ? 'rgba(99, 102, 241, 0.4)' : '#38bdf8')
+      border: '1px solid ' + (isDark ? 'rgba(56, 189, 248, 0.4)' : '#38bdf8')
     }}>
       
-      {/* 1. TOP HEADER & ASSIST SEARCH BAR (Matching Business Central Image) */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span style={{ fontSize: '24px' }}>⚡</span>
+      {/* 1. TOP GLOBAL SEARCH & QUICK STATUS INDICATORS */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{
+            background: 'linear-gradient(135deg, #0284c7, #6366f1)',
+            padding: '12px 16px',
+            borderRadius: '18px',
+            color: 'white',
+            fontWeight: 'bold',
+            fontSize: '24px',
+            boxShadow: '0 0 24px rgba(2, 132, 199, 0.6)'
+          }}>
+            ⚡
+          </div>
           <div>
-            <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 800, letterSpacing: '-0.5px' }}>
-              AetherCare Enterprise Health Operations Center
+            <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 800, letterSpacing: '-0.5px' }}>
+              AetherCare Agentic Operations Hub
             </h2>
             <span style={{ fontSize: '11px', color: '#38bdf8', fontWeight: 600 }}>
-              CONNECTED AGENTIC ECOSYSTEM • INTERCONNECTED MULTI-MODEL STATE
+              ● DUAL SSE+STDIO ACTIVE • 14 TOOLS CONNECTED • 5 RESOURCES SYNCED
             </span>
           </div>
         </div>
 
-        <span style={{
-          background: 'linear-gradient(135deg, #0284c7, #2563eb)',
-          color: 'white',
-          fontSize: '11px',
-          fontWeight: 800,
-          padding: '6px 14px',
-          borderRadius: '20px',
-          boxShadow: '0 4px 12px rgba(2, 132, 199, 0.4)'
-        }}>
-          ENTERPRISE V2.0
-        </span>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <span style={{
+            background: 'rgba(16, 185, 129, 0.15)',
+            color: '#34d399',
+            fontSize: '11px',
+            fontWeight: 800,
+            padding: '6px 12px',
+            borderRadius: '20px',
+            border: '1px solid rgba(16, 185, 129, 0.3)'
+          }}>
+            HEALTH: 100% OPERATIONAL
+          </span>
+        </div>
       </div>
 
-      {/* Universal Search Bar */}
+      {/* Centered Search & Quick Execution Box */}
       <div style={{
         background: isDark ? 'rgba(255,255,255,0.06)' : '#ffffff',
-        border: '1px solid ' + (isDark ? 'rgba(255,255,255,0.15)' : '#cbd5e1'),
-        padding: '12px',
-        borderRadius: '16px',
-        marginBottom: '20px',
+        border: '1px solid ' + (isDark ? 'rgba(56, 189, 248, 0.3)' : '#cbd5e1'),
+        padding: '14px 18px',
+        borderRadius: '20px',
+        marginBottom: '24px',
         display: 'flex',
-        gap: '10px',
-        alignItems: 'center'
+        gap: '12px',
+        alignItems: 'center',
+        boxShadow: '0 8px 24px rgba(0,0,0,0.15)'
       }}>
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span style={{ fontSize: '16px', opacity: 0.7 }}>🔍</span>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="How can AetherCare Agentic AI assist you today?"
-            style={{
-              width: '100%',
-              background: 'transparent',
-              border: 'none',
-              color: isDark ? '#ffffff' : '#0f172a',
-              fontSize: '13px',
-              outline: 'none',
-              fontWeight: 600
-            }}
-          />
-        </div>
-        <button style={{
-          background: 'linear-gradient(135deg, #0284c7, #2563eb)',
-          color: 'white',
-          border: 'none',
-          borderRadius: '10px',
-          padding: '8px 16px',
-          fontWeight: 700,
-          fontSize: '12px',
-          cursor: 'pointer',
-          whiteSpace: 'nowrap'
-        }}>
-          Generate Report
+        <span style={{ fontSize: '20px', opacity: 0.8 }}>🔍</span>
+        <input
+          type="text"
+          value={searchPrompt}
+          onChange={(e) => setSearchPrompt(e.target.value)}
+          placeholder="How can I assist your healthcare operations today?"
+          style={{
+            flex: 1,
+            background: 'transparent',
+            border: 'none',
+            color: isDark ? '#ffffff' : '#0f172a',
+            fontSize: '14px',
+            outline: 'none',
+            fontWeight: 600
+          }}
+        />
+        <button
+          onClick={() => handleAction('Executed Autonomous Healthcare Investigation!')}
+          style={{
+            background: 'linear-gradient(135deg, #0284c7, #2563eb)',
+            color: 'white',
+            border: 'none',
+            borderRadius: '12px',
+            padding: '10px 20px',
+            fontWeight: 800,
+            fontSize: '13px',
+            cursor: 'pointer',
+            boxShadow: '0 4px 14px rgba(2, 132, 199, 0.4)',
+            whiteSpace: 'nowrap'
+          }}
+        >
+          Execute Agent Task
         </button>
       </div>
 
-      {/* 2. KEY METRIC SUMMARY BAR */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr 1fr',
-        gap: '12px',
-        marginBottom: '20px'
-      }}>
-        <div style={{ background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff', padding: '12px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.1)' }}>
-          <span style={{ fontSize: '11px', opacity: 0.7, display: 'block' }}>Total Patients Saved</span>
-          <strong style={{ fontSize: '20px', color: '#38bdf8' }}>₹4,500,000</strong>
-        </div>
-
-        <div style={{ background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff', padding: '12px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.1)' }}>
-          <span style={{ fontSize: '11px', opacity: 0.7, display: 'block' }}>Overdue Fraud Claims</span>
-          <strong style={{ fontSize: '20px', color: '#ef4444' }}>₹66,000</strong>
-        </div>
-
-        <div style={{ background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff', padding: '12px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.1)' }}>
-          <span style={{ fontSize: '11px', opacity: 0.7, display: 'block' }}>Active Scheme Coverage</span>
-          <strong style={{ fontSize: '20px', color: '#10b981' }}>99.4%</strong>
-        </div>
-      </div>
-
-      {/* 3. DUAL AI COPILOT AVATARS (Matching Image Left & Right Speech Bubbles) */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '20px' }}>
+      {/* 2. INTERACTIVE FLOATING AGENT AVATARS & SPEECH NOTIFICATIONS */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '24px' }}>
         
-        {/* Left Avatar */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        {/* Assistant Avatar 1 */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div style={{
-            width: '42px', height: '42px', borderRadius: '50%', background: '#0284c7',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', color: 'white', flexShrink: 0
+            width: '46px', height: '46px', borderRadius: '50%', background: '#0284c7',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', color: 'white', flexShrink: 0,
+            boxShadow: '0 0 16px rgba(2, 132, 199, 0.5)'
           }}>
             👩‍⚕️
           </div>
           <div style={{
-            background: isDark ? 'rgba(255,255,255,0.08)' : '#ffffff',
-            padding: '10px 12px', borderRadius: '14px', fontSize: '11px', lineHeight: 1.3, border: '1px solid rgba(255,255,255,0.15)'
+            background: isDark ? 'rgba(255,255,255,0.06)' : '#ffffff',
+            border: '1px solid ' + (isDark ? 'rgba(255,255,255,0.12)' : '#cbd5e1'),
+            padding: '12px 14px', borderRadius: '16px', fontSize: '12px', lineHeight: 1.4
           }}>
-            <strong>Health Audit Agent:</strong><br />
-            "Sure! I've executed the full 360-degree hospital audit for Kauvery Hospital Chennai."
+            <strong>Dr. Aether AI Navigator:</strong><br />
+            "Sure! I've generated the empanelment trend analysis and hospital audit report for you."
           </div>
         </div>
 
-        {/* Right Avatar */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        {/* Assistant Avatar 2 */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div style={{
-            background: isDark ? 'rgba(255,255,255,0.08)' : '#ffffff',
-            padding: '10px 12px', borderRadius: '14px', fontSize: '11px', lineHeight: 1.3, border: '1px solid rgba(255,255,255,0.15)', textAlign: 'right'
+            background: isDark ? 'rgba(255,255,255,0.06)' : '#ffffff',
+            border: '1px solid ' + (isDark ? 'rgba(255,255,255,0.12)' : '#cbd5e1'),
+            padding: '12px 14px', borderRadius: '16px', fontSize: '12px', lineHeight: 1.4, textAlign: 'right'
           }}>
             <strong>Legal Enforcement Agent:</strong><br />
-            "Reminder: Approve 5 pending Form 14555 legal notices for dispatch."
+            "Reminder: Review 5 pending claim audits and NHA Form 14555 legal notices."
           </div>
           <div style={{
-            width: '42px', height: '42px', borderRadius: '50%', background: '#6366f1',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', color: 'white', flexShrink: 0
+            width: '46px', height: '46px', borderRadius: '50%', background: '#6366f1',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px', color: 'white', flexShrink: 0,
+            boxShadow: '0 0 16px rgba(99, 102, 241, 0.5)'
           }}>
             🤖
           </div>
         </div>
       </div>
 
-      {/* 4. INTERCONNECTED 4-PANEL DASHBOARD GRID (Matching the reference picture layout!) */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '20px' }}>
+      {/* Action Notification Alert */}
+      {actionDone && (
+        <div style={{
+          background: 'linear-gradient(135deg, #10b981, #059669)',
+          color: 'white',
+          padding: '10px 16px',
+          borderRadius: '12px',
+          fontSize: '12px',
+          fontWeight: 700,
+          marginBottom: '20px',
+          textAlign: 'center'
+        }}>
+          ⚡ {actionDone}
+        </div>
+      )}
+
+      {/* 3. DYNAMIC DASHBOARD WIDGETS & CARDS LAYOUT (GRID VIEW) */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '24px' }}>
         
-        {/* Panel 1: Revenue & Overcharge Audit Analysis */}
+        {/* Widget 1: Revenue/Claims Trend Analysis */}
         <div style={{
           background: isDark ? 'rgba(255,255,255,0.04)' : '#ffffff',
           border: '1px solid ' + (isDark ? 'rgba(255,255,255,0.1)' : '#cbd5e1'),
-          padding: '14px',
-          borderRadius: '16px'
+          padding: '16px',
+          borderRadius: '20px'
         }}>
-          <h4 style={{ margin: '0 0 10px 0', fontSize: '13px', fontWeight: 800 }}>📈 Billing Overcharge Analysis</h4>
-          <div style={{ fontSize: '11px', opacity: 0.8, marginBottom: '8px' }}>Procedure: <strong>Drug-Eluting Cardiac Stent (DES)</strong></div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: 700, marginBottom: '4px' }}>
-            <span>Quoted Estimate:</span>
-            <span style={{ color: '#ef4444' }}>₹45,000</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+            <h4 style={{ margin: 0, fontSize: '14px', fontWeight: 800 }}>📈 Claims & Revenue Trend Analysis</h4>
+            <span style={{ fontSize: '11px', color: '#10b981', fontWeight: 700 }}>+14.2% Growth</span>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: 700, marginBottom: '8px' }}>
-            <span>NPPA Legal Cap:</span>
-            <span style={{ color: '#10b981' }}>₹38,260</span>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '12px' }}>
+            <div style={{ background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)', padding: '10px', borderRadius: '10px' }}>
+              <span style={{ fontSize: '11px', opacity: 0.7, display: 'block' }}>Total Patients Saved</span>
+              <strong style={{ fontSize: '18px', color: '#38bdf8' }}>₹4,500,000</strong>
+            </div>
+
+            <div style={{ background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)', padding: '10px', borderRadius: '10px' }}>
+              <span style={{ fontSize: '11px', opacity: 0.7, display: 'block' }}>Overdue Fraud Claims</span>
+              <strong style={{ fontSize: '18px', color: '#ef4444' }}>₹66,000</strong>
+            </div>
           </div>
-          <div style={{ background: 'rgba(239, 68, 68, 0.15)', padding: '6px 10px', borderRadius: '8px', fontSize: '11px', color: '#fca5a5', fontWeight: 700 }}>
-            Illegal Overcharge: +₹6,740 (DPCO Violation)
+
+          <div style={{ fontSize: '11px', opacity: 0.8 }}>
+            Top Scheme Categories: <strong>CMCHIS (TN)</strong> • <strong>PM-JAY</strong> • <strong>SAST (KA)</strong>
           </div>
         </div>
 
-        {/* Panel 2: Predictive Healthcare Insights */}
+        {/* Widget 2: Predictive Insights & MoE Routing Panel */}
         <div style={{
           background: isDark ? 'rgba(255,255,255,0.04)' : '#ffffff',
           border: '1px solid ' + (isDark ? 'rgba(255,255,255,0.1)' : '#cbd5e1'),
-          padding: '14px',
-          borderRadius: '16px'
+          padding: '16px',
+          borderRadius: '20px'
         }}>
-          <h4 style={{ margin: '0 0 10px 0', fontSize: '13px', fontWeight: 800 }}>📊 Predictive Health AI Insights</h4>
-          <div style={{ fontSize: '11px', opacity: 0.85, marginBottom: '8px' }}>
-            <strong>AI Analysis:</strong> Hospital Compliance Score Up 15% after SAFU audit notice.
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+            <h4 style={{ margin: 0, fontSize: '14px', fontWeight: 800 }}>📊 Predictive MoE Insights Panel</h4>
+            <span style={{ fontSize: '11px', color: '#38bdf8', fontWeight: 700 }}>99.4% Confidence</span>
           </div>
-          <div style={{ background: 'rgba(56, 189, 248, 0.15)', padding: '8px 10px', borderRadius: '8px', fontSize: '11px', color: '#7dd3fc' }}>
-            Predicted Approval Probability: <strong>99.4% Cashless Guarantee</strong>
+
+          <div style={{ background: 'rgba(56, 189, 248, 0.12)', padding: '12px', borderRadius: '12px', marginBottom: '12px', fontSize: '12px' }}>
+            <strong>AI Forecast:</strong> Scheme utilization spikes +15% across Chennai & Bengaluru empanelled facilities.
+          </div>
+
+          <div style={{ fontSize: '11px', opacity: 0.85 }}>
+            MoE Expert Allocation: <strong>4 Expert Agents Active</strong> (Empanelment, Price Cap, Pre-Auth, Anti-Fraud).
           </div>
         </div>
 
-        {/* Panel 3: Smart Recommendations / Action Optimization */}
+        {/* Widget 3: Smart Recommendations & Automated Actions */}
         <div style={{
           background: isDark ? 'rgba(255,255,255,0.04)' : '#ffffff',
           border: '1px solid ' + (isDark ? 'rgba(255,255,255,0.1)' : '#cbd5e1'),
-          padding: '14px',
-          borderRadius: '16px'
+          padding: '16px',
+          borderRadius: '20px'
         }}>
-          <h4 style={{ margin: '0 0 10px 0', fontSize: '13px', fontWeight: 800 }}>💡 Smart AI Recommendations</h4>
-          <div style={{ fontSize: '11px', opacity: 0.85, marginBottom: '10px' }}>
-            <strong>AI Suggestion:</strong> Convert Kauvery Hospital Chennai admission to 100% Cashless under CMCHIS TN.
+          <h4 style={{ margin: '0 0 10px 0', fontSize: '14px', fontWeight: 800 }}>💡 Smart AI Recommendations</h4>
+          <div style={{ fontSize: '11px', opacity: 0.85, marginBottom: '12px' }}>
+            AI Suggestion: Convert Kauvery Chennai admission to 100% Cashless under CMCHIS TN.
           </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <button
+              onClick={() => handleAction('Approved All 5 Pending Claims!')}
+              style={{ background: 'linear-gradient(135deg, #10b981, #059669)', color: 'white', border: 'none', borderRadius: '10px', padding: '8px 12px', fontSize: '11px', fontWeight: 700, cursor: 'pointer' }}
+            >
+              ✓ Approve All Claims
+            </button>
+            <button
+              onClick={() => handleAction('Dispatched Emergency District Collector Escalation!')}
+              style={{ background: 'linear-gradient(135deg, #0284c7, #2563eb)', color: 'white', border: 'none', borderRadius: '10px', padding: '8px 12px', fontSize: '11px', fontWeight: 700, cursor: 'pointer' }}
+            >
+              📧 Dispatch Collector Escalation
+            </button>
+          </div>
+        </div>
+
+        {/* Widget 4: Invoice / Legal Notice Approval Panel */}
+        <div style={{
+          background: isDark ? 'rgba(255,255,255,0.04)' : '#ffffff',
+          border: '1px solid ' + (isDark ? 'rgba(255,255,255,0.1)' : '#cbd5e1'),
+          padding: '16px',
+          borderRadius: '20px'
+        }}>
+          <h4 style={{ margin: '0 0 10px 0', fontSize: '14px', fontWeight: 800 }}>📋 Pending Legal Approvals</h4>
+          <div style={{ fontSize: '12px', fontWeight: 700, marginBottom: '8px' }}>
+            5 Complaints Pending • Total: <span style={{ color: '#38bdf8' }}>₹32,750</span>
+          </div>
+
           <button
-            onClick={() => setDispatched(true)}
+            onClick={() => handleAction('Formulated Statutory Form 14555 Legal Notice!')}
             style={{
               width: '100%',
-              background: dispatched ? '#10b981' : 'linear-gradient(135deg, #0284c7, #2563eb)',
+              background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
               color: 'white',
               border: 'none',
-              borderRadius: '8px',
-              padding: '8px',
-              fontSize: '11px',
-              fontWeight: 700,
-              cursor: 'pointer'
-            }}
-          >
-            {dispatched ? '✓ District Collector Escalation Dispatched' : 'Create Emergency Collector Escalation'}
-          </button>
-        </div>
-
-        {/* Panel 4: Invoice / Legal Notice Approval Panel */}
-        <div style={{
-          background: isDark ? 'rgba(255,255,255,0.04)' : '#ffffff',
-          border: '1px solid ' + (isDark ? 'rgba(255,255,255,0.1)' : '#cbd5e1'),
-          padding: '14px',
-          borderRadius: '16px'
-        }}>
-          <h4 style={{ margin: '0 0 10px 0', fontSize: '13px', fontWeight: 800 }}>📋 Legal Form 14555 Approval</h4>
-          <div style={{ fontSize: '11px', opacity: 0.85, marginBottom: '6px' }}>
-            5 Complaints Pending • Total: <strong>₹32,750</strong>
-          </div>
-          <button
-            onClick={() => setApproved(true)}
-            style={{
-              width: '100%',
-              background: approved ? '#10b981' : 'linear-gradient(135deg, #2563eb, #1d4ed8)',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              padding: '8px',
+              borderRadius: '10px',
+              padding: '10px',
               fontSize: '11px',
               fontWeight: 800,
               cursor: 'pointer',
-              marginBottom: '8px'
+              marginBottom: '10px'
             }}
           >
-            {approved ? '✓ All Legal Notices Approved & Issued' : 'Approve All Legal Notices'}
+            📜 Generate Statutory Form 14555 Notice
           </button>
-          <div style={{ fontSize: '10px', opacity: 0.6, textAlign: 'center' }}>
-            Automated Actions: <strong>Task Scheduled</strong>
-          </div>
         </div>
       </div>
 
-      {/* Footer Banner */}
+      {/* 4. TASK SCHEDULED & SYSTEM HEALTH HUB (FOOTER MODULE) */}
       <div style={{
-        paddingTop: '12px',
-        borderTop: '1px solid ' + (isDark ? 'rgba(255,255,255,0.1)' : '#cbd5e1'),
+        background: isDark ? 'rgba(0,0,0,0.4)' : '#ffffff',
+        border: '1px solid ' + (isDark ? 'rgba(255,255,255,0.1)' : '#cbd5e1'),
+        padding: '14px 18px',
+        borderRadius: '16px',
         display: 'flex',
         justify: 'space-between',
         alignItems: 'center',
-        fontSize: '11px',
-        opacity: 0.7
+        fontSize: '12px'
       }}>
-        <span>AetherCare Interconnected Multi-Agent Ecosystem</span>
-        <span>4M Token Context Enabled</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span style={{ fontSize: '16px' }}>⚙️</span>
+          <div>
+            <strong>Automated Actions Hub:</strong> Task Scheduled (NHA & SAFU Circular Ingestion Active)
+          </div>
+        </div>
+        <span style={{ color: '#10b981', fontWeight: 700 }}>
+          MCP SERVER HEALTH: 100%
+        </span>
       </div>
+
     </div>
   );
 }
