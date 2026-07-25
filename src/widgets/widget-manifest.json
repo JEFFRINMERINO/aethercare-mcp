@@ -2,6 +2,13 @@
   "version": "1.0.0",
   "widgets": [
     {
+      "uri": "/dashboard",
+      "name": "AetherCare Agentic Control Hub Dashboard Widget",
+      "description": "Full-screen 360-degree autonomous Agentic AI operations dashboard combining execution state machine, hospital radar, NPPA caps, pre-auth checklist, Form 14555 notice, and cashless rebate calculator",
+      "examples": [],
+      "tags": ["dashboard", "agentic", "hub", "control-center", "360-degree"]
+    },
+    {
       "uri": "/agentic-execution-loop",
       "name": "Pure Autonomous Agentic Execution Loop Widget",
       "description": "5-stage autonomous AI execution pipeline visualizer showing real-time perception, MoE reasoning, audit exceptions, legal notice formulation, and enforcement dispatch",
@@ -65,5 +72,5 @@
       "tags": ["rebate", "cashless", "refund", "penalty"]
     }
   ],
-  "generatedAt": "2026-07-25T22:50:00.000Z"
+  "generatedAt": "2026-07-25T23:25:00.000Z"
 }
