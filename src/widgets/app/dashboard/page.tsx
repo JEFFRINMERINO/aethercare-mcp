@@ -13,7 +13,12 @@ export default function AgenticDashboardWidget() {
   const [activeTab, setActiveTab] = useState<'agents' | 'tools' | 'gateway' | 'cases'>('agents');
   const [showLaunchModal, setShowLaunchModal] = useState(false);
   const [selectedAgentName, setSelectedAgentName] = useState('Dr. Aether Medical Auditor');
-  const [taskInput, setTaskInput] = useState('Rajesh Kumar admitted at Kauvery Hospital Chennai under CMCHIS TN, hospital demands 45,000 cash.');
+  
+  // Custom user input (empty by default so user types query)
+  const [taskInput, setTaskInput] = useState('');
+  
+  // Chat History state
+  const [chatHistory, setChatHistory] = useState<string[]>([]);
   
   // Progress states
   const [progressPercent, setProgressPercent] = useState(0);
@@ -38,18 +43,45 @@ export default function AgenticDashboardWidget() {
     'claim_audit_assistant', 'open_agentic_command_center'
   ];
 
+  // ALL 4 AI MODELS
+  const modelsList = [
+    { name: '🟢 OpenAI (GPT-4o / GPT-4 Turbo)', key: 'sk-proj-****9920', status: 'ACTIVE & ONLINE' },
+    { name: '🟣 Anthropic (Claude 3.5 Sonnet)', key: 'sk-ant-****8820', status: 'ACTIVE & ONLINE' },
+    { name: '🔵 Google AI (Gemini 1.5 Pro)', key: 'AIzaSy****8821', status: 'ACTIVE & ONLINE' },
+    { name: '⚪ DeepSeek (DeepSeek R1 Reasoning)', key: 'sk-ds-****1049', status: 'ACTIVE & ONLINE' }
+  ];
+
+  // ALL 10 PRIORITY CASES
+  const casesList = [
+    { caseId: 'CSE-2024-0089', patient: 'Rajesh Kumar', hospital: 'Kauvery Hospital Chennai', violation: 'Illegal ₹45,000 upfront cash deposit demand under CMCHIS TN', status: 'Audit In Progress' },
+    { caseId: 'CSE-2024-0090', patient: 'Priya Singh', hospital: 'Apollo Lifecare Delhi', violation: 'DES Stent Price Cap Exceeded (Quoted ₹52,000 vs Cap ₹38,260)', status: 'Legal Notice Sent' },
+    { caseId: 'CSE-2024-0091', patient: 'Amit Patel', hospital: 'Fortis Hospital Bangalore', violation: 'Prohibited upfront ICU bed deposit under SAST KA', status: 'Collector Notified' },
+    { caseId: 'CSE-2024-0092', patient: 'Fatima Khan', hospital: 'Max Super Specialty Delhi', violation: 'Essential Drug NLEM pharmacy markup overcharge', status: 'Rebate Approved' },
+    { caseId: 'CSE-2024-0093', patient: 'Suresh Reddy', hospital: 'Manipal Hospital Hyderabad', violation: 'Pre-admission cash deposit demand under Aarogyasri TS', status: 'Pending Audit' },
+    { caseId: 'CSE-2024-0094', patient: 'Ananya Sundaram', hospital: 'Kauvery Hospital Trichy (TN)', violation: 'Prohibited cash demand for Appendectomy under CMCHIS TN', status: 'SAFU Notice Issued' },
+    { caseId: 'CSE-2024-0095', patient: 'Karthik Raman', hospital: 'Aster CMI Bengaluru (KA)', violation: 'Knee Replacement Implant Cap Breach (Quoted ₹85k vs Cap ₹64k)', status: 'Cap Exception Flagged' },
+    { caseId: 'CSE-2024-0096', patient: 'Lakshmi Amma', hospital: 'KIMSHEALTH Trivandrum (KL)', violation: 'Illegal ICU daily surcharge under Karunya KHIIS Kerala', status: 'Collector Notified' },
+    { caseId: 'CSE-2024-0097', patient: 'Venkat Rao', hospital: 'KIMS Hospital Secunderabad (TS)', violation: 'NLEM Human Insulin pharmacy markup violation', status: 'Pharmacy Audit Passed' },
+    { caseId: 'CSE-2024-0098', patient: 'Meenakshi Nambiar', hospital: 'PSG Hospital Coimbatore (TN)', violation: 'Patient billing during active SAFU empanelment suspension', status: 'Blacklist Alert Active' }
+  ];
+
   const startTask = () => {
+    const userQuery = taskInput.trim() || 'Kauvery Hospital Chennai cash deposit demand under CMCHIS TN';
+    
+    // Add query to Recent Chats History
+    setChatHistory(prev => [userQuery, ...prev]);
+
     setIsExecuting(true);
     setIsCompleted(false);
     setProgressPercent(0);
     setProgressLogs(["Ingesting hospital empanelment & scheme rules..."]);
 
     const logsArray = [
-      "✓ Stage 1: Perception — Ingested Kauvery Hospital Chennai empanelment status (EMPANELED_ACTIVE).",
-      "✓ Stage 2: MoE Reasoning — Verified Cardiac Stent against NPPA DPCO 2013 cap (Cap: ₹38,260 vs Quote: ₹45,000).",
-      "✓ Stage 3: Fraud Audit — Flagged ₹6,740 illegal overcharge & prohibited upfront deposit.",
-      "✓ Stage 4: Legal Formulation — Formulated Form 14555 Statutory Enforcement Notice.",
-      "✓ Stage 5: Enforcement Dispatch — Dispatched email escalation to District Collector Chennai & NHA Desk!"
+      "✓ Step 1 (20% Complete): Ingested hospital empanelment status for target facility (Status: EMPANELED_ACTIVE).",
+      "✓ Step 2 (40% Complete): Audited Drug-Eluting Stent quote against NPPA DPCO statutory cap (Cap: ₹38,260).",
+      "✓ Step 3 (60% Complete): Flagged illegal overcharge & calculated patient rebate entitlement (+12% interest).",
+      "✓ Step 4 (80% Complete): Formulated statutory Form 14555 legal enforcement notice & SAFU grievance packet.",
+      "✓ Step 5 (100% Complete): Dispatched emergency complaint email to District Collector & NHA Grievance Officer!"
     ];
 
     let currentStep = 0;
@@ -68,6 +100,15 @@ export default function AgenticDashboardWidget() {
     }, 600);
   };
 
+  const startNewChat = () => {
+    setTaskInput('');
+    setIsCompleted(false);
+    setIsExecuting(false);
+    setProgressPercent(0);
+    setProgressLogs([]);
+    setShowLaunchModal(false);
+  };
+
   return (
     <div style={{
       padding: '24px',
@@ -80,7 +121,7 @@ export default function AgenticDashboardWidget() {
       border: '1px solid ' + (isDark ? 'rgba(56, 189, 248, 0.4)' : '#cbd5e1')
     }}>
       
-      {/* 1. TOP HEADER */}
+      {/* 1. TOP HEADER WITH + NEW CHAT BUTTON */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', paddingBottom: '16px', borderBottom: '1px solid ' + (isDark ? 'rgba(56, 189, 248, 0.2)' : '#e2e8f0') }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div style={{ background: 'linear-gradient(135deg, #0284c7, #6366f1)', width: '38px', height: '38px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyCenter: 'center', fontSize: '20px', color: 'white' }}>⚡</div>
@@ -89,17 +130,36 @@ export default function AgenticDashboardWidget() {
             <span style={{ fontSize: '11px', color: '#38bdf8', fontWeight: 600 }}>14 CONNECTED MCP TOOLS • 6 AUTONOMOUS AGENTS</span>
           </div>
         </div>
-        <span style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#34d399', fontSize: '11px', fontWeight: 800, padding: '5px 12px', borderRadius: '20px', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
-          ● 100% OPERATIONAL
-        </span>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button onClick={startNewChat} style={{ background: 'linear-gradient(135deg, #10b981, #059669)', color: 'white', border: 'none', padding: '6px 14px', borderRadius: '14px', fontSize: '11px', fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <span>+</span> New Chat
+          </button>
+          <span style={{ background: 'rgba(16, 185, 129, 0.15)', color: '#34d399', fontSize: '11px', fontWeight: 800, padding: '6px 12px', borderRadius: '20px', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
+            ● 100% OPERATIONAL
+          </span>
+        </div>
       </div>
+
+      {/* RECENT CHATS HISTORY BANNER */}
+      {chatHistory.length > 0 && (
+        <div style={{ background: 'rgba(2, 132, 199, 0.08)', border: '1px solid rgba(56, 189, 248, 0.3)', padding: '10px 14px', borderRadius: '12px', marginBottom: '16px', fontSize: '11px' }}>
+          <strong style={{ color: '#38bdf8' }}>📜 Recent Search History ({chatHistory.length}):</strong>
+          <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', marginTop: '6px' }}>
+            {chatHistory.map((q, idx) => (
+              <span key={idx} style={{ background: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9', padding: '4px 10px', borderRadius: '8px', whiteSpace: 'nowrap', border: '1px solid rgba(255,255,255,0.1)' }}>
+                {q}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* 2. TAB CONTROLS */}
       <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
         {[
           { id: 'agents', label: '🤖 AI Agent Marketplace' },
           { id: 'tools', label: '🛠️ Connected MCP Tools (14)' },
-          { id: 'gateway', label: '🧠 Multi-Model Gateway' },
+          { id: 'gateway', label: '🧠 Multi-Model Gateway (4)' },
           { id: 'cases', label: '📈 Active Case Queue (10)' }
         ].map(t => (
           <button
@@ -136,7 +196,7 @@ export default function AgenticDashboardWidget() {
                 </div>
                 <p style={{ fontSize: '11px', opacity: 0.8, lineHeight: 1.4, marginBottom: '12px', flex: 1 }}>{ag.desc}</p>
                 <button
-                  onClick={() => { setSelectedAgentName(ag.name); setShowLaunchModal(true); setIsCompleted(false); setIsExecuting(false); setProgressPercent(0); }}
+                  onClick={() => { setSelectedAgentName(ag.name); setTaskInput(''); setShowLaunchModal(true); setIsCompleted(false); setIsExecuting(false); setProgressPercent(0); }}
                   style={{ width: '100%', background: 'linear-gradient(135deg, #0284c7, #2563eb)', color: 'white', border: 'none', padding: '10px', borderRadius: '10px', fontWeight: 800, fontSize: '11px', cursor: 'pointer' }}
                 >
                   ⚡ Book & Deploy Agent
@@ -147,7 +207,7 @@ export default function AgenticDashboardWidget() {
         </div>
       )}
 
-      {/* TAB 2: CONNECTED MCP TOOLS */}
+      {/* TAB 2: CONNECTED MCP TOOLS (ALL 14 TOOLS) */}
       {activeTab === 'tools' && (
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
           {toolsList.map((tName, idx) => (
@@ -162,27 +222,35 @@ export default function AgenticDashboardWidget() {
         </div>
       )}
 
-      {/* TAB 3: MULTI-MODEL GATEWAY */}
+      {/* TAB 3: MULTI-MODEL GATEWAY (ALL 4 AI MODELS SHOWN!) */}
       {activeTab === 'gateway' && (
-        <div style={{ fontSize: '12px' }}>
-          <div style={{ background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff', padding: '16px', borderRadius: '16px', marginBottom: '10px' }}>
-            <strong>🟢 OpenAI (GPT-4o / GPT-4 Turbo)</strong> — Key: <code>sk-proj-****9920</code> <span style={{ color: '#34d399', fontWeight: 800, marginLeft: '10px' }}>[ACTIVE]</span>
-          </div>
-          <div style={{ background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff', padding: '16px', borderRadius: '16px' }}>
-            <strong>🟣 Anthropic (Claude 3.5 Sonnet)</strong> — Key: <code>sk-ant-****8820</code> <span style={{ color: '#34d399', fontWeight: 800, marginLeft: '10px' }}>[ACTIVE]</span>
-          </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {modelsList.map((m, idx) => (
+            <div key={idx} style={{ background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff', border: '1px solid ' + (isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0'), padding: '14px', borderRadius: '14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontSize: '12px' }}>
+                <strong>{m.name}</strong>
+                <div style={{ fontSize: '10px', opacity: 0.7, marginTop: '2px' }}>API Key: <code>{m.key}</code></div>
+              </div>
+              <span style={{ background: 'rgba(16,185,129,0.15)', color: '#34d399', fontSize: '10px', fontWeight: 800, padding: '4px 10px', borderRadius: '8px' }}>
+                {m.status}
+              </span>
+            </div>
+          ))}
         </div>
       )}
 
-      {/* TAB 4: CASES */}
+      {/* TAB 4: ACTIVE CASE QUEUE (ALL 10 PRIORITY CASES SHOWN!) */}
       {activeTab === 'cases' && (
-        <div style={{ fontSize: '11px' }}>
-          <div style={{ background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff', padding: '12px', borderRadius: '12px', marginBottom: '8px' }}>
-            <strong>CSE-2024-0089: Rajesh Kumar</strong> (Kauvery Hospital Chennai) — Demanded ₹45,000 cash under CMCHIS. Status: <span style={{ color: '#ef4444' }}>Illegal Overcharge Flagged</span>
-          </div>
-          <div style={{ background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff', padding: '12px', borderRadius: '12px' }}>
-            <strong>CSE-2024-0090: Priya Singh</strong> (Apollo Lifecare Delhi) — Quoted ₹52,000 for DES Stent (Cap ₹38.26k). Status: <span style={{ color: '#38bdf8' }}>Legal Notice Sent</span>
-          </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '380px', overflowY: 'auto' }}>
+          {casesList.map((c, idx) => (
+            <div key={idx} style={{ background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff', border: '1px solid ' + (isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0'), padding: '12px', borderRadius: '12px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: 800, marginBottom: '4px' }}>
+                <span style={{ color: '#38bdf8' }}>{c.caseId}: {c.patient} ({c.hospital})</span>
+                <span style={{ color: c.status.includes('Progress') || c.status.includes('Flagged') ? '#ef4444' : '#10b981', fontSize: '10px' }}>{c.status}</span>
+              </div>
+              <div style={{ fontSize: '11px', opacity: 0.8 }}>Violation: {c.violation}</div>
+            </div>
+          ))}
         </div>
       )}
 
@@ -196,8 +264,14 @@ export default function AgenticDashboardWidget() {
             </div>
 
             <div style={{ marginBottom: '14px' }}>
-              <label style={{ fontSize: '10px', color: '#38bdf8', fontWeight: 700, display: 'block', marginBottom: '4px' }}>TARGET TASK STATEMENT</label>
-              <input type="text" value={taskInput} onChange={(e) => setTaskInput(e.target.value)} style={{ width: '100%', background: isDark ? '#090d16' : '#f8fafc', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', padding: '10px', color: isDark ? '#ffffff' : '#0f172a', fontSize: '12px' }} />
+              <label style={{ fontSize: '10px', color: '#38bdf8', fontWeight: 700, display: 'block', marginBottom: '4px' }}>TYPE YOUR COMPLAINT / QUERY STATEMENT</label>
+              <input
+                type="text"
+                value={taskInput}
+                onChange={(e) => setTaskInput(e.target.value)}
+                placeholder="Type your complaint query here (e.g. Kauvery Hospital Chennai demands 45,000 cash)..."
+                style={{ width: '100%', background: isDark ? '#090d16' : '#f8fafc', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', padding: '10px', color: isDark ? '#ffffff' : '#0f172a', fontSize: '12px' }}
+              />
             </div>
 
             {!isExecuting && !isCompleted && (
