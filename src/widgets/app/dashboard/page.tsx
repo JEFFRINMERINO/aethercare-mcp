@@ -133,7 +133,7 @@ export default function AgenticDashboardWidget() {
 
         {/* PATIENT CONTEXT SWITCHER DROPDOWN */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '10px', color: '#94a3b8', fontWeight: 700, textTransform: uppercase }}>SELECT PATIENT:</span>
+          <span style={{ fontSize: '10px', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase' }}>SELECT PATIENT:</span>
           <select
             value={selectedPatientId}
             onChange={(e) => switchPatient(e.target.value as any)}
@@ -207,7 +207,7 @@ export default function AgenticDashboardWidget() {
 
         {/* WIDGET 4: ACTIVE AI WORKFLOWS */}
         <div style={{ background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff', border: '1px solid ' + (isDark ? 'rgba(56,189,248,0.2)' : '#e2e8f0'), padding: '16px', borderRadius: '16px' }}>
-          <div style={{ fontSize: '10px', color: '#94a3b8', fontWeight 700, textTransform: 'uppercase' }}>Active AI Workflows</div>
+          <div style={{ fontSize: '10px', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase' }}>Active AI Workflows</div>
           {currentPatient.activeAgents.running > 0 || currentPatient.activeAgents.completedToday > 0 ? (
             <div>
               <div style={{ fontSize: '24px', fontWeight: 900, color: '#f59e0b', margin: '4px 0' }}>{currentPatient.activeAgents.running} Running</div>
