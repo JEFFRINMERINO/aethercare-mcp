@@ -11,7 +11,7 @@ export default function AgenticDashboardWidget() {
   const isDark = theme === 'dark';
 
   // State matching NitroStack Spec
-  const [metrics, setMetrics] = useState({ activeCases: 12, pendingEscalations: 8, resolvedCases: 47 });
+  const [metrics, setMetrics] = useState({ activeCases: 17, pendingEscalations: 12, resolvedCases: 52 });
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCaseId, setSelectedCaseId] = useState<string | null>('CSE-2024-0089');
   
@@ -30,21 +30,26 @@ export default function AgenticDashboardWidget() {
     { caseId: 'CSE-2024-0090', patient: 'Priya Singh', hospital: 'Apollo Delhi', violation: 'Price cap exceeded (DES stent)', amount: '₹52,000', status: 'Legal Notice Sent' },
     { caseId: 'CSE-2024-0091', patient: 'Amit Patel', hospital: 'Fortis Bangalore', violation: 'Prohibited bed charges upfront', amount: '₹18,500', status: 'Collector Notified' },
     { caseId: 'CSE-2024-0092', patient: 'Fatima Khan', hospital: 'Max Delhi', violation: 'Medicine markup violation', amount: '₹8,200', status: 'Rebate Approved' },
-    { caseId: 'CSE-2024-0093', patient: 'Suresh Reddy', hospital: 'Manipal Hyderabad', violation: 'Illegal deposit demand', amount: '₹35,000', status: 'Pending Audit' }
+    { caseId: 'CSE-2024-0093', patient: 'Suresh Reddy', hospital: 'Manipal Hyderabad', violation: 'Illegal deposit demand', amount: '₹35,000', status: 'Pending Audit' },
+    { caseId: 'CSE-2024-0094', patient: 'Ananya Sundaram', hospital: 'Kauvery Trichy (TN)', violation: 'Prohibited cash demand (Appendectomy)', amount: '₹28,000', status: 'SAFU Notice Issued' },
+    { caseId: 'CSE-2024-0095', patient: 'Karthik Raman', hospital: 'Aster CMI Bengaluru (KA)', violation: 'Knee implant cap breach (₹85k vs ₹64k)', amount: '₹85,000', status: 'Cap Exception Flagged' },
+    { caseId: 'CSE-2024-0096', patient: 'Lakshmi Amma', hospital: 'KIMSHEALTH Trivandrum (KL)', violation: 'Illegal ICU daily surcharge under Karunya', amount: '₹14,000', status: 'Collector Notified' },
+    { caseId: 'CSE-2024-0097', patient: 'Venkat Rao', hospital: 'KIMS Secunderabad (TS)', violation: 'NLEM Insulin pharmacy markup', amount: '₹4,350', status: 'Pharmacy Audit Passed' },
+    { caseId: 'CSE-2024-0098', patient: 'Meenakshi Nambiar', hospital: 'PSG Coimbatore (TN)', violation: 'Billing during SAFU suspension', amount: '₹62,000', status: 'Blacklist Alert Active' }
   ];
 
   const alerts = [
     { id: 'alert-1', type: 'error', title: '🚨 Illegal Cash Demand Detected', message: 'Kauvery Chennai demanded ₹45,000 upfront for cardiac stent under CMCHIS. Patient protected. Legal notice queued.' },
-    { id: 'alert-2', type: 'warning', title: '⚠️ Price Cap Violation', message: 'Apollo Delhi charged ₹52,000 for DES stent (cap: ₹38,260). Audit initiated. Patient rebate: ₹2,500 + 12% interest.' },
-    { id: 'alert-3', type: 'success', title: '✅ Legal Notice Dispatched', message: 'NHA Grievance Officer and Collector notified of Fortis Bangalore violation. Case escalated to SAFU.' },
-    { id: 'alert-4', type: 'info', title: 'ℹ️ Workflow Complete', message: 'Compliance audit for Case #CSE-2024-0089 complete. 2 violations detected. Enforcement action recommended.' }
+    { id: 'alert-2', type: 'warning', title: '⚠️ Price Cap Violation', message: 'Aster CMI Bengaluru charged ₹85,000 for Knee Implant (cap: ₹64,180). Audit initiated. Rebate: ₹20,820 + interest.' },
+    { id: 'alert-3', type: 'error', title: '🚨 Suspended Facility Violation', message: 'PSG Coimbatore attempted billing during active SAFU suspension. Case escalated for license review.' },
+    { id: 'alert-4', type: 'success', title: '✅ Legal Notice Dispatched', message: 'NHA Grievance Officer and Collector notified of KIMSHEALTH Trivandrum violation.' }
   ];
 
   const workflows = [
-    { id: 'WF-001', name: 'Billing Fraud Detection', progress: 87, status: 'Running', detail: 'Analyzing 5 active cases for price cap violations...' },
-    { id: 'WF-002', name: 'Price Cap Verification', progress: 100, status: 'Complete', detail: 'All 12 active cases verified against NPPA registry. 3 violations found.' },
-    { id: 'WF-003', name: 'Legal Notice Dispatch', progress: 65, status: 'Running', detail: 'Sending enforcement notices to NHA and District Collectors...' },
-    { id: 'WF-004', name: 'NHA Grievance Filing', progress: 45, status: 'Running', detail: 'Filing formal grievances for 3 high-priority violations...' }
+    { id: 'WF-001', name: 'Billing Fraud Detection', progress: 87, status: 'Running', detail: 'Analyzing 10 active cases for price cap violations...' },
+    { id: 'WF-002', name: 'Price Cap Verification', progress: 100, status: 'Complete', detail: 'All 17 active cases verified against NPPA registry. 5 violations found.' },
+    { id: 'WF-003', name: 'Legal Notice Dispatch', progress: 75, status: 'Running', detail: 'Sending enforcement notices to NHA and District Collectors...' },
+    { id: 'WF-004', name: 'NHA Grievance Filing', progress: 60, status: 'Running', detail: 'Filing formal grievances for 5 high-priority violations...' }
   ];
 
   const toolExecutions = [
@@ -63,7 +68,7 @@ export default function AgenticDashboardWidget() {
         : 'linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%)',
       borderRadius: '24px',
       color: isDark ? '#ffffff' : '#0f172a',
-      maxWidth: '820px',
+      maxWidth: '850px',
       boxShadow: '0 25px 60px rgba(0,0,0,0.5)',
       fontFamily: 'system-ui, -apple-system, sans-serif',
       border: '1px solid ' + (isDark ? 'rgba(56, 189, 248, 0.4)' : '#cbd5e1')
@@ -81,7 +86,7 @@ export default function AgenticDashboardWidget() {
           </div>
         </div>
         <span style={{ background: '#0284c7', color: 'white', fontSize: '11px', fontWeight: 800, padding: '5px 12px', borderRadius: '20px' }}>
-          LIVE MONITORING
+          10 ACTIVE CASES
         </span>
       </div>
 
@@ -94,7 +99,7 @@ export default function AgenticDashboardWidget() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Global Case Search (e.g. Kauvery Chennai, CSE-2024-0089, PM-JAY)"
+            placeholder="Global Case Search (e.g. Kauvery Trichy, Aster Bengaluru, KIMSHEALTH Trivandrum)"
             style={{
               flex: 1,
               background: isDark ? '#090d16' : '#f8fafc',
@@ -136,7 +141,7 @@ export default function AgenticDashboardWidget() {
             📧 Legal Notice
           </button>
           <button onClick={() => setRebateApproved(true)} style={{ background: rebateApproved ? '#10b981' : 'linear-gradient(135deg, #10b981, #059669)', color: 'white', border: 'none', borderRadius: '10px', padding: '8px 14px', fontWeight: 700, fontSize: '11px', cursor: 'pointer' }}>
-            {rebateApproved ? '✓ Rebate Approved' : '✅ Approve Rebate'}
+            {rebateApproved ? '✓ Rebates Approved' : '✅ Approve Rebate'}
           </button>
           <button onClick={() => setLastRefreshed(new Date().toLocaleTimeString())} style={{ background: 'transparent', color: isDark ? '#cbd5e1' : '#475569', border: '1px solid ' + (isDark ? 'rgba(255,255,255,0.2)' : '#cbd5e1'), borderRadius: '10px', padding: '8px 14px', fontWeight: 700, fontSize: '11px', cursor: 'pointer' }}>
             🔄 {lastRefreshed ? `Refreshed ${lastRefreshed}` : 'Refresh Status'}
@@ -163,11 +168,11 @@ export default function AgenticDashboardWidget() {
       {/* 4. ACTIVE CASE AUDIT QUEUE TABLE */}
       <div style={{ background: isDark ? 'rgba(255,255,255,0.04)' : '#ffffff', border: '1px solid ' + (isDark ? 'rgba(255,255,255,0.1)' : '#e2e8f0'), padding: '16px', borderRadius: '18px', marginBottom: '20px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-          <h4 style={{ margin: 0, fontSize: '13px', fontWeight: 800 }}>📋 Active Case Audit Queue (5 Priority Cases)</h4>
-          <span style={{ fontSize: '11px', color: '#10b981', fontWeight: 700 }}>5 ACTIVE</span>
+          <h4 style={{ margin: 0, fontSize: '13px', fontWeight: 800 }}>📋 Active Case Audit Queue (10 Priority Cases)</h4>
+          <span style={{ fontSize: '11px', color: '#10b981', fontWeight: 700 }}>10 ACTIVE</span>
         </div>
 
-        <div style={{ overflowX: 'auto' }}>
+        <div style={{ overflowX: 'auto', maxHeight: '280px' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '11px', textAlign: 'left' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid ' + (isDark ? 'rgba(255,255,255,0.1)' : '#cbd5e1'), opacity: 0.7 }}>
