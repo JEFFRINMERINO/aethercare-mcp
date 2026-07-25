@@ -4,6 +4,7 @@ import { AutonomousScraperTools } from './autonomous_scraper.tools.js';
 import { MoERouterTools } from './moe_router.tools.js';
 import { GeoEmpanelmentTools } from './geo_empanelment.tools.js';
 import { PharmacyAndRebateTools } from './pharmacy_and_rebate.tools.js';
+import { AgenticExecutionLoopTools } from './agentic_execution_loop.tools.js';
 import { AetherCareResources } from './aethercare.resources.js';
 import { AetherCarePrompts } from './aethercare.prompts.js';
 
@@ -16,6 +17,7 @@ import { AetherCarePrompts } from './aethercare.prompts.js';
     MoERouterTools,
     GeoEmpanelmentTools,
     PharmacyAndRebateTools,
+    AgenticExecutionLoopTools,
     AetherCareResources,
     AetherCarePrompts
   ]

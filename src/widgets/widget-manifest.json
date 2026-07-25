@@ -2,9 +2,16 @@
   "version": "1.0.0",
   "widgets": [
     {
+      "uri": "/agentic-execution-loop",
+      "name": "Pure Autonomous Agentic Execution Loop Widget",
+      "description": "5-stage autonomous AI execution pipeline visualizer showing real-time perception, MoE reasoning, audit exceptions, legal notice formulation, and enforcement dispatch",
+      "examples": [],
+      "tags": ["agentic", "execution", "loop", "pipeline", "autonomous"]
+    },
+    {
       "uri": "/empanelment-card",
       "name": "Hospital Empanelment & Blacklist Status Card",
-      "description": "Interactive card showing hospital empanelment status, cashless facility availability, active scheme coverage, and fraud warning alerts",
+      "description": "Interactive card showing hospital empanelment status, cashless facility availability, active scheme coverage across Tamil Nadu (CMCHIS), Karnataka (SAST), Kerala (Karunya), Telangana (Aarogyasri), PM-JAY, CGHS, and SAFU warnings",
       "examples": [],
       "tags": ["healthcare", "hospital", "empanelment", "cashless"]
     },
@@ -58,5 +65,5 @@
       "tags": ["rebate", "cashless", "refund", "penalty"]
     }
   ],
-  "generatedAt": "2026-07-25T22:20:00.000Z"
+  "generatedAt": "2026-07-25T22:50:00.000Z"
 }

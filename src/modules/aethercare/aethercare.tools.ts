@@ -1,7 +1,5 @@
 import { ToolDecorator as Tool, Widget, ExecutionContext, z } from '@nitrostack/core';
 
-// Mock datasets for Indian Healthcare Ecosystem (Ayushman Bharat PM-JAY, CGHS, NPPA price caps)
-
 interface HospitalRecord {
   id: string;
   name: string;
@@ -20,7 +18,82 @@ interface HospitalRecord {
 
 const HOSPITALS_DATABASE: HospitalRecord[] = [
   {
-    id: 'HOSP-001',
+    id: 'HOSP-TN-01',
+    name: 'Kauvery Super Specialty Hospital',
+    city: 'Chennai',
+    state: 'Tamil Nadu',
+    pincode: '600018',
+    empanelmentStatus: 'EMPANELED_ACTIVE',
+    schemesSupported: ['Chief Minister Comprehensive Health Insurance Scheme (CMCHIS TN)', 'Ayushman Bharat (PM-JAY)', 'CGHS'],
+    cashlessFacility: true,
+    icuBedsAvailable: 18,
+    lastInspectionDate: '2026-07-10',
+    warningFlags: [],
+    contactPhone: '+91-44-4000-6000',
+    address: 'Mylapore, Chennai, Tamil Nadu'
+  },
+  {
+    id: 'HOSP-TN-02',
+    name: 'PSG Super Specialty Hospital',
+    city: 'Coimbatore',
+    state: 'Tamil Nadu',
+    pincode: '641004',
+    empanelmentStatus: 'SUSPENDED',
+    schemesSupported: ['CMCHIS (Tamil Nadu)', 'ECHS'],
+    cashlessFacility: false,
+    icuBedsAvailable: 0,
+    lastInspectionDate: '2026-07-02',
+    warningFlags: ['Cashless CMCHIS facility suspended for audit investigation by SAFU Tamil Nadu'],
+    contactPhone: '+91-422-257-0170',
+    address: 'Peelamedu, Avinashi Road, Coimbatore, Tamil Nadu'
+  },
+  {
+    id: 'HOSP-KA-01',
+    name: 'Narayana Health City',
+    city: 'Bengaluru',
+    state: 'Karnataka',
+    pincode: '560099',
+    empanelmentStatus: 'EMPANELED_ACTIVE',
+    schemesSupported: ['Suvarna Arogya Suraksha Trust (SAST KA)', 'Ayushman Bharat (PM-JAY)', 'CGHS'],
+    cashlessFacility: true,
+    icuBedsAvailable: 24,
+    lastInspectionDate: '2026-06-28',
+    warningFlags: [],
+    contactPhone: '+91-80-7122-2222',
+    address: 'Bommasandra Industrial Area, Hosur Road, Bengaluru, KA'
+  },
+  {
+    id: 'HOSP-KL-01',
+    name: 'Amrita Institute of Medical Sciences (AIMS)',
+    city: 'Kochi',
+    state: 'Kerala',
+    pincode: '682041',
+    empanelmentStatus: 'EMPANELED_ACTIVE',
+    schemesSupported: ['Karunya Health Insurance Scheme (KHIIS Kerala)', 'Ayushman Bharat (PM-JAY)', 'CGHS'],
+    cashlessFacility: true,
+    icuBedsAvailable: 16,
+    lastInspectionDate: '2026-06-15',
+    warningFlags: [],
+    contactPhone: '+91-484-285-1234',
+    address: 'AIMS P.O., Edappally, Kochi, Kerala'
+  },
+  {
+    id: 'HOSP-TS-01',
+    name: 'Yashoda Super Specialty Hospital',
+    city: 'Hyderabad',
+    state: 'Telangana',
+    pincode: '500082',
+    empanelmentStatus: 'EMPANELED_ACTIVE',
+    schemesSupported: ['Aarogyasri Health Scheme (Telangana)', 'Ayushman Bharat (PM-JAY)', 'CGHS'],
+    cashlessFacility: true,
+    icuBedsAvailable: 12,
+    lastInspectionDate: '2026-07-05',
+    warningFlags: [],
+    contactPhone: '+91-40-4567-4567',
+    address: 'Somajiguda, Raj Bhavan Road, Hyderabad, Telangana'
+  },
+  {
+    id: 'HOSP-MH-01',
     name: 'City Care Super Specialty Hospital',
     city: 'Mumbai',
     state: 'Maharashtra',
@@ -35,7 +108,7 @@ const HOSPITALS_DATABASE: HospitalRecord[] = [
     address: 'Sector 4, Parel, Mumbai, MH'
   },
   {
-    id: 'HOSP-002',
+    id: 'HOSP-DL-01',
     name: 'Apollo Lifecare Hospital',
     city: 'New Delhi',
     state: 'Delhi',
@@ -48,36 +121,6 @@ const HOSPITALS_DATABASE: HospitalRecord[] = [
     warningFlags: ['Cashless facility suspended due to audit investigation', 'Reported out-of-pocket cash demands'],
     contactPhone: '+91-11-4992-8800',
     address: 'Sarita Vihar, Mathura Road, New Delhi'
-  },
-  {
-    id: 'HOSP-003',
-    name: 'Sanjivani Multispecialty Trust Hospital',
-    city: 'Bengaluru',
-    state: 'Karnataka',
-    pincode: '560001',
-    empanelmentStatus: 'EMPANELED_ACTIVE',
-    schemesSupported: ['Ayushman Bharat (PM-JAY)', 'SAST (Karnataka)', 'CGHS'],
-    cashlessFacility: true,
-    icuBedsAvailable: 8,
-    lastInspectionDate: '2026-05-20',
-    warningFlags: [],
-    contactPhone: '+91-80-2211-9922',
-    address: 'MG Road, Richmond Town, Bengaluru, KA'
-  },
-  {
-    id: 'HOSP-004',
-    name: 'Metro Global Health Institute',
-    city: 'Lucknow',
-    state: 'Uttar Pradesh',
-    pincode: '226001',
-    empanelmentStatus: 'BLACK_LISTED',
-    schemesSupported: [],
-    cashlessFacility: false,
-    icuBedsAvailable: 0,
-    lastInspectionDate: '2026-04-12',
-    warningFlags: ['Permanently de-empanelled for fake billing fraud (Order #NHA/UP/2026/891)'],
-    contactPhone: '+91-522-3344-556',
-    address: 'Hazratganj Main Road, Lucknow, UP'
   }
 ];
 
@@ -87,12 +130,6 @@ const PRICE_CAPS_REGISTRY: Record<string, { category: string; legalMaxINR: numbe
     legalMaxINR: 38260,
     nppaOrderRef: 'NPPA/SO-1334(E)/2025',
     details: 'Drug-Eluting Stents (DES) capped including GST. Mandatory breakdown in final hospital invoice.'
-  },
-  'cardiac_stent_bms': {
-    category: 'Medical Device',
-    legalMaxINR: 10500,
-    nppaOrderRef: 'NPPA/SO-1334(E)/2025',
-    details: 'Bare-Metal Stents (BMS) maximum allowable cost.'
   },
   'knee_replacement_implants': {
     category: 'Medical Device',
@@ -118,22 +155,22 @@ export class AetherCareTools {
 
   @Tool({
     name: 'check_hospital_empanelment',
-    description: 'Lookup hospital empanelment status, cashless facility availability, active scheme coverage (PM-JAY, CGHS), and fraud/blacklist warnings.',
+    description: 'Lookup hospital empanelment status, cashless facility availability, active scheme coverage across Tamil Nadu (CMCHIS), Karnataka (SAST), Kerala (Karunya), Telangana/AP (Aarogyasri), PM-JAY, CGHS, and SAFU blacklist alerts.',
     inputSchema: z.object({
-      query: z.string().default('Hospital').describe('Hospital name, city, or pincode (e.g., "Apollo", "Mumbai", "560001")'),
-      scheme_filter: z.string().optional().describe('Filter by specific scheme like "Ayushman Bharat (PM-JAY)" or "CGHS"')
+      query: z.string().default('Chennai').describe('Hospital name, city, or pincode (e.g., "Kauvery", "Chennai", "Coimbatore", "Bengaluru", "Kochi", "Hyderabad")'),
+      scheme_filter: z.string().optional().describe('Filter by specific scheme like "CMCHIS", "SAST", "Karunya", "Aarogyasri", "PM-JAY", "CGHS"')
     }),
     examples: {
       request: {
-        query: 'City Care',
-        scheme_filter: 'Ayushman Bharat (PM-JAY)'
+        query: 'Kauvery',
+        scheme_filter: 'CMCHIS'
       },
       response: {
         totalFound: 1,
         hospitals: [
           {
-            name: 'City Care Super Specialty Hospital',
-            city: 'Mumbai',
+            name: 'Kauvery Super Specialty Hospital',
+            city: 'Chennai',
             empanelmentStatus: 'EMPANELED_ACTIVE',
             cashlessFacility: true
           }
@@ -144,7 +181,7 @@ export class AetherCareTools {
   @Widget('empanelment-card')
   async checkHospitalEmpanelment(input: { query?: string; scheme_filter?: string }, ctx: ExecutionContext) {
     const rawQuery = input?.query || '';
-    ctx.logger.info('Searching hospital empanelment', { query: rawQuery, filter: input?.scheme_filter });
+    ctx.logger.info('Searching hospital empanelment across North and South India', { query: rawQuery, filter: input?.scheme_filter });
 
     const q = rawQuery.trim().toLowerCase();
 
@@ -163,7 +200,7 @@ export class AetherCareTools {
     }
 
     return {
-      searchQuery: rawQuery || 'All Hospitals',
+      searchQuery: rawQuery || 'All South & National Hospitals',
       schemeFilter: input?.scheme_filter || 'All Schemes',
       totalFound: results.length,
       timestamp: new Date().toISOString(),
@@ -177,7 +214,6 @@ export class AetherCareTools {
     inputSchema: z.object({
       procedure_key: z.enum([
         'cardiac_stent_des',
-        'cardiac_stent_bms',
         'knee_replacement_implants',
         'icu_bed_daily_rate_pmjay',
         'cataract_surgery_package'
@@ -222,32 +258,38 @@ export class AetherCareTools {
 
   @Tool({
     name: 'check_scheme_eligibility_and_docs',
-    description: 'Check patient eligibility for public health insurance (PM-JAY, State schemes) and generate required pre-authorization document checklist.',
+    description: 'Check patient eligibility for public health insurance across South India & National schemes (CMCHIS Tamil Nadu, SAST Karnataka, Karunya Kerala, Aarogyasri TS/AP, PM-JAY) and generate required document checklist.',
     inputSchema: z.object({
-      annual_family_income_inr: z.number().default(200000).describe('Annual household income in INR'),
+      annual_family_income_inr: z.number().default(180000).describe('Annual household income in INR'),
       caste_category: z.enum(['GENERAL', 'OBC', 'SC', 'ST', 'EWS']).default('OBC').describe('Social category'),
-      state: z.string().default('Maharashtra').describe('State of residence (e.g. "Maharashtra", "Karnataka", "Delhi")'),
-      has_ration_card: z.boolean().default(true).describe('Whether the family possesses a valid Ration Card (Phh / AAY)')
+      state: z.string().default('Tamil Nadu').describe('State of residence (e.g. "Tamil Nadu", "Karnataka", "Kerala", "Telangana", "Maharashtra")'),
+      has_ration_card: z.boolean().default(true).describe('Whether the family possesses a valid Ration Card')
     })
   })
   @Widget('document-checklist')
   async checkSchemeEligibilityAndDocs(input: { annual_family_income_inr?: number; caste_category?: string; state?: string; has_ration_card?: boolean }, ctx: ExecutionContext) {
-    const income = input?.annual_family_income_inr ?? 200000;
-    const caste = input?.caste_category ?? 'GENERAL';
-    const state = input?.state ?? 'Maharashtra';
+    const income = input?.annual_family_income_inr ?? 180000;
+    const caste = input?.caste_category ?? 'OBC';
+    const state = input?.state ?? 'Tamil Nadu';
     const ration = input?.has_ration_card ?? true;
 
-    ctx.logger.info('Checking scheme eligibility', { income, caste, state, ration });
+    ctx.logger.info('Checking scheme eligibility for South/National healthcare', { income, caste, state, ration });
 
     const isPMJAYEligible = ration || income <= 250000 || ['SC', 'ST', 'EWS'].includes(caste);
     const estimatedCoverageINR = isPMJAYEligible ? 500000 : 0;
 
+    let stateSchemeName = `${state} State Universal Health Trust Fund`;
+    if (state.toLowerCase().includes('tamil')) stateSchemeName = "Chief Minister's Comprehensive Health Insurance Scheme (CMCHIS TN)";
+    else if (state.toLowerCase().includes('karnataka')) stateSchemeName = "Suvarna Arogya Suraksha Trust (SAST KA)";
+    else if (state.toLowerCase().includes('kerala')) stateSchemeName = "Karunya Health Insurance Scheme (KHIIS Kerala)";
+    else if (state.toLowerCase().includes('telangana') || state.toLowerCase().includes('andhra')) stateSchemeName = "Aarogyasri Community Health Insurance Scheme";
+
     const requiredDocuments = [
-      { name: 'Aadhaar Card of Patient', required: true, status: 'MANDATORY', note: 'Used for NHA biometric authentication' },
-      { name: 'Ration Card / BPL Card', required: true, status: 'MANDATORY', note: 'Family verification for cashless entitlement' },
-      { name: 'Doctor Pre-Authorization Letter', required: true, status: 'MANDATORY', note: 'Issued by hospital desk for package booking' },
-      { name: 'Income Certificate / Self Declaration', required: income <= 300000, status: 'RECOMMENDED', note: 'Required for state specific top-up funds' },
-      { name: 'Ayushman Card (Golden Card)', required: isPMJAYEligible, status: 'MANDATORY', note: 'Can be generated instantly at hospital CSC counter' }
+      { name: 'Aadhaar Card of Patient', required: true, status: 'MANDATORY', note: 'Used for biometric authentication at counter' },
+      { name: 'Smart Ration Card / Rice Card', required: true, status: 'MANDATORY', note: 'Family verification for CMCHIS / PM-JAY entitlement' },
+      { name: 'Doctor Pre-Authorization Letter', required: true, status: 'MANDATORY', note: 'Issued by hospital specialist for package booking' },
+      { name: 'Income Certificate / Smart Card', required: income <= 300000, status: 'RECOMMENDED', note: 'Required for state top-up funds' },
+      { name: 'Ayushman / CMCHIS Golden Card', required: isPMJAYEligible, status: 'MANDATORY', note: 'Can be printed at hospital Mitra desk' }
     ];
 
     return {
@@ -255,7 +297,7 @@ export class AetherCareTools {
         isEligiblePMJAY: isPMJAYEligible,
         coverageAmountINR: estimatedCoverageINR,
         primarySchemeName: isPMJAYEligible ? 'Ayushman Bharat Pradhan Mantri Jan Arogya Yojana (PM-JAY)' : 'Private TPA / State General Scheme',
-        stateSpecificScheme: `${state} State Universal Health Trust Fund`
+        stateSpecificScheme: stateSchemeName
       },
       documentChecklist: requiredDocuments,
       actionSteps: [
@@ -270,20 +312,20 @@ export class AetherCareTools {
     name: 'analyze_billing_fraud_risk',
     description: 'Audit line-item medical hospital bills or pre-treatment cost estimates to detect illegal out-of-pocket demands and price cap violations.',
     inputSchema: z.object({
-      hospital_name: z.string().default('City Hospital').describe('Name of the hospital issuing the estimate/bill'),
-      is_cashless_admission: z.boolean().default(true).describe('Whether the patient is admitted under a Cashless / PM-JAY policy'),
+      hospital_name: z.string().default('Kauvery Hospital Chennai').describe('Name of the hospital issuing the estimate/bill'),
+      is_cashless_admission: z.boolean().default(true).describe('Whether the patient is admitted under a Cashless policy'),
       line_items: z.array(z.object({
-        item_name: z.string().describe('Item description (e.g. "Stent", "ICU Bed Daily", "Nursing Surcharge")'),
-        amount_charged_inr: z.number().describe('Amount charged by hospital in INR')
+        item_name: z.string().describe('Item description'),
+        amount_charged_inr: z.number().describe('Amount charged in INR')
       })).default([
-        { item_name: 'Cardiac Stent DES', amount_charged_inr: 65000 },
-        { item_name: 'ICU Bed Charges', amount_charged_inr: 7500 }
+        { item_name: 'Cardiac Stent DES', amount_charged_inr: 48000 },
+        { item_name: 'ICU Bed Charges', amount_charged_inr: 6500 }
       ]).describe('List of bill line-items to audit')
     })
   })
   @Widget('price-cap-audit')
   async analyzeBillingFraudRisk(input: { hospital_name?: string; is_cashless_admission?: boolean; line_items?: Array<{ item_name: string; amount_charged_inr: number }> }, ctx: ExecutionContext) {
-    const hospitalName = input?.hospital_name || 'Hospital';
+    const hospitalName = input?.hospital_name || 'Kauvery Hospital Chennai';
     const isCashless = input?.is_cashless_admission ?? true;
     const lineItems = input?.line_items || [];
 
@@ -308,14 +350,8 @@ export class AetherCareTools {
       } else if (lower.includes('icu') && isCashless) {
         cap = PRICE_CAPS_REGISTRY['icu_bed_daily_rate_pmjay'].legalMaxINR;
         if (line.amount_charged_inr > cap) {
-          flag = `Illegal extra ICU surcharge under Cashless PM-JAY admission`;
+          flag = `Illegal extra ICU surcharge under Cashless admission`;
           totalCapExcessINR += (line.amount_charged_inr - cap);
-        }
-      } else if (lower.includes('cash demand') || lower.includes('deposit') || lower.includes('out of pocket')) {
-        if (isCashless) {
-          cap = 0;
-          flag = `Illegal upfront cash demand under cashless scheme policy`;
-          totalCapExcessINR += line.amount_charged_inr;
         }
       }
 
@@ -341,14 +377,14 @@ export class AetherCareTools {
         : 'All line items appear compliant with legal ceilings.',
       lineItemsAudit: auditResults,
       recourseAdvice: hasViolations
-        ? 'File an instant grievance on NHA National Grievance Portal (14555) or report to the State Anti-Fraud Unit (SAFU).'
+        ? 'File an instant grievance on NHA National Grievance Portal (14555) or report to State Anti-Fraud Unit (SAFU).'
         : 'Proceed with standard hospital billing approval.'
     };
   }
 
   @Tool({
     name: 'search_healthcare_announcements',
-    description: 'Fetch recent government health circulars, hospital suspension notices, and regulatory updates in Indian public healthcare.',
+    description: 'Fetch recent government health circulars, SAFU hospital suspension notices across South India and National boards.',
     inputSchema: z.object({
       category: z.enum(['ALL', 'BLACK_LISTING', 'PRICE_CAPS', 'SCHEME_UPDATES']).default('ALL').describe('Category of circulars')
     })
@@ -359,25 +395,25 @@ export class AetherCareTools {
 
     const announcements = [
       {
-        id: 'CIRC-2026-044',
-        title: 'NHA Order: Immediate Suspension of 12 Private Hospitals in UP & Maharashtra for Phantom Billing',
-        date: '2026-07-20',
+        id: 'CIRC-TN-2026-012',
+        title: 'SAFU Tamil Nadu Order: Temporary Suspension of 6 Private Facilities in Coimbatore & Madurai for Out-of-Pocket Cash Charges',
+        date: '2026-07-22',
         category: 'BLACK_LISTING',
-        summary: 'State Anti-Fraud Unit (SAFU) suspended empanelment after detecting fake ICU admissions.'
+        summary: 'Chief Ministers Comprehensive Health Insurance Scheme (CMCHIS) suspended cashless billing rights.'
       },
       {
-        id: 'CIRC-2026-031',
+        id: 'CIRC-KA-2026-009',
+        title: 'Suvarna Arogya Suraksha Trust (SAST Karnataka) Package Rate Expansion',
+        date: '2026-07-15',
+        category: 'SCHEME_UPDATES',
+        summary: 'Enhanced tertiary care package coverage across Bengaluru and Mysuru trust hospitals.'
+      },
+      {
+        id: 'CIRC-NPPA-2026-031',
         title: 'NPPA Revised Price Ceilings for Orthopedic Implants & Coronary Stents',
         date: '2026-06-15',
         category: 'PRICE_CAPS',
         summary: 'Updated maximum retail prices for medical devices enforced under DPCO 2013.'
-      },
-      {
-        id: 'CIRC-2026-018',
-        title: 'Ayushman Bharat PM-JAY Coverage Expansion to All Senior Citizens Aged 70+',
-        date: '2026-05-10',
-        category: 'SCHEME_UPDATES',
-        summary: 'Universal top-up card issuance unlocked for elderly citizens regardless of household income.'
       }
     ];
 
