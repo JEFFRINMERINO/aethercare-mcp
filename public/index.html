@@ -3,196 +3,212 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AetherCare — Agentic AI Healthcare Portal</title>
+  <title>AetherCare — Enterprise Agentic AI Control Hub</title>
   <style>
     :root {
       --bg: #090d16;
       --card-bg: rgba(255, 255, 255, 0.04);
       --border: rgba(255, 255, 255, 0.12);
-      --primary: #6366f1;
+      --primary: #0284c7;
+      --secondary: #6366f1;
       --emerald: #10b981;
       --rose: #ef4444;
       --text: #ffffff;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
     body { background: var(--bg); color: var(--text); padding: 24px; min-height: 100vh; }
-    .container { max-width: 1000px; margin: 0 auto; }
+    .container { max-width: 1100px; margin: 0 auto; }
     
-    /* Header */
-    .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
-    .logo { font-size: 22px; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 10px; }
-    .badge { background: rgba(99, 102, 241, 0.2); color: #818cf8; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; border: 1px solid rgba(99, 102, 241, 0.4); }
-    
-    /* Login Card */
-    .auth-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 32px; max-width: 440px; margin: 40px auto; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-    .auth-card h2 { margin-bottom: 8px; font-size: 22px; }
-    .auth-card p { opacity: 0.75; font-size: 13px; margin-bottom: 24px; }
-    .input-group { margin-bottom: 16px; text-align: left; }
-    .input-group label { display: block; font-size: 12px; font-weight: 700; opacity: 0.8; margin-bottom: 6px; }
-    .input-group input { width: 100%; padding: 12px 14px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 14px; outline: none; }
-    .btn { width: 100%; padding: 12px; background: linear-gradient(135deg, var(--primary), #3b82f6); color: white; border: none; border-radius: 10px; font-weight: 800; font-size: 14px; cursor: pointer; transition: all 0.2s; }
-    .btn:hover { opacity: 0.9; transform: translateY(-1px); }
-    
-    /* User Portal */
-    .portal { display: none; }
-    .user-banner { background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(16,185,129,0.15)); border: 1px solid var(--primary); padding: 16px 20px; border-radius: 16px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; }
-    
-    /* Tool Catalog Grid */
-    .tool-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 32px; }
-    .tool-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 20px; transition: all 0.2s; cursor: pointer; }
-    .tool-card:hover { border-color: var(--primary); transform: translateY(-2px); background: rgba(255,255,255,0.06); }
-    .tool-icon { font-size: 24px; margin-bottom: 10px; }
-    .tool-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
-    .tool-desc { font-size: 12px; opacity: 0.75; line-height: 1.4; }
-    
-    /* History Section */
-    .history-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-top: 24px; }
-    .history-item { padding: 12px; background: rgba(0,0,0,0.3); border-radius: 10px; margin-top: 10px; font-size: 13px; display: flex; justify-content: space-between; }
+    /* Top Header Bar */
+    .top-bar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 16px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+    .title-group { display: flex; align-items: center; gap: 12px; }
+    .title-icon { font-size: 26px; }
+    .main-title { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
+    .sub-title { font-size: 11px; color: #38bdf8; font-weight: 600; }
+    .version-badge { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 800; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4); }
+
+    /* Universal Assist Search Bar */
+    .search-box { background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border); padding: 12px 16px; border-radius: 16px; margin-bottom: 20px; display: flex; gap: 12px; align-items: center; }
+    .search-input { flex: 1; background: transparent; border: none; color: white; font-size: 13px; outline: none; font-weight: 600; }
+    .search-btn { background: linear-gradient(135deg, var(--primary), #2563eb); color: white; border: none; border-radius: 10px; padding: 10px 18px; font-weight: 700; font-size: 12px; cursor: pointer; }
+
+    /* Key Metrics Bar */
+    .metrics-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+    .metric-card { background: var(--card-bg); border: 1px solid var(--border); padding: 14px; border-radius: 14px; }
+    .metric-label { font-size: 11px; opacity: 0.7; display: block; margin-bottom: 4px; }
+    .metric-val { font-size: 22px; font-weight: 800; }
+
+    /* Dual AI Avatars */
+    .avatars-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+    .avatar-card { display: flex; align-items: center; gap: 12px; }
+    .avatar-img { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; color: white; flex-shrink: 0; }
+    .speech-bubble { background: rgba(255,255,255,0.06); border: 1px solid var(--border); padding: 10px 14px; border-radius: 14px; font-size: 11px; line-height: 1.4; flex: 1; }
+
+    /* 4-Panel Grid (Matched to Picture) */
+    .panels-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+    .panel-card { background: var(--card-bg); border: 1px solid var(--border); padding: 18px; border-radius: 18px; }
+    .panel-title { font-size: 14px; font-weight: 800; margin-bottom: 12px; display: flex; justify-content: space-between; }
+    .action-btn { width: 100%; padding: 10px; border: none; border-radius: 10px; font-weight: 700; font-size: 12px; cursor: pointer; margin-top: 10px; color: white; transition: all 0.2s; }
+
+    /* Auth Modal */
+    .auth-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+    .auth-modal { background: #0f172a; border: 1px solid var(--border); padding: 32px; border-radius: 20px; width: 400px; text-align: center; box-shadow: 0 25px 60px rgba(0,0,0,0.6); }
+    .auth-input { width: 100%; padding: 12px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 10px; color: white; margin-bottom: 12px; outline: none; }
   </style>
 </head>
 <body>
-  <div class="container">
-    
-    <!-- Top Header -->
-    <div class="header">
-      <div class="logo">⚡ AetherCare Agentic AI</div>
-      <div class="badge">14 TOOLS • 13 WIDGETS</div>
-    </div>
-
-    <!-- Screen 1: User Login / Signup -->
-    <div id="authScreen" class="auth-card">
-      <h2>Patient & Hospital Portal</h2>
-      <p>Log in or Create an account using your Email or Mobile Number to access Agentic AI tools.</p>
-      
-      <div class="input-group">
-        <label>Email Address or Mobile Number</label>
-        <input type="text" id="userInput" placeholder="user@domain.com or +91 9876543210" value="jeffrin@amrita.edu">
-      </div>
-
-      <div class="input-group">
-        <label>Account Password</label>
-        <input type="password" id="passInput" placeholder="••••••••" value="password123">
-      </div>
-
-      <button class="btn" onclick="handleAuth()">Login / Create Account</button>
-    </div>
-
-    <!-- Screen 2: Authenticated Dashboard -->
-    <div id="portalScreen" class="portal">
-      <div class="user-banner">
-        <div>
-          <h3 id="userWelcome">Welcome, User!</h3>
-          <span style="font-size: 12px; opacity: 0.8;">Session State: <strong>PERSISTED ACTIVE</strong> • User Database Synced</span>
-        </div>
-        <button onclick="handleLogout()" style="background: rgba(239,68,68,0.2); color: #fca5a5; border: 1px solid #ef4444; padding: 6px 12px; border-radius: 8px; font-size: 12px; cursor: pointer;">Logout</button>
-      </div>
-
-      <!-- Tools Catalog -->
-      <h3 style="margin-bottom: 14px;">🛠️ Connected Agentic AI Tools Catalog</h3>
-      
-      <div class="tool-grid">
-        <div class="tool-card" onclick="runTask('run_autonomous_agentic_workflow')">
-          <div class="tool-icon">🤖</div>
-          <div class="tool-title">Autonomous Execution Loop</div>
-          <div class="tool-desc">Runs pure 5-stage AI pipeline (Perception ➔ Reasoning ➔ Fraud Audit ➔ Legal Notice ➔ Enforcement).</div>
-        </div>
-
-        <div class="tool-card" onclick="runTask('open_agentic_command_center')">
-          <div class="tool-icon">⚡</div>
-          <div class="tool-title">360-Degree Control Hub</div>
-          <div class="tool-desc">Full-screen operations center with hospital radar, price caps, pre-auth checklist & Form 14555 notice.</div>
-        </div>
-
-        <div class="tool-card" onclick="runTask('dispatch_emergency_email_escalation')">
-          <div class="tool-icon">📧</div>
-          <div class="tool-title">District Collector Email Escalation</div>
-          <div class="tool-desc">Dispatches automated email memorandum to District Collector & NHA Grievance Officers.</div>
-        </div>
-
-        <div class="tool-card" onclick="runTask('track_agentic_action_progress')">
-          <div class="tool-icon">📈</div>
-          <div class="tool-title">Real-Time Action Progress Tracker</div>
-          <div class="tool-desc">Tracks multi-step agentic execution progress (0%–100%) with animated progress bars.</div>
-        </div>
-
-        <div class="tool-card" onclick="runTask('configure_external_ai_gateway')">
-          <div class="tool-icon">🔑</div>
-          <div class="tool-title">External LLM API Key Gateway</div>
-          <div class="tool-desc">Connects external API keys for OpenAI GPT-4o, Claude 3.5, Gemini 1.5 Pro, and DeepSeek.</div>
-        </div>
-
-        <div class="tool-card" onclick="runTask('check_hospital_empanelment')">
-          <div class="tool-icon">🏥</div>
-          <div class="tool-title">Hospital Empanelment Radar</div>
-          <div class="tool-desc">Checks CMCHIS (TN), SAST (KA), Karunya (KL), Aarogyasri (TS/AP), PM-JAY & SAFU alerts.</div>
-        </div>
-
-        <div class="tool-card" onclick="runTask('verify_procedure_price_cap')">
-          <div class="tool-icon">⚖️</div>
-          <div class="tool-title">NPPA Stent & Implant Auditor</div>
-          <div class="tool-desc">Verifies NPPA DPCO 2013 ceiling caps for cardiac stents (₹38,260) and knee implants.</div>
-        </div>
-
-        <div class="tool-card" onclick="runTask('calculate_out_of_pocket_cashless_rebate')">
-          <div class="tool-icon">💵</div>
-          <div class="tool-title">Cashless Refund & Penalty Calculator</div>
-          <div class="tool-desc">Calculates 100% refund + 12% statutory penalty interest for forced cash deposits.</div>
-        </div>
-      </div>
-
-      <!-- User Persistent Execution History -->
-      <div class="history-card">
-        <h4 style="margin-bottom: 8px;">📜 User Persistent Session & Execution History</h4>
-        <div id="historyList">
-          <div class="history-item">
-            <span>⚡ Executed: Autonomous Agentic Execution Loop for Kauvery Hospital Chennai</span>
-            <span style="color: #10b981; font-weight: bold;">SUCCESSFULLY ENFORCED</span>
-          </div>
-          <div class="history-item">
-            <span>📜 Generated: Form 14555 Legal Notice against prohibited cash demand</span>
-            <span style="color: #6366f1; font-weight: bold;">NOTICE READY</span>
-          </div>
-        </div>
-      </div>
+  
+  <!-- Auth Overlay Modal -->
+  <div id="authOverlay" class="auth-overlay">
+    <div class="auth-modal">
+      <h2 style="margin-bottom: 8px;">AetherCare Login</h2>
+      <p style="font-size: 12px; opacity: 0.75; margin-bottom: 20px;">Enter your Email or Mobile Number to access Enterprise Dashboard</p>
+      <input type="text" id="userAccount" class="auth-input" placeholder="User Email or Mobile Number" value="jeffrin@amrita.edu">
+      <input type="password" id="userPass" class="auth-input" placeholder="Password" value="password123">
+      <button class="action-btn" style="background: linear-gradient(135deg, var(--primary), var(--secondary));" onclick="loginUser()">Login to Agentic Platform</button>
     </div>
   </div>
 
+  <div class="container">
+    
+    <!-- Top Header Bar -->
+    <div class="top-bar">
+      <div class="title-group">
+        <span class="title-icon">⚡</span>
+        <div>
+          <div class="main-title">AetherCare Enterprise Health Operations Center</div>
+          <div class="sub-title">CONNECTED AGENTIC ECOSYSTEM • INTERCONNECTED MULTI-MODEL STATE</div>
+        </div>
+      </div>
+      <div class="version-badge">ENTERPRISE V2.0</div>
+    </div>
+
+    <!-- Universal Search Bar -->
+    <div class="search-box">
+      <span style="opacity: 0.7;">🔍</span>
+      <input type="text" class="search-input" value="Analyze patient billing & audit hospital empanelment for Kauvery Chennai">
+      <button class="search-btn" onclick="triggerReport()">Generate Report</button>
+    </div>
+
+    <!-- Key Metrics Bar -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <span class="metric-label">Total Patients Saved</span>
+        <div class="metric-val" style="color: #38bdf8;">₹4,500,000</div>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Overdue Fraud Claims</span>
+        <div class="metric-val" style="color: #ef4444;">₹66,000</div>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Active Scheme Coverage</span>
+        <div class="metric-val" style="color: #10b981;">99.4%</div>
+      </div>
+    </div>
+
+    <!-- Dual AI Avatars (Matched to Picture) -->
+    <div class="avatars-grid">
+      <div class="avatar-card">
+        <div class="avatar-img" style="background: #0284c7;">👩‍⚕️</div>
+        <div class="speech-bubble">
+          <strong>Health Audit Agent:</strong><br />
+          "Sure! I've executed the full 360-degree hospital audit for Kauvery Hospital Chennai."
+        </div>
+      </div>
+
+      <div class="avatar-card">
+        <div class="speech-bubble" style="text-align: right;">
+          <strong>Legal Enforcement Agent:</strong><br />
+          "Reminder: Approve 5 pending Form 14555 legal notices for dispatch."
+        </div>
+        <div class="avatar-img" style="background: #6366f1;">🤖</div>
+      </div>
+    </div>
+
+    <!-- 4 Interconnected Panels Grid (Matched to Picture) -->
+    <div class="panels-grid">
+      
+      <!-- Panel 1: Billing Overcharge Analysis -->
+      <div class="panel-card">
+        <div class="panel-title">
+          <span>📈 Billing Overcharge Analysis</span>
+          <span style="color: #ef4444; font-size: 11px;">VIOLATION DETECTED</span>
+        </div>
+        <div style="font-size: 12px; opacity: 0.8; margin-bottom: 8px;">Procedure: <strong>Drug-Eluting Cardiac Stent (DES)</strong></div>
+        <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+          <span>Quoted Estimate:</span>
+          <strong style="color: #ef4444;">₹45,000</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px;">
+          <span>NPPA Legal Cap:</span>
+          <strong style="color: #10b981;">₹38,260</strong>
+        </div>
+        <div style="background: rgba(239, 68, 68, 0.15); padding: 8px; border-radius: 8px; font-size: 11px; color: #fca5a5; font-weight: 700;">
+          Illegal Overcharge: +₹6,740 (DPCO Violation)
+        </div>
+      </div>
+
+      <!-- Panel 2: Predictive Health AI Insights -->
+      <div class="panel-card">
+        <div class="panel-title">
+          <span>📊 Predictive Health AI Insights</span>
+          <span style="color: #38bdf8; font-size: 11px;">AI ANALYSIS</span>
+        </div>
+        <div style="font-size: 12px; opacity: 0.85; margin-bottom: 12px;">
+          <strong>AI Forecast:</strong> Hospital Compliance Score Up 15% after SAFU audit notice.
+        </div>
+        <div style="background: rgba(56, 189, 248, 0.15); padding: 10px; border-radius: 8px; font-size: 11px; color: #7dd3fc; font-weight: 700;">
+          Predicted Approval Probability: 99.4% Cashless Guarantee
+        </div>
+      </div>
+
+      <!-- Panel 3: Smart AI Recommendations -->
+      <div class="panel-card">
+        <div class="panel-title">
+          <span>💡 Smart AI Recommendations</span>
+          <span style="color: #10b981; font-size: 11px;">ACTION READY</span>
+        </div>
+        <div style="font-size: 12px; opacity: 0.85; margin-bottom: 10px;">
+          <strong>AI Suggestion:</strong> Convert Kauvery Hospital Chennai admission to 100% Cashless under CMCHIS TN.
+        </div>
+        <button id="escBtn" class="action-btn" style="background: linear-gradient(135deg, #0284c7, #2563eb);" onclick="dispatchEscalation()">Create Emergency Collector Escalation</button>
+      </div>
+
+      <!-- Panel 4: Invoice / Legal Notice Approval Panel -->
+      <div class="panel-card">
+        <div class="panel-title">
+          <span>📋 Legal Form 14555 Approval</span>
+          <span style="color: #818cf8; font-size: 11px;">5 PENDING</span>
+        </div>
+        <div style="font-size: 12px; opacity: 0.85; margin-bottom: 10px;">
+          5 Complaints Pending • Total: <strong>₹32,750</strong>
+        </div>
+        <button id="appBtn" class="action-btn" style="background: linear-gradient(135deg, #2563eb, #1d4ed8);" onclick="approveAll()">Approve All Legal Notices</button>
+        <div style="font-size: 10px; opacity: 0.6; text-align: center; margin-top: 8px;">
+          Automated Actions: <strong>Task Scheduled</strong>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
   <script>
-    function handleAuth() {
-      const user = document.getElementById('userInput').value.trim();
-      const pass = document.getElementById('passInput').value.trim();
-
-      if (!user || !pass) {
-        alert('Please enter valid email/phone and password');
-        return;
-      }
-
-      localStorage.setItem('aethercare_user', user);
-      document.getElementById('userWelcome').innerText = 'Welcome back, ' + user + '!';
-      document.getElementById('authScreen').style.display = 'none';
-      document.getElementById('portalScreen').style.display = 'block';
+    function loginUser() {
+      document.getElementById('authOverlay').style.display = 'none';
     }
-
-    function handleLogout() {
-      localStorage.removeItem('aethercare_user');
-      document.getElementById('authScreen').style.display = 'block';
-      document.getElementById('portalScreen').style.display = 'none';
+    function dispatchEscalation() {
+      const btn = document.getElementById('escBtn');
+      btn.innerText = '✓ District Collector Escalation Dispatched';
+      btn.style.background = '#10b981';
     }
-
-    function runTask(toolName) {
-      const user = localStorage.getItem('aethercare_user') || 'User';
-      alert('⚡ Dispatching Autonomous Task [' + toolName + '] for ' + user + '\n\nTo view visual widget rendering, open NitroChat or NitroStudio!');
+    function approveAll() {
+      const btn = document.getElementById('appBtn');
+      btn.innerText = '✓ All Legal Notices Approved & Issued';
+      btn.style.background = '#10b981';
     }
-
-    // Auto-login if session exists
-    window.onload = function() {
-      const savedUser = localStorage.getItem('aethercare_user');
-      if (savedUser) {
-        document.getElementById('userWelcome').innerText = 'Welcome back, ' + savedUser + '!';
-        document.getElementById('authScreen').style.display = 'none';
-        document.getElementById('portalScreen').style.display = 'block';
-      }
-    };
+    function triggerReport() {
+      alert('⚡ Executing 360-Degree Agentic Report for Kauvery Hospital Chennai...');
+    }
   </script>
 </body>
 </html>
