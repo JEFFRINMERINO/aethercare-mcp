@@ -4,6 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>AetherOS — Enterprise AI Agent Platform</title>
+  
+  <!-- PWA App Manifest & Mobile Web App Meta Tags -->
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#0284c7">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AetherOS">
+  <link rel="apple-touch-icon" href="https://img.icons8.com/color/192/000000/medical-heart.png">
+
   <style>
     :root {
       --bg: #07090e;
@@ -31,6 +41,7 @@
     .brand-sub { font-size: 9px; color: var(--cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
 
     .nav-actions { display: flex; align-items: center; gap: 10px; }
+    .btn-install-app { background: linear-gradient(135deg, var(--cyan), var(--primary)); color: white; border: none; padding: 6px 14px; border-radius: 14px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; }
     .btn-new-chat { background: linear-gradient(135deg, var(--emerald), #059669); color: white; border: none; padding: 6px 14px; border-radius: 14px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; }
     .user-pill { background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border); padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 8px; cursor: pointer; }
     .user-avatar-sm { width: 22px; height: 22px; border-radius: 50%; background: var(--emerald); display: flex; align-items: center; justify-content: center; font-size: 10px; color: white; font-weight: 800; }
@@ -125,6 +136,7 @@
     </div>
 
     <div class="nav-actions">
+      <button class="btn-install-app" onclick="promptPWAInstall()">📲 Install App</button>
       <button class="btn-new-chat" onclick="startNewChat()"><span>+</span> New Chat</button>
       <div class="user-pill" onclick="openLoginModal()">
         <div class="user-avatar-sm" id="userAvatarInit">JM</div>
@@ -556,6 +568,33 @@
 
   <script>
     let chatHistoryList = [];
+    let deferredPrompt;
+
+    // PWA Service Worker & Install Prompt Registration
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW reg error:', err));
+      });
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+    });
+
+    function promptPWAInstall() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            alert('🎉 AetherOS installed on your home screen!');
+          }
+          deferredPrompt = null;
+        });
+      } else {
+        alert('📲 To install AetherOS on mobile/desktop:\n\n1. Android/Chrome: Tap Chrome menu (⋮) -> "Add to Home screen" or "Install App".\n2. iPhone/Safari: Tap Share button (⎋) -> "Add to Home Screen".');
+      }
+    }
 
     function switchNav(id, el) {
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
