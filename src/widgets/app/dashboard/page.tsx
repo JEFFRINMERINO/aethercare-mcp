@@ -22,13 +22,21 @@ export default function AgenticDashboardWidget() {
   const [isExecuting, setIsExecuting] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
 
+  // ALL 13 AUTONOMOUS PATIENT & ENFORCEMENT AGENTS
   const agents = [
     { name: 'Dr. Aether Medical Auditor', role: 'Billing & Insurance Fraud Audit', desc: 'Parses hospital bills, verifies Drug-Eluting Stents & ICU bed caps against NPPA DPCO statutory rules.', tools: ['analyze_billing_fraud_risk', 'verify_procedure_price_cap'], avatar: '👩‍⚕️', color: 'linear-gradient(135deg, #0284c7, #2563eb)' },
     { name: 'NPPA Legal Enforcement Agent', role: 'Statutory Form 14555 Legal Notices', desc: 'Generates binding Form 14555 legal enforcement notices for prohibited upfront cash deposit demands.', tools: ['dispatch_emergency_email_escalation', 'grievance_notice_generator'], avatar: '⚖️', color: 'linear-gradient(135deg, #6366f1, #4f46e5)' },
     { name: 'District Collector Escalation Bot', role: 'Emergency Government Escalation', desc: 'Dispatches immediate emergency email escalations to District Magistrates & SAFU Helplines.', tools: ['collector_escalation_dispatch', 'safu_grievance_filing'], avatar: '🏛️', color: 'linear-gradient(135deg, #10b981, #059669)' },
     { name: 'NLEM Pharmacy Price Auditor', role: 'Essential Drug Markup Enforcement', desc: 'Audits pharmacy receipts for Human Insulin, IV Antibiotics, and Cardiac medications.', tools: ['pharmacy_overcharge_audit', 'calculate_cashless_rebate'], avatar: '💊', color: 'linear-gradient(135deg, #f59e0b, #d97706)' },
     { name: 'Multi-Lingual Patient Advocate', role: 'Tamil, Kannada, Malayalam, Hindi Support', desc: 'Provides real-time voice and text patient intake, scheme eligibility, and emergency triage.', tools: ['multilingual_patient_voice_assistant', 'check_hospital_empanelment'], avatar: '🗣️', color: 'linear-gradient(135deg, #ec4899, #db2777)' },
-    { name: 'MoE Master Router Engine', role: '5-Stage Autonomous Execution Pipeline', desc: 'Full 360-degree autonomous pipeline combining Perception, Reasoning, Audit, Legal Notice, and Webhooks.', tools: ['run_autonomous_agentic_workflow', 'route_healthcare_query_moe'], avatar: '🧠', color: 'linear-gradient(135deg, #8b5cf6, #7c3aed)' }
+    { name: 'MoE Master Router Engine', role: '5-Stage Autonomous Execution Pipeline', desc: 'Full 360-degree autonomous pipeline combining Perception, Reasoning, Audit, Legal Notice, and Webhooks.', tools: ['run_autonomous_agentic_workflow', 'route_healthcare_query_moe'], avatar: '🧠', color: 'linear-gradient(135deg, #8b5cf6, #7c3aed)' },
+    { name: 'AI Smart Appointment Booking Agent', role: 'Doctor Slot & Cashless Verifier', desc: 'Autonomously books doctor appointments in nearby empaneled hospitals, verifies cashless eligibility, and syncs calendar.', tools: ['search_hospitals', 'book_doctor_slot'], avatar: '📅', color: 'linear-gradient(135deg, #0284c7, #38bdf8)' },
+    { name: '108 Emergency Ambulance Dispatch Engine', role: 'GPS Ambulance & ICU Desk Alert', desc: 'Locates nearest Advanced Cardiac Life Support ambulance (ETA 4 Mins) and transmits GPS coordinates to 108 Control Room.', tools: ['dispatch_emergency_ambulance'], avatar: '🚨', color: 'linear-gradient(135deg, #ef4444, #b91c1c)' },
+    { name: 'AI Medical Routing Agent', role: 'Symptom Triage & Urgency Assessment', desc: 'Analyzes symptoms (e.g. Chest pain ➔ Cardiology/Emergency), estimates urgency, and guides specialty care.', tools: ['symptom_triage', 'specialty_recommendation'], avatar: '🩺', color: 'linear-gradient(135deg, #e11d48, #f43f5e)' },
+    { name: 'AI Insurance Intelligence Agent', role: 'Policy PDF & Room Cap Verifier', desc: 'Extracts room rent caps, deductibles, and pre-existing disease waiting periods from insurance PDFs/cards.', tools: ['parse_insurance_pdf', 'cashless_verifier'], avatar: '🛡️', color: 'linear-gradient(135deg, #059669, #10b981)' },
+    { name: 'Live Hospital Bill Tracker', role: 'Real-Time Overcharge Fraud Monitor', desc: 'Monitors running consultation, ICU bed, and lab fees in real time. Automatically flags NPPA DPCO overcharges.', tools: ['live_bill_monitor', 'nppa_overcharge_flag'], avatar: '📊', color: 'linear-gradient(135deg, #d97706, #f59e0b)' },
+    { name: 'AI Medical Records & Report Summarizer', role: 'Lab, MRI & Discharge PDF Parser', desc: 'Parses blood tests and MRI scans. Highlights abnormal values in plain text and generates downloadable PDF summary.', tools: ['lab_report_summarizer', 'mri_analyzer'], avatar: '📄', color: 'linear-gradient(135deg, #2563eb, #3b82f6)' },
+    { name: 'AI Follow-up & Recovery Manager', role: 'Post-Discharge Recovery Score Coach', desc: 'Tracks pain levels, blood pressure, sugar readings, and medicine adherence. Automatically schedules follow-up visits.', tools: ['recovery_score_tracker', 'bp_sugar_logger'], avatar: '❤️', color: 'linear-gradient(135deg, #db2777, #ec4899)' }
   ];
 
   const nearbyDoctors = [
@@ -128,8 +136,8 @@ export default function AgenticDashboardWidget() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div style={{ background: 'linear-gradient(135deg, #0284c7, #6366f1)', width: '38px', height: '38px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyCenter: 'center', fontSize: '20px', color: 'white' }}>⚡</div>
           <div>
-            <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 800 }}>AetherOS — Enterprise AI Agent Platform</h2>
-            <span style={{ fontSize: '11px', color: '#38bdf8', fontWeight: 600 }}>14 CONNECTED MCP TOOLS • 6 AUTONOMOUS AGENTS</span>
+            <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 800 }}>AetherOS — Patient AI Operating System</h2>
+            <span style={{ fontSize: '11px', color: '#38bdf8', fontWeight: 600 }}>14 CONNECTED MCP TOOLS • 13 AUTONOMOUS AGENTS</span>
           </div>
         </div>
         <button onClick={startNewChat} style={{ background: 'linear-gradient(135deg, #10b981, #059669)', color: 'white', border: 'none', padding: '6px 14px', borderRadius: '14px', fontSize: '11px', fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -174,7 +182,7 @@ export default function AgenticDashboardWidget() {
       {/* TAB CONTROLS */}
       <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
         {[
-          { id: 'agents', label: '🤖 AI Agent Marketplace' },
+          { id: 'agents', label: '🤖 AI Agent Marketplace (13)' },
           { id: 'tools', label: '🛠️ Connected MCP Tools (14)' },
           { id: 'gateway', label: '🧠 Multi-Model Gateway (4)' },
           { id: 'cases', label: '📈 Active Case Queue (10)' }
@@ -198,15 +206,15 @@ export default function AgenticDashboardWidget() {
         ))}
       </div>
 
-      {/* TAB 1: AI AGENTS MARKETPLACE */}
+      {/* TAB 1: ALL 13 AI AGENTS MARKETPLACE */}
       {activeTab === 'agents' && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', maxHeight: '520px', overflowY: 'auto' }}>
           {agents.map((ag, i) => (
             <div key={i} style={{ background: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff', border: '1px solid ' + (isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0'), padding: '16px', borderRadius: '16px', display: 'flex', flexDirection: 'column' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
                 <div style={{ background: ag.color, width: '40px', height: '40px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyCenter: 'center', fontSize: '20px', color: 'white', flexShrink: 0 }}>{ag.avatar}</div>
                 <div>
-                  <div style={{ fontSize: '14px', fontWeight: 800 }}>{ag.name}</div>
+                  <div style={{ fontSize: '13px', fontWeight: 800 }}>{ag.name}</div>
                   <div style={{ fontSize: '10px', color: '#38bdf8', fontWeight: 700 }}>{ag.role}</div>
                 </div>
               </div>
